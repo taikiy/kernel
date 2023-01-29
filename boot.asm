@@ -18,7 +18,7 @@ print:
     mov bx, 0                   ; bh = page number, bl = color
 
 .loop:
-    lodsb                       ; Load a byte from SI into AL, then increase SI
+    lodsb                       ; Load a byte from DS:SI into AL, then increase SI (see "Notes" in ./doc/real_mode_development.md)
 
     cmp al, 0                   ; if AL contains a null-byte, stop
     je .done
