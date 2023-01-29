@@ -8,7 +8,7 @@ Developing a multi-threaded kernel from scratch
 
 ### Printing a string to the screen
 
-1. Edit `boot.asm`
+1. Edit [`boot.asm`](./boot.asm)
 
 2. Assemble
 
@@ -16,7 +16,9 @@ Developing a multi-threaded kernel from scratch
 > nasm -f bin ./boot.asm -o ./boot.bin
 ```
 
-`-f bin` assembled to binary. We don't use object file etc. because there's no concept of executables, file formats, etc. in the BIOS. Output has no header information. Just raw code output.
+`-f bin` option assembles the file to binary. We don't use object file etc. because there's no concept of executables, file formats, etc. in the BIOS.
+
+Output has no header information. Just raw code output.
 
 ```
 ❯ ll
@@ -25,7 +27,7 @@ total 32
 -rw-r--r--  1 taiki  staff   512B Jan 29 20:38 boot.bin
 ```
 
-3. You can disassemble the bin file to see the contents
+You can disassemble the bin file to see the contents.
 
 ```
 > ndisasm ./boot.bin`
@@ -46,4 +48,4 @@ total 32
 > qemu-system-x86_64 -hda ./boot.bin
 ```
 
-[Print "A"](./img/real_mode/print_a.png?raw=true "Print A")
+![Print "Hello, World!"](./img/real_mode/hello_world.png)
