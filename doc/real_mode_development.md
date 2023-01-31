@@ -6,7 +6,7 @@ BIOS operates in _Real Mode_. Real mode (aka. read address mode) is an operating
 
 ## Printing a string to the screen
 
-1. Edit [`boot.asm`](../boot.asm)
+1. Edit [`boot.asm`](../boot.asm) ([git](https://github.com/taikiy/kernel/commit/fa5ced2e4e5b3dab0105ed001ef021cc7759e329#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
 
 2. Assemble
 
@@ -47,6 +47,12 @@ You can disassemble the bin file to see the contents.
 ```
 
 ![Print "Hello, World!"](../img/real_mode/hello_world.png)
+
+## Set the data segment
+
+In the previous section, `ORG 0x7c00` worked fine. This is because QEMU BIOS starts with DS set to 0. On other BIOS, however, this might not work if it initializes the data segment to, for example, `0x7c0`. In that case, our DS will be `0x7c00 + 0x7c0 * 16` which does not point to `message`.
+
+To prevent this, we set DS ourselves in the assembly.
 
 ## Notes
 

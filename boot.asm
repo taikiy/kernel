@@ -1,8 +1,19 @@
-ORG 0x7c00                      ; bootloader location address
+ORG 0
 BITS 16                         ; 16-bit (real mode)
 
-; https://en.wikipedia.org/wiki/INT_10H
+jmp 0x7c0:start
+
 start:
+    ; setup the data segment
+    cli                         ; Disable interrupts. We don't want interrupts messing with registers
+    mov ax, 0x7c0
+    mov ds, ax
+    mov es, ax
+    mov ax, 0x00
+    mov ss, ax
+    mov sp, 0x7c00
+    sti                         ; Enable interrups
+
     mov si, message             ; SI = Source Index
     call print
     
@@ -23,7 +34,7 @@ print:
     cmp al, 0                   ; if AL contains a null-byte, stop
     je .done
 
-    int 0x10                    ; BIOS interrupt call 0x10
+    int 0x10                    ; BIOS interrupt call 0x10. https://en.wikipedia.org/wiki/INT_10H
 
     jmp .loop
 
