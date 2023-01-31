@@ -1,7 +1,15 @@
 ORG 0
 BITS 16                         ; 16-bit (real mode)
 
-jmp 0x7c0:start
+; BIOS Parameter Block
+; https://wiki.osdev.org/FAT#BPB_.28BIOS_Parameter_Block.29
+_start:
+    jmp short init
+    nop
+times 33 db 0
+
+init:
+    jmp 0x7c0:start
 
 start:
     ; setup the data segment
@@ -44,5 +52,5 @@ print:
 message:
     db 'Hello, World!', 0
 
-times 510 - ($ - $$) db 0       ; 510 - (current position - beginning of the current section)
-dw 0xAA55                       ; Little-endian 55AA
+times 510 - ($ - $$) db 0       ; Pad the boot sector to 510 bytes
+dw 0xAA55                       ; Boot signature. 55AA (2 bytes) in the little-endian

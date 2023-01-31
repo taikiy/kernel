@@ -4,7 +4,7 @@
 
 BIOS operates in _Real Mode_. Real mode (aka. read address mode) is an operating mode of all x86-compatible CPUs. All code in real mode is required to be 16 bits. Addresses in real mode correspond to real locations in memory. It uses a 20-bit _segmented memory_ address space (= 1MB of addressable memory) and unlimited direct software access to all addressable memory, I/O addresses and peripheral hardware. It does not provide memory protection, multitasking, or code privilege levels. [(wiki)](https://en.wikipedia.org/wiki/Real_mode)
 
-## Printing a string to the screen
+## 1. Printing a string to the screen
 
 1. Edit [`boot.asm`](../boot.asm) ([git](https://github.com/taikiy/kernel/commit/fa5ced2e4e5b3dab0105ed001ef021cc7759e329#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
 
@@ -48,11 +48,47 @@ You can disassemble the bin file to see the contents.
 
 ![Print "Hello, World!"](../img/real_mode/hello_world.png)
 
-## Set the data segment
+## 2. Set the data segment
 
 In the previous section, `ORG 0x7c00` worked fine. This is because QEMU BIOS starts with DS set to 0. On other BIOS, however, this might not work if it initializes the data segment to, for example, `0x7c0`. In that case, our DS will be `0x7c00 + 0x7c0 * 16` which does not point to `message`.
 
-To prevent this, we set DS ourselves in the assembly.
+To prevent this, we set DS ourselves in the assembly. ([git](https://github.com/taikiy/kernel/commit/6b08bf6ba316d4bcc16c7f214151aca9cfdcfab7#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
+
+## 3. BIOS Parameter Block (BPB)
+
+Usually, the binary file so far will work fine on real machines, but some BIOS expect what's known as [BPB](https://wiki.osdev.org/FAT#BPB_.28BIOS_Parameter_Block.29). For a maximum compatibility, we should reserve the block if BIOS decides to write some data in this data block. ([git](https://github.com/taikiy/kernel/commit/#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
+
+## 4. Writing the bootloader to a USB stick
+
+On MacOS, just like Linux, we use `dd` to copy our binary bootloader file to a USB stick. Some commands are slightly different.
+
+1. Connect a USB stick
+
+2. Check the interface path
+
+```
+diskutil list
+```
+
+This is equivalent to `fdisk -l` on Linux.
+
+3. Unmount the USB stick
+
+```
+diskutil unmountDisk /dev/disk6
+```
+
+4. Create the disk image. ❗ _Backup the USB stick before executing this command_ ❗
+
+```
+sudo dd if=./boot.bin of=/dev/disk6
+```
+
+5. Unplug the stick, plug it into a PC, boot!
+
+Don't forget to configure the boot priority :)
+
+![Real PC "Hello, World!"](../img/real_mode/real_machine_hello_world.png)
 
 ## Notes
 
