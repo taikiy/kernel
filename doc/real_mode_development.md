@@ -56,7 +56,7 @@ To prevent this, we set DS ourselves in the assembly. ([git](https://github.com/
 
 ## 3. BIOS Parameter Block (BPB)
 
-Usually, the binary file so far will work fine on real machines, but some BIOS expect what's known as [BPB](https://wiki.osdev.org/FAT#BPB_.28BIOS_Parameter_Block.29). For a maximum compatibility, we should reserve the block if BIOS decides to write some data in this data block. ([git](https://github.com/taikiy/kernel/commit/#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
+Usually, the binary file so far will work fine on real machines, but some BIOS expect what's known as [BPB](https://wiki.osdev.org/FAT#BPB_.28BIOS_Parameter_Block.29). For a maximum compatibility, we should reserve the block if BIOS decides to write some data in this data block. ([git](https://github.com/taikiy/kernel/commit/ec33f9a20982be55a0caf5eb59890048b4cfd064#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
 
 ## 4. Writing the bootloader to a USB stick
 
@@ -89,6 +89,19 @@ sudo dd if=./boot.bin of=/dev/disk6
 Don't forget to configure the boot priority :)
 
 ![Real PC "Hello, World!"](../img/real_mode/real_machine_hello_world.png)
+
+## 5. Handling interrupts (exceptions)
+
+In Real Mode, Interrupt Vector Table (IVT) is loaded at 0x00. Each interrupt takes 4 bytes - the first 2 bytes is the offset, and the second 2 bytes is the segment.
+
+```
+ +-----------+-----------+
+ |  Segment  |  Offset   |
+ +-----------+-----------+
+ 4           2           0
+```
+
+To define a custom interrupt handler, we first define a routine with a label, and then write the segment/offset of the routine to IVT. ([git]())
 
 ## Notes
 

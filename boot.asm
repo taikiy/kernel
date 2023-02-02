@@ -11,6 +11,20 @@ times 33 db 0
 init:
     jmp 0x7c0:start
 
+handle_zero:
+    mov ah, 0eh
+    mov al, 'A'
+    mov bx, 0x00
+    int 0x10
+    iret
+
+handle_one:
+    mov ah, 0eh
+    mov al, 'B'
+    mov bx, 0x00
+    int 0x10
+    iret
+
 start:
     ; setup the data segment
     cli                         ; Disable interrupts. We don't want interrupts messing with registers
@@ -20,7 +34,19 @@ start:
     mov ax, 0x00
     mov ss, ax
     mov sp, 0x7c00
-    sti                         ; Enable interrups
+    sti                         ; Enables interrups
+
+    ; Add a custom interrupt handler for Int0h (address 0x00).
+    ; word[0x00] will use `ds` as the segment by default, which at this point of the code points at
+    ; 0x7c0. We explicitly specify [ss:0x00], which points at 0x00, set in the code above.
+    mov word[ss:0x00], handle_zero  ; First two bytes of RAM - offset
+    mov word[ss:0x02], 0x7c0        ; Second two bytes of RAM - segment
+
+    mov word[ss:0x04], handle_one
+    mov word[ss:0x06], 0x7c0
+
+    int 0                       ; same as mov ax, 0x00; div ax
+    int 1
 
     mov si, message             ; SI = Source Index
     call print
