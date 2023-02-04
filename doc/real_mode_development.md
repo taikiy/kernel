@@ -6,6 +6,12 @@ BIOS operates in _Real Mode_. Real mode (aka. read address mode) is an operating
 
 ## 1. Printing a string to the screen
 
+We write our bootloader in assembly. Aside from the actual bootloader logics, we use _interrupts_ to control the CPU to access its peripherals like I/O devices. ([Ralf Brown's Interrupt List](https://www.ctyme.com/rbrown.htm))
+
+For this section, we'll print "Hello, World!" on the screen, and for that we'll use [`Int10h`](http://www.ctyme.com/intr/int-10.htm).
+
+---
+
 1. Edit [`boot.asm`](../boot.asm) ([git](https://github.com/taikiy/kernel/commit/fa5ced2e4e5b3dab0105ed001ef021cc7759e329#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
 
 2. Assemble
@@ -62,6 +68,8 @@ Usually, the binary file so far will work fine on real machines, but some BIOS e
 
 On MacOS, just like Linux, we use `dd` to copy our binary bootloader file to a USB stick. Some commands are slightly different.
 
+---
+
 1. Connect a USB stick
 
 2. Check the interface path
@@ -86,13 +94,15 @@ sudo dd if=./boot.bin of=/dev/disk6
 
 5. Unplug the stick, plug it into a PC, boot!
 
+---
+
 Don't forget to configure the boot priority :)
 
 ![Real PC "Hello, World!"](../img/real_mode/real_machine_hello_world.png)
 
 ## 5. Handling interrupts (exceptions)
 
-In Real Mode, Interrupt Vector Table (IVT) is loaded at 0x00. Each interrupt takes 4 bytes - the first 2 bytes is the offset, and the second 2 bytes is the segment.
+In Real Mode, Interrupt Vector Table (IVT) is loaded at 0x00. IVT is a table that specifies the addresses of interrupt _handlers_. Each slot takes 4 bytes - the first 2 bytes is the offset, and the second 2 bytes is the segment.
 
 ```
  +-----------+-----------+
@@ -101,7 +111,15 @@ In Real Mode, Interrupt Vector Table (IVT) is loaded at 0x00. Each interrupt tak
  4           2           0
 ```
 
-To define a custom interrupt handler, we first define a routine with a label, and then write the segment/offset of the routine to IVT. ([git]())
+To define a custom interrupt handler, we first define a routine with a label, and then write the segment/offset of the routine to IVT. ([git](https://github.com/taikiy/kernel/commit/8a5fb00bc8bdaf47af6cb9de8ac107e8a6655db6#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
+
+## 6. Reading from the disk
+
+We add [`message.txt`](../message.txt) file and append the content to `boot.bin` using `dd` command (see [`Makefile`](../Makefile)). When we start up a QEMU with `boot.bin`, it treats it as a hard disk.
+
+Whenever CPU reads data from a hard disk, it must be one full block (512 bytes). We need to make sure that our message (starting from the second sector 0x200 because we use the first sector for our bootloader code), is padded with zeros until the end of the sector
+
+Disk access is done via [`Int13h/AH=02h`](http://www.ctyme.com/intr/rb-0607.htm).
 
 ## Notes
 
