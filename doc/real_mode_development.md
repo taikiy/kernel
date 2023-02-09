@@ -1,8 +1,10 @@
 # Real Mode Development
 
-##
+## Writing a bootloader
 
-BIOS operates in _Real Mode_. Real mode (aka. read address mode) is an operating mode of all x86-compatible CPUs. All code in real mode is required to be 16 bits. Addresses in real mode correspond to real locations in memory. It uses a 20-bit _segmented memory_ address space (= 1MB of addressable memory) and unlimited direct software access to all addressable memory, I/O addresses and peripheral hardware. It does not provide memory protection, multitasking, or code privilege levels. [(wiki)](https://en.wikipedia.org/wiki/Real_mode)
+Bootloader is a set of CPU instructions (usually written in assembly) that is loaded by the BIOS when a PC is booted. Bootloader's code sits at 0x7c00 when loaded into the memory, and must be 1-sector (= 512 bytes) long. The end of the bootloader code is marked by 2-byte signature `0x55AA`.
+
+BIOS operates in _Real Mode_. Real Mode (aka. read address mode) is an operating mode available to all x86-compatible CPUs. All code in real mode is required to be 16 bits. Addresses in real mode correspond to real locations in memory. It uses a 20-bit _segmented memory_ address space (= 1MB of addressable memory) and unlimited direct software access to all addressable memory, I/O addresses and peripheral hardware. It does not provide memory protection, multitasking, or code privilege levels. [(wiki)](https://en.wikipedia.org/wiki/Real_mode)
 
 ## 1. Printing a string to the screen
 
@@ -117,9 +119,11 @@ To define a custom interrupt handler, we first define a routine with a label, an
 
 We add [`message.txt`](../message.txt) file and append the content to `boot.bin` using `dd` command (see [`Makefile`](../Makefile)). When we start up a QEMU with `boot.bin`, it treats it as a hard disk.
 
-Whenever CPU reads data from a hard disk, it must be one full block (512 bytes). We need to make sure that our message (starting from the second sector 0x200 because we use the first sector for our bootloader code), is padded with zeros until the end of the sector
+Whenever CPU reads data from a hard disk, it must be one full sector (512 bytes). We need to make sure that our message (starting from the second sector 0x200 because we use the first sector for our bootloader code), is padded with zeros until the end of the sector
 
 Disk access is done via [`Int13h/AH=02h`](http://www.ctyme.com/intr/rb-0607.htm).
+
+Note how we created an empty label called `buffer` at the very end of the bootloader code. Because the bootloader code is 512 bytes, this label is not loaded into the memory. That doesn't mean we cannot use the memory pointed by this label. Since the label is at the end, it points to 0x7e00 = 0x7c00 (start of the bootloader) + 0x200 (512 bytes).
 
 ## Notes
 

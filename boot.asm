@@ -11,20 +11,6 @@ times 33 db 0
 init:
     jmp 0x7c0:start
 
-handle_zero:
-    mov ah, 0eh
-    mov al, 'A'
-    mov bx, 0x00
-    int 0x10
-    iret
-
-handle_one:
-    mov ah, 0eh
-    mov al, 'B'
-    mov bx, 0x00
-    int 0x10
-    iret
-
 start:
     ; setup the data segment
     cli                         ; Disable interrupts. We don't want interrupts messing with registers
@@ -36,26 +22,29 @@ start:
     mov sp, 0x7c00
     sti                         ; Enables interrups
 
-    ; Add a custom interrupt handler for Int0h (address 0x00).
-    ; word[0x00] will use `ds` as the segment by default, which at this point of the code points at
-    ; 0x7c0. We explicitly specify [ss:0x00], which points at 0x00, set in the code above.
-    mov word[ss:0x00], handle_zero  ; First two bytes of RAM - offset
-    mov word[ss:0x02], 0x7c0        ; Second two bytes of RAM - segment
+    ; Disk interrupt preparation
+    mov ah, 0x02                ; READ SECTOR command
+    mov al, 0x01                ; Read 1 sector
+    mov ch, 0x00                ; Cylinder number 0
+    mov cl, 0x02                ; Sector number 2
+    mov dh, 0x00                ; Head number 0
+                                ; We don't set DL. BIOS sets it to the booted disk
+    mov bx, buffer              ; Data read will be buffered at ES:BX
+    int 0x13
 
-    mov word[ss:0x04], handle_one
-    mov word[ss:0x06], 0x7c0
+    jc error                    ; if the carry flag is set (error), jump
 
-    int 0                       ; same as mov ax, 0x00; div ax
-    int 1
-
-    mov si, message             ; SI = Source Index
+    mov si, buffer
     call print
-    
-    cld                         ; Clears direction flag
 
-    ; this hangs the computer
-    cli
-    hlt
+    cld                         ; Clears direction flag
+    cli                         ; Disables interrupts
+    hlt                         ; This hangs the computer
+
+
+error: 
+    mov si, error_message
+    call print
 
 print:
     ; setup INT10h params
@@ -75,8 +64,12 @@ print:
 .done:
     ret
 
-message:
-    db 'Hello, World!', 0
+error_message:
+    db 'Failed to load sector', 0
 
 times 510 - ($ - $$) db 0       ; Pad the boot sector to 510 bytes
 dw 0xAA55                       ; Boot signature. 55AA (2 bytes) in the little-endian
+
+;; Everything under here is at the second sector from 0x7c00 (0x7e00)
+
+buffer:
