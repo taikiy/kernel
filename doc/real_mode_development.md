@@ -4,7 +4,13 @@
 
 Bootloader is a set of CPU instructions (usually written in assembly) that is loaded by the BIOS when a PC is booted. Bootloader's code sits at 0x7c00 when loaded into the memory, and must be 1-sector (= 512 bytes) long. The end of the bootloader code is marked by 2-byte signature `0x55AA`.
 
-BIOS operates in _Real Mode_. Real Mode (aka. read address mode) is an operating mode available to all x86-compatible CPUs. All code in real mode is required to be 16 bits. Addresses in real mode correspond to real locations in memory. It uses a 20-bit _segmented memory_ address space (= 1MB of addressable memory) and unlimited direct software access to all addressable memory, I/O addresses and peripheral hardware. It does not provide memory protection, multitasking, or code privilege levels. [(wiki)](https://en.wikipedia.org/wiki/Real_mode)
+## Real Mode
+
+BIOS operates in _Real Mode_. Real Mode (aka. read address mode) is an operating mode available to all x86-compatible CPUs. All code in real mode is required to be 16 bits. Addresses in real mode correspond to real locations in memory.
+
+Real Mode uses a 20-bit _segmented memory_ address space (= 1MB of addressable memory) and unlimited direct software access to all addressable memory, I/O addresses and peripheral hardware. It does not provide memory protection, multitasking, or code privilege levels. [(wiki)](https://en.wikipedia.org/wiki/Real_mode)
+
+# Development
 
 ## 1. Printing a string to the screen
 

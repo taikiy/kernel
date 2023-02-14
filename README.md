@@ -14,6 +14,7 @@ Documents in this repo assumes MacOS, but one should be able to follow the steps
 # Sections
 
 1. [Real Mode Development](./doc/real_mode_development.md)
+2. [Protected Mode Development](./doc/protected_mode_development.md)
 
 # Resources
 
