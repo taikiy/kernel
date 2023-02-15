@@ -14,7 +14,7 @@ Real Mode uses a 20-bit _segmented memory_ address space (= 1MB of addressable m
 
 ## 1. Printing a string to the screen
 
-We write our bootloader in assembly. Aside from the actual bootloader logics, we use _interrupts_ to control the CPU to access its peripherals like I/O devices. ([Ralf Brown's Interrupt List](https://www.ctyme.com/rbrown.htm))
+We write our bootloader in assembly. Aside from the actual bootloader logics, we use _interrupts_ to control the CPU to access its peripherals like I/O devices ([Ralf Brown's Interrupt List](https://www.ctyme.com/rbrown.htm)). Note that these interrupts are **provided by BIOS**.
 
 For this section, we'll print "Hello, World!" on the screen, and for that we'll use [`Int10h`](http://www.ctyme.com/intr/int-10.htm).
 

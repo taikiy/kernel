@@ -47,7 +47,7 @@ Process 1 stopped
 Target 0: (No executable module.) stopped.
 (lldb) c                  # continue
 Process 1 resuming
-(lldb) process interrupt  # now the bootloader should come to a halt
+(lldb) process interrupt  # (C-c also works) now the bootloader should come to a halt
 Process 1 stopped
 * thread #1, stop reason = signal SIGINT
     frame #0: 0x0000000000007c68
@@ -70,6 +70,16 @@ general:
        fs = 0x00000010
        gs = 0x00000010
 ```
+
+## 3. Enabling A20 Line
+
+[A20 Line](https://wiki.osdev.org/A20_Line) needs to be enabled to access all memories.
+
+---
+
+[continue](./protected_mode_development_2.md)
+
+---
 
 ## Notes
 
