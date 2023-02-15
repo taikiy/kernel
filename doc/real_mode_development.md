@@ -74,7 +74,7 @@ Usually, the binary file so far will work fine on real machines, but some BIOS e
 
 ## 4. Writing the bootloader to a USB stick
 
-On MacOS, just like Linux, we use `dd` to copy our binary bootloader file to a USB stick. Some commands are slightly different.
+On Mac, just like Linux, you can use `dd` to copy our binary bootloader file to a USB stick. Some commands/options are slightly different.
 
 ---
 

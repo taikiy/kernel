@@ -60,23 +60,70 @@ gdt_descriptor:
 
 [BITS 32]
 load32:
-    mov ax, DATA_SEG
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax
-    mov ebp, 0x00200000
-    mov esp, ebp
+    mov eax, 1                  ; Beginning of the sector to read from (Kernel starts at the first sector. 0 = bootloader)
+    mov ecx, 100                ; End of the sector (we added 100 sectors in Makefile)
+    mov edi, 0x0100000          ; Address where the Kernel will be loaded into (linker.ld specifies 1M)
+    call ata_lba_read
+    jmp CODE_SEG:0x0100000
 
-    ; Enable the A20 Line
-    in al, 0x92                 ; Read from the bus line 92
-    or al, 2
-    out 0x92, al                ; Write to the bus line 92
+ata_lba_read:
+    mov ebx, eax                ; Backup the LBA (Linear Block Address), which is set to 1
+    ; Send the highest 8 bits of the LBA to hard disk controller
+    shr eax, 24
+    or eax, 0xE0                ; Select the master drive
+    mov dx, 0x1F6               ; Port that expects us to write LBA MSB 8 bits to
+    out dx, al                  ; Write to the bus line 0x1F6
+    ; Finished sending the highest 8 bits of the LBA
 
-    cld                         ; Clears direction flag
-    cli                         ; Disables interrupts
-    hlt                         ; This hangs the computer
+    ; Send the total sectors to read
+    mov eax, ecx
+    mov dx, 0x1F2
+    out dx, al
+    ; Finished sending the total sectors to read
+
+    ; Send more bits of the LBA
+    mov eax, ebx                ; Restore the backup LBA
+    mov dx, 0x1F3
+    out dx, al
+    ; Finished sending more bits of the LBA
+
+    mov eax, ebx                ; Backup LBA again just in case
+    ; Send more bits of the LBA
+    shr eax, 8
+    mov dx, 0x1F4
+    out dx, al
+    ; Finished sending more bits of the LBA
+
+    ; Send upper 16 bits of the LBA
+    mov eax, ebx
+    shr eax, 16
+    mov dx, 0x1F5
+    out dx, al
+    ; Finished sending upper 16 bits of the LBA
+
+    mov dx, 0x1F7
+    mov al, 0x20
+    out dx, al
+
+; Read all sectors into memory
+.next_sector:
+    push ecx
+
+; Checking if we need to reqd
+.try_again:
+    mov dx, 0x1F7
+    in al, dx
+    test al, 8
+    jz .try_again
+
+    ; Read 256 words (512 bytes = 1 sector) at a time and store it at address specified by ES:EDI
+    mov ecx, 256
+    mov dx, 0x1F0
+    rep insw                    ; Input word from I/O port specified in DX into memory location specified in ES:EDI
+    pop ecx
+    loop .next_sector
+    ; End of reading sectors into memory
+    ret
 
 times 510 - ($ - $$) db 0       ; Pad the boot sector to 510 bytes
 dw 0xAA55                       ; Boot signature. 55AA (2 bytes) in the little-endian

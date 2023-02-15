@@ -28,7 +28,7 @@ We create entries for Global Descriptor Table (GDT) and load its address into GD
 
 ## 2. Verify using LLDB
 
-Since this repo assumes you are using MacOS, we need to use LLDB instead of GDB. Here's how:
+This repo assumes you are using a Mac on M1 Chip. For that, we need to use LLDB instead of GDB. Here's how:
 
 ```
 # Launch QEMU with gdb server enabled

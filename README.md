@@ -4,7 +4,7 @@ Developing a multi-threaded kernel from scratch
 
 # Preparation
 
-Documents in this repo assumes MacOS, but one should be able to follow the steps in Linux/Windows.
+Documents in this repo assumes macOS on Apple M1 chip.
 
 ```
 > brew install nasm
