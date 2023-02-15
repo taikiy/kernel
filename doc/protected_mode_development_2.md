@@ -10,13 +10,15 @@ Installing the i686-elf toolchain on M1 Mac is very easy.
 
 ## 2. Loading the 32-bit kernel into memory
 
+([git commit](https://github.com/taikiy/kernel/commit/9ada2f4b0606508ff5c1a163e83da0f5d0e57527))
+
 1. Kernel code
 
 Create [`kernel.asm`](../src/kernel.asm), copy all 32-bit code to it. We'll change [`boot.asm`](../src/boot/boot.asm) later to load the 32-bit kernel code. At this point, `load32` label is no longer available because these two files are not linked. What we'll do is load the kernel to some known address, and specify that address from the bootloader.
 
 2. Linker script
 
-We'll also need [`linker.ld`](../src/linker.ld) to link the object files.
+We'll also need [`linker.ld`](../src/linker.ld) to describe how to link the object files.
 
 ```
 SECTIONS
@@ -91,6 +93,7 @@ Breakpoint 1, _start () at ./src/kernel.asm:9
    0x100024:	add    %al,(%rax)
    0x100026:	add    %al,(%rax)
    0x100028:	add    %al,(%rax)
+(gdb) layout asm
 ```
 
-a
+https://asciinema.org/a/n3qfuN4AV8u3GWKHAqFxtGR15
