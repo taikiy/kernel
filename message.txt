@@ -1,1 +1,0 @@
-Hello, World! This message located at the second sector of the disk starting at 512, or 0x200h.
