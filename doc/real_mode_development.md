@@ -60,7 +60,7 @@ You can disassemble the bin file to see the contents.
 > qemu-system-x86_64 -hda ./boot.bin
 ```
 
-![Print "Hello, World!"](../img/real_mode/hello_world.png)
+![Print "Hello, World!"](./img/real_mode/hello_world.png)
 
 ## 2. Set the data segment
 
@@ -106,7 +106,7 @@ sudo dd if=./boot.bin of=/dev/disk6
 
 Don't forget to configure the boot priority :)
 
-![Real PC "Hello, World!"](../img/real_mode/real_machine_hello_world.png)
+![Real PC "Hello, World!"](./img/real_mode/real_machine_hello_world.png)
 
 ## 5. Handling interrupts (exceptions)
 
