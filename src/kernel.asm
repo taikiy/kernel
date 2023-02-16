@@ -23,3 +23,7 @@ _start:
     cld                         ; Clears direction flag
     cli                         ; Disables interrupts
     hlt                         ; This hangs the computer
+
+times 512 - ($ - $$) db 0       ; Pad the kernel code sector to 512 bytes
+                                ; This ensures that any object files written in C and linked with this assembly
+                                ; will be correctly aligned.
