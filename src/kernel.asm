@@ -2,6 +2,8 @@
 
 global _start
 
+extern kernel_main
+
 CODE_SEG equ 0x08
 DATA_SEG equ 0x10
 
@@ -19,6 +21,8 @@ _start:
     in al, 0x92                 ; Read from the bus line 92
     or al, 2
     out 0x92, al                ; Write to the bus line 92
+
+    call kernel_main
 
     cld                         ; Clears direction flag
     cli                         ; Disables interrupts

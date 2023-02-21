@@ -81,7 +81,7 @@ general:
 
 ---
 
-## Notes
+## References
 
 - [GDB to LLDB command map](https://lldb.llvm.org/use/map.html#examining-thread-state)
 - [Entering Protected Mode tutorial](http://www.osdever.net/tutorials/view/the-world-of-protected-mode)

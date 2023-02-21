@@ -112,3 +112,7 @@ Quick summary of how our code works with memory.
     - Note that aligning `boot.asm` to 512 bytes is unrelated to the memory alignment issue we talk about here. The bootloader must have the boot signature 0x55AA at 511 and 512 byte.
   - Make sure that `kernel.asm.o` is the first file to be linked. That ensures `kernel.asm.o` is located in the `.text` section ([`linker.ld`](../src/linker.ld)) when linked, and always starts at 0x100000. `kernel.asm.o` is 512 bytes long, so any other C object files linked after that are automatically aligned.
   - In other kernel assembly files, specify `.asm` section so that they are linked at the end of the object file. If the assembled code is not a multiple of 4 bytes, that's okay because those files are at the end.
+
+---
+
+[continue](./protected_mode_development_3.md)
