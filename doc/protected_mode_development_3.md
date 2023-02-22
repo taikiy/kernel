@@ -56,4 +56,4 @@ video_mem[0] = 0x0241; // 'A' (65 decimal or 0x41 hex) + Green (0x02) in the lit
 
 and with bit more helper functions, we can call `print` and write "Hello, World!".
 
-[commit]()
+[commit](https://github.com/taikiy/kernel/commit/fa0fbabaf9c9cd93bcaff966fb54164fa3da3df6)
