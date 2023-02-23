@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "name": "Mac",
+      "includePath": ["${workspaceFolder}/**"],
+      "defines": [],
+      "compilerPath": "/opt/homebrew/bin/i686-elf-gcc",
+      "compilerArgs": [
+        "-ffreestanding",
+        "-nostdlib",
+        "-nostartfiles",
+        "-nodefaultlibs",
+        "-Iinc"
+      ],
+      "cStandard": "gnu99",
+      "intelliSenseMode": "macos-gcc-x86",
+      "configurationProvider": "ms-vscode.makefile-tools",
+      "browse": {
+        "path": ["${workspaceFolder}"],
+        "limitSymbolsToIncludedHeaders": true
+      }
+    }
+  ],
+  "version": 4
+}

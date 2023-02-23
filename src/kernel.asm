@@ -1,6 +1,7 @@
 [BITS 32]
 
 global _start
+global divide_by_zero
 
 extern kernel_main
 
@@ -27,6 +28,9 @@ _start:
     cld                         ; Clears direction flag
     cli                         ; Disables interrupts
     hlt                         ; This hangs the computer
+
+divide_by_zero:
+    int 0
 
 times 512 - ($ - $$) db 0       ; Pad the kernel code sector to 512 bytes
                                 ; This ensures that any object files written in C and linked with this assembly

@@ -20,11 +20,11 @@ For this section, we'll print "Hello, World!" on the screen, and for that we'll 
 
 ---
 
-1. Edit [`boot.asm`](../boot.asm) ([git](https://github.com/taikiy/kernel/commit/fa5ced2e4e5b3dab0105ed001ef021cc7759e329#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
+1. Edit [`boot.asm`](../boot.asm) ([commit](https://github.com/taikiy/kernel/commit/fa5ced2e4e5b3dab0105ed001ef021cc7759e329#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
 
 2. Assemble
 
-```
+```shell
 > nasm -f bin ./boot.asm -o ./boot.bin
 ```
 
@@ -32,7 +32,7 @@ For this section, we'll print "Hello, World!" on the screen, and for that we'll 
 
 Output has no header information. Just raw code output.
 
-```
+```shell
 ❯ ll
 total 32
 -rw-r--r--  1 taiki  staff   501B Jan 29 20:38 boot.asm
@@ -41,7 +41,7 @@ total 32
 
 You can disassemble the bin file to see the contents.
 
-```
+```shell
 > ndisasm ./boot.bin`
 00000000  B40E              mov ah,0xe
 00000002  B041              mov al,0x41
@@ -56,7 +56,7 @@ You can disassemble the bin file to see the contents.
 
 4. Run
 
-```
+```shell
 > qemu-system-x86_64 -hda ./boot.bin
 ```
 
@@ -66,11 +66,11 @@ You can disassemble the bin file to see the contents.
 
 In the previous section, `ORG 0x7c00` worked fine. This is because QEMU BIOS starts with DS set to 0. On other BIOS, however, this might not work if it initializes the data segment to, for example, `0x7c0`. In that case, our DS will be `0x7c00 + 0x7c0 * 16` which does not point to `message`.
 
-To prevent this, we set DS ourselves in the assembly. ([git](https://github.com/taikiy/kernel/commit/6b08bf6ba316d4bcc16c7f214151aca9cfdcfab7#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
+To prevent this, we set DS ourselves in the assembly. ([commit](https://github.com/taikiy/kernel/commit/6b08bf6ba316d4bcc16c7f214151aca9cfdcfab7#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
 
 ## 3. BIOS Parameter Block (BPB)
 
-Usually, the binary file so far will work fine on real machines, but some BIOS expect what's known as [BPB](https://wiki.osdev.org/FAT#BPB_.28BIOS_Parameter_Block.29). For a maximum compatibility, we should reserve the block if BIOS decides to write some data in this data block. ([git](https://github.com/taikiy/kernel/commit/ec33f9a20982be55a0caf5eb59890048b4cfd064#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
+Usually, the binary file so far will work fine on real machines, but some BIOS expect what's known as [BPB](https://wiki.osdev.org/FAT#BPB_.28BIOS_Parameter_Block.29). For a maximum compatibility, we should reserve the block if BIOS decides to write some data in this data block. ([commit](https://github.com/taikiy/kernel/commit/ec33f9a20982be55a0caf5eb59890048b4cfd064#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
 
 ## 4. Writing the bootloader to a USB stick
 
@@ -82,22 +82,22 @@ On Mac, just like Linux, you can use `dd` to copy our binary bootloader file to 
 
 2. Check the interface path
 
-```
-diskutil list
+```shell
+> diskutil list
 ```
 
 This is equivalent to `fdisk -l` on Linux.
 
 3. Unmount the USB stick
 
-```
-diskutil unmountDisk /dev/disk6
+```shell
+> diskutil unmountDisk /dev/disk6
 ```
 
 4. Create the disk image. ❗ _Backup the USB stick before executing this command_ ❗
 
-```
-sudo dd if=./boot.bin of=/dev/disk6
+```shell
+> sudo dd if=./boot.bin of=/dev/disk6
 ```
 
 5. Unplug the stick, plug it into a PC, boot!
@@ -119,7 +119,7 @@ In Real Mode, Interrupt Vector Table (IVT) is loaded at 0x00. IVT is a table tha
  4           2           0
 ```
 
-To define a custom interrupt handler, we first define a routine with a label, and then write the segment/offset of the routine to IVT. ([git](https://github.com/taikiy/kernel/commit/8a5fb00bc8bdaf47af6cb9de8ac107e8a6655db6#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
+To define a custom interrupt handler, we first define a routine with a label, and then write the segment/offset of the routine to IVT. ([commit](https://github.com/taikiy/kernel/commit/8a5fb00bc8bdaf47af6cb9de8ac107e8a6655db6#diff-ef96aa02ede6928fc12bc906ab8b222af1250dde26bb066466d339e48ab4e658))
 
 ## 6. Reading from the disk
 

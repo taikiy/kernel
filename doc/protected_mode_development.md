@@ -30,7 +30,7 @@ We create entries for Global Descriptor Table (GDT) and load its address into GD
 
 This repo assumes you are using a Mac on M1 Chip. For that, we need to use LLDB instead of GDB. Here's how:
 
-```
+```shell
 # Launch QEMU with gdb server enabled
 # '-s'   shorthand for -gdb tcp::1234
 # '-S'   freeze CPU at startup (use 'c' to start execution)

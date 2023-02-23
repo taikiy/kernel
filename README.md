@@ -6,7 +6,7 @@ Developing a multi-threaded kernel from scratch
 
 Documents in this repo assumes macOS on Apple M1 chip.
 
-```
+```shell
 > brew install nasm
 > brew install qemu
 ```

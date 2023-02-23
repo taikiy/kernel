@@ -4,7 +4,7 @@
 
 Installing the i686-elf toolchain on M1 Mac is very easy.
 
-```
+```shell
 > brew install i686-elf-binutils i686-elf-gcc i386-elf-gdb
 ```
 
@@ -49,7 +49,7 @@ Now, we can use `i386-elf-gdb` instead of `lldb`. Load the symbol file `kernelfu
 
 Now you can debug the kernel just like you would do with any executables!
 
-```
+```shell
 > make clean
 > make
 ❯ qemu-system-x86_64 -hda ./bin/os.bin -s -S &
