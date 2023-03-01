@@ -117,4 +117,4 @@ Trap gates are like interrupt gates, but used for exceptions. They disable inter
 
 Use `lidt` instruction.
 
-([commit]())
+([commit](https://github.com/taikiy/kernel/commit/e6abc5cf5b4a14e49d5b098d4d46bafc4e75f587))

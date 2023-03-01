@@ -69,8 +69,6 @@ void print(const char *str)
     }
 }
 
-extern void divide_by_zero();
-
 void kernel_main()
 {
     terminal_initialize();
@@ -78,5 +76,4 @@ void kernel_main()
 
     // Initialize the Interrupt Descriptor Table
     idt_init();
-    divide_by_zero();
 }
