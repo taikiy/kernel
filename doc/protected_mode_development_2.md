@@ -14,7 +14,7 @@ Installing the i686-elf toolchain on M1 Mac is very easy.
 
 1. Kernel code
 
-Create [`kernel.asm`](../src/kernel.asm), copy all 32-bit code to it. We'll change [`boot.asm`](../src/boot/boot.asm) later to load the 32-bit kernel code. At this point, `load32` label is no longer available because these two files are not linked. What we'll do is load the kernel to some known address, and specify that address from the bootloader.
+Create [`kernel.asm`](../src/kernel.asm), and copy all 32-bit code to it. We'll change [`boot.asm`](../src/boot/boot.asm) later to load the 32-bit kernel code. At this point, `load32` label is no longer available because these two files are not linked. What we'll do is load the kernel to some known address, and specify that address from the bootloader.
 
 2. Linker script
 
@@ -31,11 +31,11 @@ This means that the kernel will be loaded into 1M into memory (1024 \* 1024 = 0x
 
 3. Makefile to build object files and link them
 
-We'll also add bunch of lines in [Makefile](../Makefile) to build and link the object files into a single binary.
+We'll also add a bunch of lines in [Makefile](../Makefile) to build and link the object files into a single binary.
 
 4. Modify boot.asm
 
-Now we'll write a disk read/write driver. Since we are now in Protected Mode, we cannot (easily) call INT 13h BIOS interrupts. Instead, we'll access the disk through ports (CPU IO port bus) by communicating with motherboard's hard disk controller following the ATA disk spec.
+Now we'll write a disk read/write driver. Since we are now in Protected Mode, we cannot (easily) call INT 13h BIOS interrupts. Instead, we'll access the disk through ports (CPU IO port bus) by communicating with the motherboard's hard disk controller following the ATA disk spec.
 
 [ATA PIO Mode](https://wiki.osdev.org/ATA_PIO_Mode)
 
@@ -43,7 +43,7 @@ Now we'll write a disk read/write driver. Since we are now in Protected Mode, we
 
 5. Build, run, and debug
 
-Now, we can use `i386-elf-gdb` instead of `lldb`. Load the symbol file `kernelfull.o` using `add-symbol-file` command so that we can set breakpoints. You must specify the address of the code being loaded:
+Now, we can use `i386-elf-gdb` instead of `lldb`. Load the symbol file `kernelfull.o` using `add-symbol-file` command so that we can set breakpoints. You must specify the address of the code is loaded:
 
 `add-symbol-file ./build/kernelfull.o 0x100000`
 
@@ -106,10 +106,10 @@ Quick summary of how our code works with memory.
 - Before entering Protected Mode, we define GDT that defines the memory segments - `CODE_SEG` and `DATA_SEG`.
 - In `boot.asm`, we load our kernel code from the disk and place it at address `CODE_SEG:0x100000`.
 - Kernel code is written in `kernel.asm` which is assembled into an ELF file (Makefile `kernel.asm.o`). All other kernel code (not written yet at this point, but in the future) will be linked to output `kernelfull.o` and compiled into `kernel.bin`.
-- The C compiler aligns stack frames, data, etc., by a multiple of 4 bytes, because memory access of 32-bit processors are a lot faster when done aligned. If the content of an object file is misaligned, it may cause unexpected errors. But our `kernel.asm` is not a C program, thus not aligned by default.
+- The C compiler aligns stack frames, data, etc., by a multiple of 4 bytes, because memory access of 32-bit processors is a lot faster when aligned. If the content of an object file is misaligned, it may cause unexpected errors. But our `kernel.asm` is not a C program, thus not aligned by default.
 - To properly align the kernelfull.o, we do:
   - Add the padding instruction at the end of `kernel.asm` so that it becomes 1-sector (512 bytes) long.
-    - Note that aligning `boot.asm` to 512 bytes is unrelated to the memory alignment issue we talk about here. The bootloader must have the boot signature 0x55AA at 511 and 512 byte.
+    - Note that aligning `boot.asm` to 512 bytes is unrelated to the memory alignment issue we talk about here. The bootloader must have the boot signature 0x55AA at 511 and 512 bytes.
   - Make sure that `kernel.asm.o` is the first file to be linked. That ensures `kernel.asm.o` is located in the `.text` section ([`linker.ld`](../src/linker.ld)) when linked, and always starts at 0x100000. `kernel.asm.o` is 512 bytes long, so any other C object files linked after that are automatically aligned.
   - In other kernel assembly files, specify `.asm` section so that they are linked at the end of the object file. If the assembled code is not a multiple of 4 bytes, that's okay because those files are at the end.
 

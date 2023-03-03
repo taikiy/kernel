@@ -19,7 +19,7 @@ Debugging steps are the same as what we did in the [previous note](./protected_m
   - ...
   - color number 15, White, RGB = 255 255 255, HEX = FF FF FF
 - No need to set individual screen pixels for printing characters
-  - The video card will take the ascii value and automatically reference it in a font table to output pixels for the letter.
+  - The video card will take the ASCII value and automatically reference it in a font table to output pixels for the letter.
 
 Each character will take 2 bytes.
 
@@ -54,13 +54,13 @@ uint16_t *video_mem = (uint16_t *)0xB8000;
 video_mem[0] = 0x0241; // 'A' (65 decimal or 0x41 hex) + Green (0x02) in the little-endian format
 ```
 
-and with bit more helper functions, we can call `print` and write "Hello, World!".
+and with a bit more helper functions, we can call `print` and write "Hello, World!".
 
 [commit](https://github.com/taikiy/kernel/commit/fa0fbabaf9c9cd93bcaff966fb54164fa3da3df6)
 
 ### Interrupt Descriptor Table
 
-IDT describes how interrupts are invoked in Protected Mode, and can be mapped anywhere in memory (as opposed to IVT must be loaded at 0x00). This is equivalent of IVT (Interrupt Vector Table) in Real Mode, but a bit harder to setup. ([osdev wiki](https://wiki.osdev.org/Interrupt_descriptor_table))
+IDT describes how interrupts are invoked in Protected Mode and can be mapped anywhere in memory (as opposed to IVT must be loaded at 0x00). This is equivalent to IVT (Interrupt Vector Table) in Real Mode, but a bit harder to set up. ([osdev wiki](https://wiki.osdev.org/Interrupt_descriptor_table))
 
 We'll use the C structure to represent IDT entries.
 

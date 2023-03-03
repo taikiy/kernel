@@ -14,7 +14,7 @@ What we know as _segmentation_ registers in Real Mode become _selector_ register
 
 ### Paging Memory Scheme
 
-Paging memory scheme maps virtual memory addresses to physical memory addresses somewhere entirely different in memory. This allows user processes to believe that they are loaded into the same memory address, and makes it impossible for a user program to see the address space of other running programs. As far as a program is concerned, it is the only process running. Note that all virtual and physical addresses need to be divisible by 4096.
+Paging memory scheme maps virtual memory addresses to physical memory addresses somewhere entirely different in memory. This allows user processes to believe that they are loaded into the same memory address and makes it impossible for a user program to see the address space of other running programs. As far as a program is concerned, it is the only process running. Note that all virtual and physical addresses need to be divisible by 4096.
 
 ### 32-bit instructions
 
