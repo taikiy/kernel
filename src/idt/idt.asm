@@ -7,7 +7,7 @@ idt_load:
     mov ebp, esp
 
     mov ebx, [ebp+8] ; first argument passed to this function
-    lidt [edx]
+    lidt [ebx]
 
     pop ebp
     ret
