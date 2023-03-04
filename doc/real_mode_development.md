@@ -134,3 +134,7 @@ Note how we created an empty label called `buffer` at the very end of the bootlo
 ## Notes
 
 - `lodsb` is one of x86 memory segmentation instructions. It uses DS (Data Segment) and SI (Source Index) registers. The real memory address is `DS * 16 + SI`.
+
+---
+
+[next](./protected_mode_development_1.md)

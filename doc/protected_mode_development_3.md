@@ -1,4 +1,4 @@
-# Protected Mode Development - Part 3
+# Protected Mode Development 3 - Writing kernel in C
 
 ## Writing C program in Protected Mode
 
@@ -119,8 +119,6 @@ Use `lidt` instruction.
 
 ([commit](https://github.com/taikiy/kernel/commit/e6abc5cf5b4a14e49d5b098d4d46bafc4e75f587))
 
-## Implement `in()` and `out()`
+---
 
-We create wrapper functions in C for assembler instructions to perform input from/output to a specified I/O port. This is a typical method to write a set of low-level instructions in assembly, export it, and use it from C.
-
-([commit])()
+[next](./protected_mode_development_4.md)

@@ -1,4 +1,4 @@
-# Protected Mode Development - Part 2
+# Protected Mode Development 2 - Loading 32-bit kernel
 
 ## 1. Cross-Compiler
 
@@ -115,4 +115,4 @@ Quick summary of how our code works with memory.
 
 ---
 
-[continue](./protected_mode_development_3.md)
+[next](./protected_mode_development_3.md)
