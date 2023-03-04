@@ -73,10 +73,8 @@ void print(const char *str)
 void kernel_main()
 {
     terminal_initialize();
-    print("Hello, World!\nYou are in Protected Mode!");
+    print("Hello, World!\nYou are in Protected Mode!\n");
 
     // Initialize the Interrupt Descriptor Table
     idt_init();
-
-    outb(0x60, 0xff);
 }
