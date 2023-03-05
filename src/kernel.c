@@ -3,6 +3,8 @@
 #include <stddef.h>
 #include "idt/idt.h"
 #include "io/io.h"
+#include "memory/heap/kernel_heap.h"
+#include "config.h"
 
 uint16_t *video_mem = 0;
 uint16_t terminal_row = 0;
@@ -75,6 +77,17 @@ void kernel_main()
     terminal_initialize();
     print("Hello, World!\nYou are in Protected Mode!\n");
 
+    kernel_heap_initialize();
+
     // Initialize the Interrupt Descriptor Table
     idt_init();
+
+    void *ptr = kmalloc(50);    // allocates 1 block of memory at 0x1000000
+    void *ptr2 = kmalloc(5000); // allocates 2 blocks of memory at 0x1001000
+    void *ptr3 = kmalloc(5000); // allocates 2 blocks of memory at 0x1003000
+    kfree(ptr);                 // frees 1 block of memory at 0x1000000
+    void *ptr4 = kmalloc(50);   // allocates 1 block of memory at 0x1000000
+    if (ptr || ptr2 || ptr3 || ptr4)
+    {
+    }
 }
