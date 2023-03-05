@@ -4,7 +4,7 @@
 
 We create wrapper functions in C for assembler instructions to perform input from/output to a specified I/O port. This is a typical method to write a set of low-level instructions in assembly, export it, and use it from C.
 
-([commit])(https://github.com/taikiy/kernel/commit/99a23c79d93c2fb05d8003ce4d91ab0957b91b2f)
+[[commit](https://github.com/taikiy/kernel/commit/99a23c79d93c2fb05d8003ce4d91ab0957b91b2f)]
 
 ## Programmable Interrupt Controller
 
@@ -38,9 +38,9 @@ Also, remember that we need to respond with acknowledgment to IRQ from PIC. For 
 
 ### Multi-tasking?
 
-You can imagine handling IRQ 0 timer interrupts (mapped to INT 20h) will allow us to switch between tasks, which will create an illusion of a multi-tasking system even on a single-core processor.
+Imagine handling IRQ 0 timer interrupts (mapped to INT 20h) will allow us to switch between tasks, which will create an illusion of a multi-tasking system even on a single-core processor.
 
-[commit](https://github.com/taikiy/kernel/commit/8b01fa3cd90cb383c3861efd33f4d8b987b76945)
+[[commit](https://github.com/taikiy/kernel/commit/8b01fa3cd90cb383c3861efd33f4d8b987b76945)]
 
 ## The heap and memory allocation
 
@@ -78,11 +78,12 @@ Con - Using blocks will result in wasted bytes. Memory fragmentation is possible
 An entry is 1 byte and the structure is:
 
 ```
-  +------------------------------------------------------+
-  |          Flags           |         Entry Type        |
-  |--------------------------+---------------------------|
-7 | HAS_N | IS_FIRST | 0 | 0 | ET_3 | ET_2 | ET_1 | ET_0 | 0
-  +------------------------------------------------------+
++------------------------------------------------------+
+|          Flags           |         Entry Type        |
+|--------------------------+---------------------------|
+| HAS_N | IS_FIRST | 0 | 0 | ET_3 | ET_2 | ET_1 | ET_0 |
++------------------------------------------------------+
+8                          4                           0
 ```
 
 ##### Flags
@@ -99,6 +100,8 @@ An entry is 1 byte and the structure is:
 
 Simply a raw flat array of bytes that our heap implementation can give to users who need memory.
 
-### Debugging the heap code
+### Implement and debug the heap code
 
 Use `qemu-system-i386` just so that we are truly in a 32-bit system. x86_64 is a 64-bit emulator.
+
+[[commit](https://github.com/taikiy/kernel/commit/f3a3d3791ffef2e401f149ac237e63b037b9cac8)]

@@ -18,6 +18,6 @@ struct idtr_desc
     uint32_t base;  // The address of the Interrupt Descriptor Table
 } __attribute__((packed));
 
-void idt_init();
+void idt_initialize();
 
 #endif

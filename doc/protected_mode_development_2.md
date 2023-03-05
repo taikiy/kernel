@@ -43,11 +43,11 @@ Now we'll write a disk read/write driver. Since we are now in Protected Mode, we
 
 5. Build, run, and debug
 
-Now, we can use `i386-elf-gdb` instead of `lldb`. Load the symbol file `kernelfull.o` using `add-symbol-file` command so that we can set breakpoints. You must specify the address of the code is loaded:
+Now, we can use `i386-elf-gdb` instead of `lldb`. Load the symbol file `kernelfull.o` using `add-symbol-file` command so that we can set breakpoints. We must specify the address of the code is loaded:
 
 `add-symbol-file ./build/kernelfull.o 0x100000`
 
-Now you can debug the kernel just like you would do with any executables!
+Now we can debug the kernel just like we would do with any executables!
 
 ```shell
 > make clean

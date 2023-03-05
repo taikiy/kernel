@@ -2,7 +2,7 @@
 
 ## Writing C program in Protected Mode
 
-Now, we start writing our kernel in C. [commit](https://github.com/taikiy/kernel/commit/2d58737d86668579690729b80f80fa2a9d01d422)
+Now, we start writing our kernel in C. [[commit](https://github.com/taikiy/kernel/commit/2d58737d86668579690729b80f80fa2a9d01d422)]
 
 Debugging steps are the same as what we did in the [previous note](./protected_mode_development_2.md) "5. Build, run, and debug".
 
@@ -56,7 +56,7 @@ video_mem[0] = 0x0241; // 'A' (65 decimal or 0x41 hex) + Green (0x02) in the lit
 
 and with a bit more helper functions, we can call `print` and write "Hello, World!".
 
-[commit](https://github.com/taikiy/kernel/commit/fa0fbabaf9c9cd93bcaff966fb54164fa3da3df6)
+[[commit](https://github.com/taikiy/kernel/commit/fa0fbabaf9c9cd93bcaff966fb54164fa3da3df6)]
 
 ### Interrupt Descriptor Table
 
@@ -117,7 +117,7 @@ Trap gates are like interrupt gates, but used for exceptions. They disable inter
 
 Use `lidt` instruction.
 
-([commit](https://github.com/taikiy/kernel/commit/e6abc5cf5b4a14e49d5b098d4d46bafc4e75f587))
+[[commit](https://github.com/taikiy/kernel/commit/e6abc5cf5b4a14e49d5b098d4d46bafc4e75f587)]
 
 ---
 
