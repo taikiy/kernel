@@ -31,7 +31,6 @@ _start:
     out 0x21, al                ; We finish the initialization by sending the mode configuration to the *data* port.
 
     ; Call our kernel
-    sti
     call kernel_main
 
     jmp $                       ; Go into an infinite loop. It lets us interact with the kernel instead of coming to a halt.

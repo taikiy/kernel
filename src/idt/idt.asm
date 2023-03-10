@@ -3,9 +3,19 @@ section .asm
 global idt_load
 global int21h
 global int_noop
+global enable_interrupts
+global disable_interrupts
 
 extern int21h_handler
 extern int_noop_handler
+
+enable_interrupts:
+    sti
+    ret
+
+disable_interrupts:
+    cli
+    ret
 
 idt_load:
     push ebp
