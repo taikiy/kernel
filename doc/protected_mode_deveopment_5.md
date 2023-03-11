@@ -80,4 +80,4 @@ Paging is a feature provided by the CPU. We call assembly instructions and set t
 
 ### Implementation
 
-- Create directories and tables, and enable paging [[commit]()]
+- Create directories and tables, and enable paging [[commit](https://github.com/taikiy/kernel/commit/209f36409c1922a36a0a953d2d5eeaf9ecb49fc8)]
