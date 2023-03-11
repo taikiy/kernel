@@ -1,4 +1,4 @@
-#include "kernel_heap.h"
+#include "kheap.h"
 #include "heap.h"
 #include "config.h"
 #include "kernel.h"
