@@ -28,14 +28,15 @@ void *kmalloc(size_t size)
 
 void *kzalloc(size_t size)
 {
-    void *ptr = heap_malloc(&kernel_heap, size);
+    void *ptr = kmalloc(size);
 
     if (!ptr)
     {
         return 0;
     }
 
-    return memset(ptr, 0, size);
+    memset(ptr, 0, size);
+    return ptr;
 }
 
 void kfree(void *ptr)

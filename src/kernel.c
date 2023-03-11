@@ -73,23 +73,39 @@ void print(const char *str)
     }
 }
 
-static struct paging_4gb_chunk *kernel_paging_directory = 0;
+static struct paging_4gb_chunk *paging_chunk = 0;
 
 void kernel_main()
 {
-    terminal_initialize();
-    print("Hello, World!\nYou are in Protected Mode!\n");
-
-    // Initialize the heap
+    // Initialize the heap. Currently allocates 100MB.
     kernel_heap_initialize();
 
     // Initialize the Interrupt Descriptor Table
     idt_initialize();
 
-    // Create paging directory and enable paging
-    kernel_paging_directory = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
-    paging_switch(paging_4gb_chunk_get_directory(kernel_paging_directory));
+    // Enable paging
+    paging_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    uint32_t *kernel_page_directory = paging_4gb_chunk_get_directory(paging_chunk);
+    paging_switch(kernel_page_directory);
     enable_paging();
 
+    // Test: Write to the video memory
+    terminal_initialize();
+    print("Hello, World!\nYou are in Protected Mode!\n");
+
+    // Test: Paging
+    char *ptr = kzalloc(4096); // `ptr` points to some physical address
+    // Map the virtual address 0x1000 (directory 0, table 1) to `ptr`, and make it writable by anyone
+    paging_set(kernel_page_directory, (void *)0x1000, (uint32_t)ptr | PAGING_ACCESS_FROM_ALL | PAGING_IS_PRESENT | PAGING_IS_WRITABLE);
+    char *ptr2 = (char *)0x1000; // `ptr2` points to virtual address 0x1000
+    ptr2[0] = 'A';
+    ptr2[1] = 'B';
+    ptr2[2] = '\n';
+    print(ptr2); // prints the data at virtual address 0x1000
+    print(ptr);  // prints the data at physical address `ptr`
+
+    // Enable the system interrupts
     enable_interrupts();
+
+    print("End of kernel_main\n");
 }
