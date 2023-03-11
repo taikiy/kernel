@@ -4,6 +4,7 @@
 #include "idt/idt.h"
 #include "io/io.h"
 #include "memory/heap/kheap.h"
+#include "memory/paging/paging.h"
 #include "config.h"
 
 uint16_t *video_mem = 0;
@@ -72,15 +73,23 @@ void print(const char *str)
     }
 }
 
+static struct paging_4gb_chunk *kernel_paging_directory = 0;
+
 void kernel_main()
 {
     terminal_initialize();
     print("Hello, World!\nYou are in Protected Mode!\n");
 
+    // Initialize the heap
     kernel_heap_initialize();
 
     // Initialize the Interrupt Descriptor Table
     idt_initialize();
+
+    // Create paging directory and enable paging
+    kernel_paging_directory = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    paging_switch(paging_4gb_chunk_get_directory(kernel_paging_directory));
+    enable_paging();
 
     enable_interrupts();
 }

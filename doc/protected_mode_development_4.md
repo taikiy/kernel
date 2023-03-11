@@ -1,4 +1,4 @@
-# Protected Mode Development Part 4 - Memory Management
+# Protected Mode Development Part 4 - Memory Management - Heap
 
 ## Implement `in()` and `out()`
 
@@ -105,3 +105,7 @@ Simply a raw flat array of bytes that our heap implementation can give to users 
 Use `qemu-system-i386` just so that we are truly in a 32-bit system. x86_64 is a 64-bit emulator.
 
 [[commit](https://github.com/taikiy/kernel/commit/f3a3d3791ffef2e401f149ac237e63b037b9cac8)]
+
+---
+
+[continue](./protected_mode_development_5.md)
