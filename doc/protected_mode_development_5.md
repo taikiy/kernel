@@ -81,7 +81,7 @@ Paging is a feature provided by the CPU. We call assembly instructions and set t
 ### Implementation
 
 - Create directories and tables, and enable paging [[commit](https://github.com/taikiy/kernel/commit/209f36409c1922a36a0a953d2d5eeaf9ecb49fc8)]
-- Implement virtual address mapping to physical memory address [[commit]]()
+- Implement virtual address mapping to physical memory address [[commit]](https://github.com/taikiy/kernel/commit/0773f6420deb57dea8c856ffdc56251baa73269e)
 
 ### Debugging
 
@@ -151,7 +151,9 @@ $3 = 0x1000 <idt_descriptors+3808> "AB"
 $4 = 0x2745000 "AB"
 ```
 
-Now it breaks at line 103 as expected. `ptr2`'s address is `0x1000` and `ptr` still points at `0x2745000`. Because the paging is enabled in the system, writing to `ptr2` also writes to `ptr`. When I print `ptr2`, the debugger shows `$3 = 0x1000 <idt_descriptors+3808>`, which seems like physical address `0x1000`, but **I believe** this is because the debugger first "peeks" at `0x1000` to get the metadata like the segment and offset, and then "resolved" the address to get the actual data.
+Now it breaks at line 103 as expected. `ptr2`'s address is `0x1000` and `ptr` still points at `0x2745000`. Because the paging is enabled in the system, writing to `ptr2` also writes to `ptr`.
+
+When I print `ptr2`, the debugger shows `$3 = 0x1000 <idt_descriptors+3808>`, which seems like physical address `0x1000`, but **I believe** this is because the debugger first "peeks" at `0x1000` to get the metadata like the segment and offset, and then "resolves" the address to get the actual data.
 
 Let's look into the page directory to find the virtual address `0x1000`. Virtual address `0x1000` should be located at page directory index 0, page table index 1.
 
