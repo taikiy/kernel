@@ -6,6 +6,7 @@
 #include "memory/heap/kheap.h"
 #include "memory/paging/paging.h"
 #include "config.h"
+#include "disk/disk.h"
 
 uint16_t *video_mem = 0;
 uint16_t terminal_row = 0;
@@ -93,16 +94,8 @@ void kernel_main()
     terminal_initialize();
     print("Hello, World!\nYou are in Protected Mode!\n");
 
-    // Test: Paging
-    char *ptr = kzalloc(4096); // `ptr` points to some physical address
-    // Map the virtual address 0x1000 (directory 0, table 1) to `ptr`, and make it writable by anyone
-    paging_set(kernel_page_directory, (void *)0x1000, (uint32_t)ptr | PAGING_ACCESS_FROM_ALL | PAGING_IS_PRESENT | PAGING_IS_WRITABLE);
-    char *ptr2 = (char *)0x1000; // `ptr2` points to virtual address 0x1000
-    ptr2[0] = 'A';
-    ptr2[1] = 'B';
-    ptr2[2] = '\n';
-    print(ptr2); // prints the data at virtual address 0x1000
-    print(ptr);  // prints the data at physical address `ptr`
+    char buf[512];
+    disk_read_sector(0, 1, buf);
 
     // Enable the system interrupts
     enable_interrupts();

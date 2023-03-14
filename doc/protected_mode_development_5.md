@@ -189,3 +189,7 @@ $11 = 0x2745000
 ```
 
 We can see that the page table entry for virtual address `0x1000` points to physical address `0x2745000`, and its content is "AB"!
+
+---
+
+[continue](./protected_mode_development_6.md)
