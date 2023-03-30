@@ -3,6 +3,18 @@
 
 #include "status.h"
 
-status_t disk_read_sector(int lba, int total, void *buf);
+#define DISK_TYPE_REAL 0;
+
+typedef unsigned int DISK_TYPE;
+
+struct disk
+{
+    DISK_TYPE type;
+    unsigned int sector_size;
+};
+
+void disk_search_and_initialize();
+struct disk *get_disk(unsigned int disk_number);
+status_t disk_read_block(struct disk *disk, unsigned int lba, unsigned int total, void *buf);
 
 #endif

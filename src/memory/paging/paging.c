@@ -20,10 +20,10 @@ struct paging_4gb_chunk *paging_new_4gb(uint8_t flags)
         {
             // set the page table entry
             // this is the virtual address of a 4K size page which is not allocated yet
-            table[j] = (offset + j * PAGING_PAGE_SIZE) | flags;
+            table[j] = (offset + j * PAGING_PAGE_SIZE_BYTES) | flags;
         }
 
-        offset += (PAGING_TOTAL_ENTRIES * PAGING_PAGE_SIZE);
+        offset += (PAGING_TOTAL_ENTRIES * PAGING_PAGE_SIZE_BYTES);
         // set the page directory entry
         // this is the virtual address of the beginning of the page table at index `i`
         directory[i] = (uint32_t)table | flags | PAGING_IS_WRITABLE;
@@ -49,7 +49,7 @@ uint32_t *paging_4gb_chunk_get_directory(struct paging_4gb_chunk *chunk)
 
 bool paging_is_aligned(void *address)
 {
-    return ((uint32_t)address % PAGING_PAGE_SIZE) == 0;
+    return ((uint32_t)address % PAGING_PAGE_SIZE_BYTES) == 0;
 }
 
 status_t paging_get_indexes(void *virtual_address, uint32_t *directory_index_out, uint32_t *table_index_out)
@@ -62,8 +62,8 @@ status_t paging_get_indexes(void *virtual_address, uint32_t *directory_index_out
         goto out;
     }
 
-    *directory_index_out = (uint32_t)virtual_address / (PAGING_TOTAL_ENTRIES * PAGING_PAGE_SIZE);
-    *table_index_out = (uint32_t)virtual_address % (PAGING_TOTAL_ENTRIES * PAGING_PAGE_SIZE) / PAGING_PAGE_SIZE;
+    *directory_index_out = (uint32_t)virtual_address / (PAGING_TOTAL_ENTRIES * PAGING_PAGE_SIZE_BYTES);
+    *table_index_out = (uint32_t)virtual_address % (PAGING_TOTAL_ENTRIES * PAGING_PAGE_SIZE_BYTES) / PAGING_PAGE_SIZE_BYTES;
 
 out:
     return res;

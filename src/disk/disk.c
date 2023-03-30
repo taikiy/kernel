@@ -1,12 +1,16 @@
 #include "disk.h"
 #include "io/io.h"
+#include "config.h"
+#include "memory/memory.h"
+
+struct disk current_disk;
 
 /// @brief Read `total` number of sectors (blocks) from the `lba` and store the read data to `buf`.
 /// @param lba LBA (Logical Block Address) to read from
 /// @param total Total blocks to read
 /// @param buf A buffer to store the data
 /// @return Status code
-status_t disk_read_sector(int lba, int total, void *buf)
+status_t disk_read_sector(unsigned int lba, unsigned int total, void *buf)
 {
     // This is the same deal as in `boot.asm`.
     // Refer to `ata_lba_read` in https://wiki.osdev.org/ATA_read/write_sectors for more.
@@ -42,4 +46,29 @@ status_t disk_read_sector(int lba, int total, void *buf)
     }
 
     return ALL_OK;
+}
+
+void disk_search_and_initialize()
+{
+    memset(&current_disk, 0, sizeof(current_disk));
+    current_disk.type = DISK_TYPE_REAL;
+    current_disk.sector_size = DISK_SECTOR_SIZE_BYTES;
+}
+
+struct disk *get_disk(unsigned int disk_number)
+{
+    if (disk_number != 0)
+    {
+        return 0;
+    }
+    return &current_disk;
+}
+
+status_t disk_read_block(struct disk *disk, unsigned int lba, unsigned int total, void *buf)
+{
+    if (disk != &current_disk)
+    {
+        return -EIO;
+    }
+    return disk_read_sector(lba, total, buf);
 }

@@ -30,7 +30,7 @@ We communicate with ATA drives through the I/O port using `in`/`out` functions w
 
 Actually, we've already written instructions to read our 32-bit kernel code from the ATA drive in [ata_lba_read](../src/boot/boot.asm) function. In this section, we'll write the same logic using C.
 
-[[commit]()]
+[[commit](https://github.com/taikiy/kernel/commit/02bc9bb5ed5d570096c7f441ca69e4c15a2cb876)]
 
 ## Debugging
 

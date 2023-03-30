@@ -13,7 +13,7 @@
 #define PAGING_IS_PRESENT 0b00000001      // P flag
 
 #define PAGING_TOTAL_ENTRIES 1024 // for both directory and table
-#define PAGING_PAGE_SIZE 4096
+#define PAGING_PAGE_SIZE_BYTES 4096
 
 struct paging_4gb_chunk
 {

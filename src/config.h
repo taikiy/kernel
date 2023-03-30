@@ -12,4 +12,6 @@
 #define HEAP_TABLE_ADDRESS 0x00007E00 // We need 25,600 bytes for our table to store 100MB heap
 #define HEAP_ADDRESS 0x01000000
 
+#define DISK_SECTOR_SIZE_BYTES 512;
+
 #endif

@@ -81,6 +81,9 @@ void kernel_main()
     // Initialize the heap. Currently allocates 100MB.
     kernel_heap_initialize();
 
+    // Search and initialize the disks
+    disk_search_and_initialize();
+
     // Initialize the Interrupt Descriptor Table
     idt_initialize();
 
@@ -94,8 +97,10 @@ void kernel_main()
     terminal_initialize();
     print("Hello, World!\nYou are in Protected Mode!\n");
 
+    struct disk *current_disk;
     char buf[512];
-    disk_read_sector(0, 1, buf);
+    current_disk = get_disk(0);
+    disk_read_block(current_disk, 0, 1, buf);
 
     // Enable the system interrupts
     enable_interrupts();
