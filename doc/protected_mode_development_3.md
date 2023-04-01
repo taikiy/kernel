@@ -121,4 +121,4 @@ Use `lidt` instruction.
 
 ---
 
-[next](./protected_mode_development_4.md)
+[previous](./protected_mode_development_2.md) | [next](./protected_mode_development_4.md)

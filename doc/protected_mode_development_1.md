@@ -77,7 +77,7 @@ general:
 
 ---
 
-[next](./protected_mode_development_2.md)
+[previous](./real_mode_development.md) | [next](./protected_mode_development_2.md)
 
 ---
 

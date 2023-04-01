@@ -102,12 +102,12 @@ https://asciinema.org/a/n3qfuN4AV8u3GWKHAqFxtGR15
 
 Quick summary of how our code works with memory.
 
-- Bootloader is loaded at address 0x7c00 and must be 512 bytes (boot.asm)
-- Before entering Protected Mode, we define GDT that defines the memory segments - `CODE_SEG` and `DATA_SEG`.
+- Bootloader is loaded at address 0x7c00 and must be 512 bytes (`boot.asm`)
+- Before entering Protected Mode, we define GDT which defines the memory segments - `CODE_SEG` and `DATA_SEG`.
 - In `boot.asm`, we load our kernel code from the disk and place it at address `CODE_SEG:0x100000`.
 - Kernel code is written in `kernel.asm` which is assembled into an ELF file (Makefile `kernel.asm.o`). All other kernel code (not written yet at this point, but in the future) will be linked to output `kernelfull.o` and compiled into `kernel.bin`.
 - The C compiler aligns stack frames, data, etc., by a multiple of 4 bytes, because memory access of 32-bit processors is a lot faster when aligned. If the content of an object file is misaligned, it may cause unexpected errors. But our `kernel.asm` is not a C program, thus not aligned by default.
-- To properly align the kernelfull.o, we do:
+- To properly align the `kernelfull.o`, we do:
   - Add the padding instruction at the end of `kernel.asm` so that it becomes 1-sector (512 bytes) long.
     - Note that aligning `boot.asm` to 512 bytes is unrelated to the memory alignment issue we talk about here. The bootloader must have the boot signature 0x55AA at 511 and 512 bytes.
   - Make sure that `kernel.asm.o` is the first file to be linked. That ensures `kernel.asm.o` is located in the `.text` section ([`linker.ld`](../src/linker.ld)) when linked, and always starts at 0x100000. `kernel.asm.o` is 512 bytes long, so any other C object files linked after that are automatically aligned.
@@ -115,4 +115,4 @@ Quick summary of how our code works with memory.
 
 ---
 
-[next](./protected_mode_development_3.md)
+[previous](./protected_mode_development_1.md) | [next](./protected_mode_development_3.md)
