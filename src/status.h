@@ -7,5 +7,6 @@ typedef int status_t;
 #define EIO 1
 #define EINVARG 2
 #define ENOMEM 3
+#define EINVPATH 4
 
 #endif

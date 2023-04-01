@@ -2,11 +2,11 @@
 
 ## The heap and memory allocation
 
-Addressable memory in a 32-bit kernel is limited to 4,294,967,296 bytes or 4.29GB. When the system starts, the RAM is in an uninitialized state. BIOS will start initializing parts of RAM for video and other hardware. Unused parts of RAM which start from _0x01000000_ are available to us. However, since 0xC0000000 is reserved, the memory array starting from 0x01000000 can give us a maximum of 3.22GB for a machine with 4GB or higher RAM installed.
+Addressable memory in a 32-bit kernel is limited to 4,294,967,296 bytes or 4.29GB. When the system starts, the RAM is uninitialized. BIOS will start initializing parts of RAM for video and other hardware. Unused parts of RAM which start from _0x01000000_ are available to us. However, since 0xC0000000 is reserved, the memory array starting from 0x01000000 can give us a maximum of 3.22GB for a machine with 4GB or higher RAM installed.
 
 As a kernel, it is responsible for allocating heap memory and keeping track of which regions are being used, freed, and so on.
 
-### The simplest possible heap implementation
+### Example - The simplest possible heap implementation
 
 1. `current_address` points to a start address that is free to use
 2. a user calls `malloc` stores the address pointed by `current_address` to `tmp` variable

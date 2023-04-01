@@ -7,6 +7,8 @@
 #include "memory/paging/paging.h"
 #include "config.h"
 #include "disk/disk.h"
+#include "string/string.h"
+#include "fs/path_parser.h"
 
 uint16_t *video_mem = 0;
 uint16_t terminal_row = 0;
@@ -55,16 +57,6 @@ void terminal_initialize()
     }
 }
 
-size_t strlen(const char *str)
-{
-    size_t len = 0;
-    while (str[len])
-    {
-        len++;
-    }
-    return len;
-}
-
 void print(const char *str)
 {
     size_t len = strlen(str);
@@ -97,6 +89,7 @@ void kernel_main()
     terminal_initialize();
     print("Hello, World!\nYou are in Protected Mode!\n");
 
+    // Test: Read from the disk 0, lba 0 (the first sector), 1 block (512 bytes) to `buf`
     struct disk *current_disk;
     char buf[512];
     current_disk = get_disk(0);
@@ -104,6 +97,17 @@ void kernel_main()
 
     // Enable the system interrupts
     enable_interrupts();
+
+    // Test the path parser
+    struct path_root *root_path = path_parse("0:/bin/sh.exe", 0);
+    if (root_path)
+    {
+        print("Root path: 0:/");
+        print(root_path->first->name);
+        print("/");
+        print(root_path->first->next->name);
+        print("\n");
+    }
 
     print("End of kernel_main\n");
 }

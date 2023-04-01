@@ -17,12 +17,18 @@ File System protocols decide how the files are laid on the disk, e.g., FAT16, FA
 
 - FAT16 is a file system protocol that is used by MS-DOS and Windows 95/98/ME.
 - The first sector of the disk is the boot sector. It contains the boot code and the file system header. The file system header contains information about the file system such as the number of sectors per cluster, the number of reserved sectors, the number of FATs, the number of root directory entries, etc.
-  - In `[boot.asm](../src/boot/boot.asm)`, the first instruction is a short jump to the label further down. Things between this jump to the next label is the file system header.
+  - In `[boot.asm](../src/boot/boot.asm)`, the first instruction is a short jump to the label further down. Things between this jump to the next label are the file system header.
 - Then follows the reserved sectors. The number of reserved sectors is specified in the file system header.
 - Next is the FAT (File Allocation Table). The FAT contains values that represent which clusters on the disk are taken or free. (clusters are groups of sectors)
 - There is the second FAT which is optional. The FAT16 header in the boot sector determines if there is a second FAT.
 - Then follows the root directory. The root directory contains the file and directory names and the first cluster of the file. Each entry has a name and attributes such as read-only, the address of the first cluster, the size of the file, and more.
 - The last is the data region. The data region contains the actual data of the files.
+
+## Path Parser
+
+Before implementing the FAT16, we'll implement the path parser. We don't actually read anything yet, but we'll use this in future implementations to read files from the disk.
+
+[commit]()
 
 ---
 
