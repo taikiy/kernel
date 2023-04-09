@@ -10,6 +10,7 @@ typedef unsigned int DISK_TYPE;
 struct disk
 {
     DISK_TYPE type;
+    unsigned int id;
     unsigned int sector_size;
 };
 

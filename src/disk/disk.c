@@ -52,6 +52,7 @@ void disk_search_and_initialize()
 {
     memset(&current_disk, 0, sizeof(current_disk));
     current_disk.type = DISK_TYPE_REAL;
+    current_disk.id = 0;
     current_disk.sector_size = DISK_SECTOR_SIZE_BYTES;
 }
 
@@ -61,6 +62,7 @@ struct disk *get_disk(unsigned int disk_number)
     {
         return 0;
     }
+    // TODO: Return a pointer to the disk struct specified by `disk_number`
     return &current_disk;
 }
 

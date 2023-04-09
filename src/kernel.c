@@ -6,6 +6,7 @@
 #include "memory/paging/paging.h"
 #include "config.h"
 #include "disk/disk.h"
+#include "disk/stream.h"
 #include "string/string.h"
 #include "fs/path_parser.h"
 
@@ -28,18 +29,12 @@ void kernel_main()
     paging_switch(kernel_page_directory);
     enable_paging();
 
+    // Enable the system interrupts
+    enable_interrupts();
+
     // Test: Write to the video memory
     terminal_initialize();
     print("Hello, World!\nYou are in Protected Mode!\n");
-
-    // Test: Read from the disk 0, lba 0 (the first sector), 1 block (512 bytes) to `buf`
-    struct disk *current_disk;
-    char buf[512];
-    current_disk = get_disk(0);
-    disk_read_block(current_disk, 0, 1, buf);
-
-    // Enable the system interrupts
-    enable_interrupts();
 
     // Test the path parser
     struct path_root *root_path = path_parse("0:/bin/sh.exe", 0);
@@ -51,6 +46,15 @@ void kernel_main()
         print(root_path->first->next->name);
         print("\n");
     }
+
+    // Test: Read from the disk stream to `buf`
+    struct disk *current_disk;
+    char buf[0x10];
+    current_disk = get_disk(0);
+    struct disk_stream *stream = disk_stream_new(current_disk->id);
+    disk_stream_seek(stream, 0x210);
+    disk_stream_read(stream, 0x10, buf);
+    disk_stream_close(stream);
 
     print("End of kernel_main\n");
 }
