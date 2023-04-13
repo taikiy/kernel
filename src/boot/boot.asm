@@ -6,10 +6,31 @@ DATA_SEG equ gdt_data - gdt_start
 
 ; BIOS Parameter Block
 ; https://wiki.osdev.org/FAT#BPB_.28BIOS_Parameter_Block.29
-_start:
-    jmp short init
-    nop
-times 33 db 0
+jmp short init
+nop
+
+; FAT16 header
+OEMIdentifier       db 'taiOS   '    ; 8 bytes
+BytesPerSector      dw 0x200         ; 512 bytes per sector
+SectorsPerCluster   db 0x80          ; 128 sectors per cluster
+ReservedSectors     dw 200           ; 200 reserved sector for our kernel
+FATCopies           db 0x2           ; 2 copies of the FAT
+RootDirEntries      dw 0x40          ; 64 root directory entries
+NumSectors          dw 0x0           ; 0 sectors in the volume
+MediaType           db 0xf8          ; 0xf8 = hard disk
+SectorsPerFAT       dw 0x100         ; 256 sectors per FAT
+SectorsPerTrack     dw 0x20
+NumberOfHeads       dw 0x40
+HiddenSectors       dd 0x0
+SectorsBig          dd 0x7704c0      ; 0x7704c0 = 7,800,000 sectors (3,900,000 KB = 3.9 GB)
+
+; Extended BPB (DOS 4.0)
+DriveNumber         db 0x80          ; 0x80 = hard disk
+WinNTBit            db 0x0           ; 0x0 = not used by Windows NT
+Signature           db 0x29          ; 0x29 = extended BPB is present
+VolumeID            dd 0xD105
+VolumeIDString      db 'taiOS BOOT ' ; 11 bytes
+SystemIDString      db 'FAT16   '    ; 8 bytes
 
 init:
     jmp 0:start

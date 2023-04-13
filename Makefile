@@ -6,7 +6,11 @@ all: ./bin/boot.bin ./bin/kernel.bin
 	rm -rf ./bin/os.bin
 	dd if=./bin/boot.bin >> ./bin/os.bin
 	dd if=./bin/kernel.bin >> ./bin/os.bin
-	dd if=/dev/zero bs=512 count=100 >> ./bin/os.bin
+	dd if=/dev/zero bs=1048576 count=16 >> ./bin/os.bin
+	# mount the boot disk image and copy a file over
+	hdiutil attach -imagekey diskimage-class=CRawDiskImage -mount required ./bin/os.bin
+	cp ./hello.txt "/Volumes/taiOS BOOT/"
+	hdiutil detach `hdiutil info | tail -n 1`
 
 ./bin/boot.bin: ./src/boot/boot.asm
 	nasm -f bin ./src/boot/boot.asm -o ./bin/boot.bin
