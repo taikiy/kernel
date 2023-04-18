@@ -4,7 +4,7 @@
 
 ### Path Parser
 
-Before implementing the FAT16, we'll implement the path parser. We don't actually read anything yet, but we'll use this in future implementations to read files from the disk.
+Before implementing the FAT16, we'll implement the path parser. We don't read anything yet, but we'll use this in future implementations to read files from the disk.
 
 [commit](https://github.com/taikiy/kernel/commit/8f6d1ebb2df287e0d7a9d79ad991489ebd0a05f2)
 

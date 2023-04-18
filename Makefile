@@ -1,76 +1,59 @@
-FILES = ./build/kernel.asm.o ./build/kernel.o ./build/terminal/terminal.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.asm.o ./build/memory/paging/paging.o ./build/disk/disk.o ./build/disk/stream.o ./build/string/string.o ./build/fs/path_parser.o
-INCLUDES = -I./src
-FLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parammeter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
+OS_IMG = os.bin
+BOOT_IMG = boot.bin
+KERNEL_IMG = kernel.bin
+
+BUILD_DIR = ./build
+SRC_DIR = ./src
+
+ASRCS = $(shell find $(SRC_DIR) -name *.asm -not -path $(SRC_DIR)/boot/*)
+CSRCS = $(shell find $(SRC_DIR) -name *.c)
+
+# COBJS = $(CSRCS:%=$(BUILD_DIR)/%.o)
+AOBJS = $(subst $(SRC_DIR),$(BUILD_DIR),$(ASRCS:.asm=.asm.o))
+COBJS = $(subst $(SRC_DIR),$(BUILD_DIR),$(CSRCS:.c=.c.o))
+OBJS = $(AOBJS) $(COBJS)
+
+CC = i686-elf-gcc
+ASM = nasm
+LD = i686-elf-ld
+
+INC_DIRS = $(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR)/boot/*)
+INCLUDES = $(addprefix -I,$(INC_DIRS))
+AFLAGS = -f elf -g
+CFLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parammeter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc -std=gnu99
+LDFLAGS = -g -relocatable
 
 all: build mount
 
-build: ./bin/boot.bin ./bin/kernel.bin
-	rm -rf ./bin/os.bin
-	dd if=./bin/boot.bin >> ./bin/os.bin
-	dd if=./bin/kernel.bin >> ./bin/os.bin
-	dd if=/dev/zero bs=1048576 count=16 >> ./bin/os.bin
+build: $(BUILD_DIR)/$(BOOT_IMG) $(BUILD_DIR)/$(KERNEL_IMG)
+	rm -rf $(BUILD_DIR)/$(OS_IMG)
+	dd if=$(BUILD_DIR)/$(BOOT_IMG) >> $(BUILD_DIR)/$(OS_IMG)
+	dd if=$(BUILD_DIR)/$(KERNEL_IMG) >> $(BUILD_DIR)/$(OS_IMG)
+	dd if=/dev/zero bs=1048576 count=16 >> $(BUILD_DIR)/$(OS_IMG)
 
-./bin/boot.bin: ./src/boot/boot.asm
-	nasm -f bin ./src/boot/boot.asm -o ./bin/boot.bin
+$(BUILD_DIR)/$(BOOT_IMG): $(SRC_DIR)/boot/boot.asm
+	mkdir -p $(dir $@)
+	$(ASM) -f bin $(SRC_DIR)/boot/boot.asm -o $(BUILD_DIR)/$(BOOT_IMG)
 
-./bin/kernel.bin: $(FILES)
-	i686-elf-ld -g -relocatable $(FILES) -o ./build/kernelfull.o
-	i686-elf-gcc $(FLAGS) -T ./src/linker.ld -o ./bin/kernel.bin ./build/kernelfull.o
+$(BUILD_DIR)/$(KERNEL_IMG): $(OBJS)
+	$(LD) $(LDFLAGS) $(OBJS) -o $(BUILD_DIR)/kernel.o
+	$(CC) $(CFLAGS) -T $(SRC_DIR)/linker.ld -o $(BUILD_DIR)/$(KERNEL_IMG) $(BUILD_DIR)/kernel.o
 
-./build/kernel.asm.o: ./src/kernel.asm
-	nasm -f elf -g ./src/kernel.asm -o ./build/kernel.asm.o
+$(BUILD_DIR)/%.asm.o: $(SRC_DIR)/%.asm
+	mkdir -p $(dir $@)
+	$(ASM) $(AFLAGS) $< -o $@
 
-./build/kernel.o: ./src/kernel.c
-	i686-elf-gcc $(INCLUDES) $(FLAGS) -std=gnu99 -c ./src/kernel.c -o ./build/kernel.o
-
-./build/terminal/terminal.o: ./src/terminal/terminal.c
-	i686-elf-gcc $(INCLUDES) -I./src/terminal $(FLAGS) -std=gnu99 -c ./src/terminal/terminal.c -o ./build/terminal/terminal.o
-
-./build/idt/idt.asm.o: ./src/idt/idt.asm
-	nasm -f elf -g ./src/idt/idt.asm -o ./build/idt/idt.asm.o
-
-./build/idt/idt.o: ./src/idt/idt.c
-	i686-elf-gcc $(INCLUDES) -I./src/idt $(FLAGS) -std=gnu99 -c ./src/idt/idt.c -o ./build/idt/idt.o
-
-./build/memory/memory.o: ./src/memory/memory.c
-	i686-elf-gcc $(INCLUDES) -I./src/memory $(FLAGS) -std=gnu99 -c ./src/memory/memory.c -o ./build/memory/memory.o
-
-./build/io/io.asm.o: ./src/io/io.asm
-	nasm -f elf -g ./src/io/io.asm -o ./build/io/io.asm.o
-
-./build/memory/heap/heap.o: ./src/memory/heap/heap.c
-	i686-elf-gcc $(INCLUDES) -I./src/memory/heap $(FLAGS) -std=gnu99 -c ./src/memory/heap/heap.c -o ./build/memory/heap/heap.o
-
-./build/memory/heap/kheap.o: ./src/memory/heap/kheap.c
-	i686-elf-gcc $(INCLUDES) -I./src/memory/heap $(FLAGS) -std=gnu99 -c ./src/memory/heap/kheap.c -o ./build/memory/heap/kheap.o
-
-./build/memory/paging/paging.asm.o: ./src/memory/paging/paging.asm
-	nasm -f elf -g ./src/memory/paging/paging.asm -o ./build/memory/paging/paging.asm.o
-
-./build/memory/paging/paging.o: ./src/memory/paging/paging.c
-	i686-elf-gcc $(INCLUDES) -I./src/memory/paging $(FLAGS) -std=gnu99 -c ./src/memory/paging/paging.c -o ./build/memory/paging/paging.o
-
-./build/disk/disk.o: ./src/disk/disk.c
-	i686-elf-gcc $(INCLUDES) -I./src/disk $(FLAGS) -std=gnu99 -c ./src/disk/disk.c -o ./build/disk/disk.o
-
-./build/disk/stream.o: ./src/disk/stream.c
-	i686-elf-gcc $(INCLUDES) -I./src/disk $(FLAGS) -std=gnu99 -c ./src/disk/stream.c -o ./build/disk/stream.o
-
-./build/string/string.o: ./src/string/string.c
-	i686-elf-gcc $(INCLUDES) -I./src/string $(FLAGS) -std=gnu99 -c ./src/string/string.c -o ./build/string/string.o
-
-./build/fs/path_parser.o: ./src/fs/path_parser.c
-	i686-elf-gcc $(INCLUDES) -I./src/fs $(FLAGS) -std=gnu99 -c ./src/fs/path_parser.c -o ./build/fs/path_parser.o
+$(BUILD_DIR)/%.c.o: $(SRC_DIR)/%.c
+	mkdir -p $(dir $@)
+	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
 
 run:
-	qemu-system-x86_64 -hda ./bin/os.bin
+	qemu-system-x86_64 -hda $(BUILD_DIR)/$(OS_IMG)
 
 mount:
-	hdiutil attach -imagekey diskimage-class=CRawDiskImage -mount required ./bin/os.bin
+	hdiutil attach -imagekey diskimage-class=CRawDiskImage -mount required $(BUILD_DIR)/$(OS_IMG)
 	cp ./hello.txt "/Volumes/taiOS BOOT/"
 	hdiutil detach `hdiutil info | tail -n 1`
 
 clean:
-	rm -rf ./bin/*.bin
-	rm -rf ./build/kernelfull.o
-	rm -rf $(FILES)
+	rm -rf $(BUILD_DIR)

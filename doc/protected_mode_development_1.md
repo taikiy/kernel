@@ -24,7 +24,7 @@ In Protected Mode, we gain access to 32-bit instructions, which enable easy acce
 
 ## 1. Entering Protected Mode
 
-We create entries for Global Descriptor Table (GDT) and load its address into GDT register by `lgdt` instruction, with additional parameters to enter Protected Mode ([osdev wiki](https://wiki.osdev.org/GDT)). We will use the GDT default values since we'll be using the paging memory scheme. ([git commit](https://github.com/taikiy/kernel/commit/82f6dae884e016ec3045f76bd52ebc4f91b886aa))
+We create entries for Global Descriptor Table (GDT) and load its address into the GDT register by `lgdt` instruction, with additional parameters to enter Protected Mode ([osdev wiki](https://wiki.osdev.org/GDT)). We will use the GDT default values since we'll be using the paging memory scheme. ([git commit](https://github.com/taikiy/kernel/commit/82f6dae884e016ec3045f76bd52ebc4f91b886aa))
 
 ## 2. Verify using LLDB
 
