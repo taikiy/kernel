@@ -2,6 +2,7 @@
 #define DISK_H
 
 #include "status.h"
+#include "fs/file.h"
 
 #define DISK_TYPE_REAL 0;
 
@@ -12,6 +13,7 @@ struct disk
     DISK_TYPE type;
     unsigned int id;
     unsigned int sector_size;
+    struct file_system *fs;
 };
 
 void disk_search_and_initialize();

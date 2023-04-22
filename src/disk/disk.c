@@ -54,6 +54,7 @@ void disk_search_and_initialize()
     current_disk.type = DISK_TYPE_REAL;
     current_disk.id = 0;
     current_disk.sector_size = DISK_SECTOR_SIZE_BYTES;
+    current_disk.fs = fs_resolve(&current_disk);
 }
 
 struct disk *get_disk(unsigned int disk_number)

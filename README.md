@@ -27,6 +27,7 @@ Protected Mode Development
 7. [Memory Management - Paging](./doc/protected_mode_development_6.md)
 8. [File System - Disk Driver](./doc/protected_mode_development_7.md)
 9. [File System - FAT16](./doc/protected_mode_development_8.md)
+10. [Virtual File System](./doc/protected_mode_development_9.md)
 
 # Resources
 
