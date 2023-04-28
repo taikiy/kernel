@@ -1,4 +1,4 @@
-# Protected Mode Development 9 - VFS (Virtual File System)
+# Protected Mode Development 9 - VFS (Virtual File System) and FAT16
 
 ## What is a Virtual File System?
 
@@ -9,3 +9,9 @@ When a user program requests a file, i.e., `fopen("0:/foo.txt", "r")`, the kerne
 File descriptors are just integers. The kernel maintains a table of file descriptors and the corresponding file system driver. When the user program calls `fread`, the kernel will find the file system driver from the table and call the driver's `fread` function.
 
 ## VFS Implementation
+
+[commit](https://github.com/taikiy/kernel/commit/aea4661d997a97ba64e10bb880339040fd10e390)
+
+## FAT16 Driver
+
+[commit]()

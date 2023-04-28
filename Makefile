@@ -53,7 +53,7 @@ run:
 mount:
 	hdiutil attach -imagekey diskimage-class=CRawDiskImage -mount required $(BUILD_DIR)/$(OS_IMG)
 	cp ./hello.txt "/Volumes/taiOS BOOT/"
-	hdiutil detach `hdiutil info | tail -n 1`
+	hdiutil detach `hdiutil info | tail -n 1 | cut -f 1`
 
 clean:
 	rm -rf $(BUILD_DIR)

@@ -9,6 +9,7 @@
 #include "disk/stream.h"
 #include "string/string.h"
 #include "fs/path_parser.h"
+#include "fs/file.h"
 
 static struct paging_4gb_chunk *paging_chunk = 0;
 
@@ -16,6 +17,9 @@ void kernel_main()
 {
     // Initialize the heap. Currently allocates 100MB.
     kernel_heap_initialize();
+
+    // Initialize the file systems
+    file_system_initialize();
 
     // Search and initialize the disks
     disk_search_and_initialize();

@@ -3,6 +3,7 @@
 
 #include "path_parser.h"
 #include "disk/disk.h"
+#include "status.h"
 
 typedef unsigned int FILE_SEEK_MODE;
 enum FILE_SEEK_MODES
@@ -22,8 +23,8 @@ enum FILE_MODES
 
 // forward declaration
 struct disk;
+typedef status_t (*FS_RESOLVE_FUNCTION)(struct disk *disk);
 typedef void *(*FS_OPEN_FUNCTION)(struct disk *disk, struct path_part *path, FILE_MODE mode);
-typedef int *(*FS_RESOLVE_FUNCTION)(struct disk *disk);
 
 struct file_system
 {

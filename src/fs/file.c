@@ -3,6 +3,7 @@
 #include "terminal/terminal.h"
 #include "memory/heap/kheap.h"
 #include "memory/memory.h"
+#include "fat/fat16.h"
 
 struct file_system *file_systems[MAX_FILE_SYSTEM_COUNT];
 struct file_descriptor *file_descriptors[MAX_FILE_DESCRIPTOR_COUNT];
@@ -33,17 +34,6 @@ void fs_insert_file_system(struct file_system *fs)
     *free_fs = fs;
 }
 
-static struct file_system *fat16_initialize()
-{
-    // struct file_system *fat16 = (struct file_system *)kzalloc(sizeof(struct file_system));
-    // fat16->name = "fat16";
-    // fat16->open = fat16_open;
-    // fat16->resolve = fat16_resolve;
-
-    // return fat16;
-    return 0;
-}
-
 static void fs_load_static_file_systems()
 {
     fs_insert_file_system(fat16_initialize());
@@ -61,7 +51,7 @@ void file_system_initialize()
     fs_load_file_systems();
 }
 
-static status_t new_file_descriptor(struct file_descriptor **fd)
+static status_t put_file_descriptor(struct file_descriptor **fd)
 {
     int res = -ENOMEM;
 
