@@ -14,4 +14,5 @@ File descriptors are just integers. The kernel maintains a table of file descrip
 
 ## FAT16 Driver
 
-[commit]()
+- Core functionality [commit](https://github.com/taikiy/kernel/commit/21f05d5826f3aeecdcd36bf4202a8b9cb448cad0)
+- Structures [commit]()
