@@ -54,11 +54,11 @@ bool paging_is_aligned(void *address)
 
 status_t paging_get_indexes(void *virtual_address, uint32_t *directory_index_out, uint32_t *table_index_out)
 {
-    status_t res = ALL_OK;
+    status_t result = ALL_OK;
 
     if (!paging_is_aligned(virtual_address))
     {
-        res = -EINVARG;
+        result = -EINVARG;
         goto out;
     }
 
@@ -66,7 +66,7 @@ status_t paging_get_indexes(void *virtual_address, uint32_t *directory_index_out
     *table_index_out = (uint32_t)virtual_address % (PAGING_TOTAL_ENTRIES * PAGING_PAGE_SIZE_BYTES) / PAGING_PAGE_SIZE_BYTES;
 
 out:
-    return res;
+    return result;
 }
 
 /// @brief Sets the `table_entry` value to the paging table, pointed by `virtual_address`, in the given `directory`.
@@ -83,10 +83,10 @@ status_t paging_set(uint32_t *directory, void *virtual_address, uint32_t table_e
 
     uint32_t directory_index = 0;
     uint32_t table_index = 0;
-    int res = paging_get_indexes(virtual_address, &directory_index, &table_index);
-    if (res < 0)
+    int result = paging_get_indexes(virtual_address, &directory_index, &table_index);
+    if (result < 0)
     {
-        return res;
+        return result;
     }
 
     uint32_t directory_entry = directory[directory_index];

@@ -2,7 +2,7 @@
 #include "memory/heap/kheap.h"
 #include "config.h"
 
-struct disk_stream *disk_stream_new(int disk_number)
+struct disk_stream *disk_stream_open(int disk_number)
 {
     struct disk *disk = get_disk(disk_number);
     if (!disk)
@@ -17,24 +17,24 @@ struct disk_stream *disk_stream_new(int disk_number)
     return stream;
 }
 
-int disk_stream_seek(struct disk_stream *stream, unsigned int position)
+status_t disk_stream_seek(struct disk_stream *stream, unsigned int position)
 {
     stream->sector = position / DISK_SECTOR_SIZE_BYTES;
     stream->offset = position % DISK_SECTOR_SIZE_BYTES;
-    return 0;
+    return ALL_OK;
 }
 
-int disk_stream_read(struct disk_stream *stream, unsigned int size, char *buf)
+status_t disk_stream_read(struct disk_stream *stream, char *buf, unsigned int size)
 {
     char block[DISK_SECTOR_SIZE_BYTES];
-    status_t res = -EINVARG;
+    status_t result = -EINVARG;
 
     for (int i = 0; i < size; i++)
     {
         if (stream->offset == 0 || i == 0)
         {
-            res = disk_read_block(stream->disk, stream->sector, 1, block);
-            if (res < 0)
+            result = disk_read_block(stream->disk, stream->sector, 1, block);
+            if (result < 0)
             {
                 goto out;
             }
@@ -50,7 +50,7 @@ int disk_stream_read(struct disk_stream *stream, unsigned int size, char *buf)
     }
 
 out:
-    return res;
+    return result;
 }
 
 void disk_stream_close(struct disk_stream *stream)

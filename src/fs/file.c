@@ -4,6 +4,7 @@
 #include "memory/heap/kheap.h"
 #include "memory/memory.h"
 #include "fat/fat16.h"
+#include "status.h"
 
 struct file_system *file_systems[MAX_FILE_SYSTEM_COUNT];
 struct file_descriptor *file_descriptors[MAX_FILE_DESCRIPTOR_COUNT];
@@ -53,7 +54,7 @@ void file_system_initialize()
 
 static status_t put_file_descriptor(struct file_descriptor **fd)
 {
-    int res = -ENOMEM;
+    int result = -ENOMEM;
 
     for (int i = 0; i < MAX_FILE_DESCRIPTOR_COUNT; i++)
     {
@@ -64,11 +65,11 @@ static status_t put_file_descriptor(struct file_descriptor **fd)
             new_fd->index = i + 1;
             file_descriptors[i] = new_fd;
             *fd = new_fd;
-            res = 0;
+            result = 0;
             break;
         }
     }
-    return res;
+    return result;
 }
 
 static struct file_descriptor *get_file_descriptor(int fd)
@@ -84,7 +85,7 @@ struct file_system *fs_resolve(struct disk *disk)
 {
     for (int i = 0; i < MAX_FILE_SYSTEM_COUNT; i++)
     {
-        if (file_systems[i] != 0 && file_systems[i]->resolve(disk) == 0)
+        if (file_systems[i] != 0 && file_systems[i]->resolve(disk) == ALL_OK)
         {
             return file_systems[i];
         }

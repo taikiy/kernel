@@ -51,14 +51,10 @@ void kernel_main()
         print("\n");
     }
 
-    // Test: Read from the disk stream to `buf`
+    // Test: Bind the disk to FAT16
     struct disk *current_disk;
-    char buf[0x10];
     current_disk = get_disk(0);
-    struct disk_stream *stream = disk_stream_new(current_disk->id);
-    disk_stream_seek(stream, 0x210);
-    disk_stream_read(stream, 0x10, buf);
-    disk_stream_close(stream);
+    fs_resolve(current_disk);
 
     print("End of kernel_main\n");
 }

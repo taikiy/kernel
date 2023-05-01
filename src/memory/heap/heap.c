@@ -10,28 +10,28 @@ static int heap_validate_alignment(void *ptr)
 
 static status_t heap_validate_table(void *start, void *end, struct heap_table *table)
 {
-    status_t res = ALL_OK;
+    status_t result = ALL_OK;
 
     size_t table_size = (size_t)(end - start);
     size_t total_blocks = table_size / HEAP_BLOCK_SIZE_BYTES;
 
     if (table->total != total_blocks)
     {
-        res = -EINVARG;
+        result = -EINVARG;
         goto out;
     }
 
 out:
-    return res;
+    return result;
 }
 
 status_t heap_create(struct heap *heap, void *start, void *end, struct heap_table *table)
 {
-    status_t res = ALL_OK;
+    status_t result = ALL_OK;
 
     if (!heap_validate_alignment(start) || !heap_validate_alignment(end))
     {
-        res = -EINVARG;
+        result = -EINVARG;
         goto out;
     }
 
@@ -48,7 +48,7 @@ status_t heap_create(struct heap *heap, void *start, void *end, struct heap_tabl
     memset(table->entries, HEAP_BLOCK_TABLE_ENTRY_FREE, table_size);
 
 out:
-    return res;
+    return result;
 }
 
 static uint32_t heap_align_value_to_upper(uint32_t val)
@@ -180,17 +180,17 @@ void *heap_malloc(struct heap *heap, size_t size)
 
 status_t heap_free(struct heap *heap, void *ptr)
 {
-    status_t res = ALL_OK;
+    status_t result = ALL_OK;
 
     uint32_t start_block = heap_address_to_block(heap, ptr);
     if (!(heap->table->entries[start_block] & HEAP_BLOCK_IS_FIRST))
     {
-        res = -EINVARG;
+        result = -EINVARG;
         goto out;
     }
 
     heap_mark_blocks_free(heap, start_block);
 
 out:
-    return res;
+    return result;
 }

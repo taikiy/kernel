@@ -37,8 +37,7 @@ struct file_descriptor
 {
     int index;
     struct disk *disk;
-    struct file_system *fs;
-    void *data;
+    void *data; // file's content
 };
 
 void file_system_initialize();

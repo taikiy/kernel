@@ -50,6 +50,7 @@ status_t disk_read_sector(unsigned int lba, unsigned int total, void *buf)
 
 void disk_search_and_initialize()
 {
+    // TODO: Search for disks and initialize them
     memset(&current_disk, 0, sizeof(current_disk));
     current_disk.type = DISK_TYPE_REAL;
     current_disk.id = 0;

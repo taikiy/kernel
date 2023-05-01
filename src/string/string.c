@@ -49,13 +49,13 @@ char *strcpy(char *dest, const char *src)
 int atoi(const char *str)
 {
     int i = 0;
-    int res = 0;
+    int result = 0;
     while (str[i])
     {
-        res = res * 10 + (str[i] - '0');
+        result = result * 10 + (str[i] - '0');
         i++;
     }
-    return res;
+    return result;
 }
 
 bool isdigit(char c)

@@ -8,5 +8,6 @@ typedef int status_t;
 #define EINVARG 2
 #define ENOMEM 3
 #define EINVPATH 4
+#define EFSNOTSUPPORTED 5
 
 #endif

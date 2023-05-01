@@ -13,9 +13,9 @@ void kernel_heap_initialize()
     kernel_heap_table.total = HEAP_SIZE_BYTES / HEAP_BLOCK_SIZE_BYTES;
 
     void *end = (void *)HEAP_ADDRESS + HEAP_SIZE_BYTES;
-    int res = heap_create(&kernel_heap, (void *)HEAP_ADDRESS, end, &kernel_heap_table);
+    int result = heap_create(&kernel_heap, (void *)HEAP_ADDRESS, end, &kernel_heap_table);
 
-    if (res < 0)
+    if (result < 0)
     {
         print("Failed to create heap\n");
     }
