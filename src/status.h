@@ -10,4 +10,6 @@ typedef int status_t;
 #define EINVPATH 4
 #define EFSNOTSUPPORTED 5
 
+#define ERROR(v) ((int)(v))
+
 #endif

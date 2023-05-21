@@ -16,4 +16,5 @@ File descriptors are just integers. The kernel maintains a table of file descrip
 
 - Core functionality [commit](https://github.com/taikiy/kernel/commit/21f05d5826f3aeecdcd36bf4202a8b9cb448cad0)
 - Structures [commit](https://github.com/taikiy/kernel/commit/b5d3e8cdad23451a9659ed056f7f9b2c6fd4a3c0)
-- FAT16 resolver function [commit]()
+- FAT16 resolver function [commit](https://github.com/taikiy/kernel/commit/a8812f846683dede5924adcf8bf42ef95673ea33)
+- VFS fopen function [commit]()

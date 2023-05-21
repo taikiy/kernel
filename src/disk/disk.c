@@ -60,11 +60,11 @@ void disk_search_and_initialize()
 
 struct disk *get_disk(unsigned int disk_number)
 {
+    // TODO: support more disks. we only have one FAT16 disk for now.
     if (disk_number != 0)
     {
         return 0;
     }
-    // TODO: Return a pointer to the disk struct specified by `disk_number`
     return &current_disk;
 }
 

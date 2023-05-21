@@ -105,7 +105,7 @@ void path_free(struct path_root *root)
 struct path_root *path_parse(const char *path, const char *current_directory_path)
 {
     const char *tmp_path = path;
-    struct path_root *root = 0;
+    struct path_root *root = NULL;
 
     if (strlen(path) > MAX_PATH_LENGTH)
     {

@@ -16,9 +16,10 @@ enum FILE_SEEK_MODES
 typedef unsigned int FILE_MODE;
 enum FILE_MODES
 {
-    FILE_MODE_READ = 1,
-    FILE_MODE_WRITE = 2,
-    FILE_MODE_APPEND = 4,
+    FILE_MODE_READ,
+    FILE_MODE_WRITE,
+    FILE_MODE_APPEND,
+    FILE_MODE_INVALID,
 };
 
 // forward declaration

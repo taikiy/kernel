@@ -5,6 +5,7 @@
 #include "memory/memory.h"
 #include "fat/fat16.h"
 #include "status.h"
+#include "string/string.h"
 
 struct file_system *file_systems[MAX_FILE_SYSTEM_COUNT];
 struct file_descriptor *file_descriptors[MAX_FILE_DESCRIPTOR_COUNT];
@@ -93,7 +94,79 @@ struct file_system *fs_resolve(struct disk *disk)
     return 0;
 }
 
-status_t fopen(const char *file_name, const char *mode)
+static FILE_MODE file_mode_str_to_enum(const char *mode_str)
 {
-    return -EIO;
+    if (strcmp(mode_str, "r") == 0)
+    {
+        return FILE_MODE_READ;
+    }
+    else if (strcmp(mode_str, "w") == 0)
+    {
+        return FILE_MODE_WRITE;
+    }
+    else if (strcmp(mode_str, "a") == 0)
+    {
+        return FILE_MODE_APPEND;
+    }
+    else
+    {
+        return FILE_MODE_INVALID;
+    }
+}
+
+int fopen(const char *file_name, const char *mode)
+{
+    status_t res = 0;
+
+    struct path_root *path = path_parse(file_name, NULL);
+
+    // invalid path, or just the root directory
+    if (!path || !path->first)
+    {
+        res = -EINVPATH;
+        goto out;
+    }
+
+    struct disk *disk = get_disk(path->drive_number);
+
+    // invalid disk number, or no file system
+    if (!disk || !disk->fs)
+    {
+        res = -EIO;
+        goto out;
+    }
+
+    FILE_MODE file_mode = file_mode_str_to_enum(mode);
+
+    // invalid file mode
+    if (file_mode == FILE_MODE_INVALID)
+    {
+        res = -EINVARG;
+        goto out;
+    }
+
+    void *private_data = disk->fs->open(disk, path->first, file_mode);
+    if (!private_data)
+    {
+        res = -ERROR(private_data);
+        goto out;
+    }
+
+    struct file_descriptor *fd = 0;
+    res = put_file_descriptor(&fd);
+    if (res != ALL_OK)
+    {
+        goto out;
+    }
+    fd->data = private_data;
+    ;
+    fd->disk = disk;
+    res = fd->index;
+
+out:
+    // fopen returns 0 on error
+    if (res < 0)
+        res = 0;
+
+    return res;
 }
