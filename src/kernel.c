@@ -56,5 +56,12 @@ void kernel_main()
     current_disk = get_disk(0);
     fs_resolve(current_disk);
 
+    // Test: open a FAT16 file
+    int fd = fopen("0:/hello2.txt", "r");
+    if (fd)
+    {
+        print("File opened successfully!\n");
+    }
+
     print("End of kernel_main\n");
 }

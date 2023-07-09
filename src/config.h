@@ -14,7 +14,7 @@
 
 #define DISK_SECTOR_SIZE_BYTES 512
 
-#define MAX_PATH_LENGTH 128
+#define MAX_PATH_LENGTH 108
 
 #define MAX_FILE_SYSTEM_COUNT 16
 #define MAX_FILE_DESCRIPTOR_COUNT 512 // Max number of open files
