@@ -1,5 +1,15 @@
 #include "string.h"
 
+char tolower(char s1)
+{
+    if (s1 >= 65 && s1 <= 90)
+    {
+        s1 += 32;
+    }
+
+    return s1;
+}
+
 int strlen(const char *ptr)
 {
     int len = 0;
@@ -22,16 +32,58 @@ int strnlen(const char *ptr, int max)
 
 int strcmp(const char *str1, const char *str2)
 {
-    int i = 0;
-    while (str1[i] && str2[i])
+    unsigned char u1, u2;
+    while (true)
     {
-        if (str1[i] != str2[i])
+        u1 = (unsigned char)*str1++;
+        u2 = (unsigned char)*str2++;
+        if (u1 != u2)
+        {
+            return u1 - u2;
+        }
+        if (u1 == '\0')
         {
             return 0;
         }
-        i++;
     }
-    return 1;
+}
+
+int strncmp(const char *str1, const char *str2, int n)
+{
+    unsigned char u1, u2;
+    while (n-- > 0)
+    {
+        u1 = (unsigned char)*str1++;
+        u2 = (unsigned char)*str2++;
+        if (u1 != u2)
+        {
+            return u1 - u2;
+        }
+        if (u1 == '\0')
+        {
+            return 0;
+        }
+    }
+    return 0;
+}
+
+int istrncmp(const char *str1, const char *str2, int n)
+{
+    unsigned char u1, u2;
+    while (n-- > 0)
+    {
+        u1 = (unsigned char)*str1++;
+        u2 = (unsigned char)*str2++;
+        if (u1 != u2 && tolower(u1) != tolower(u2))
+        {
+            return u1 - u2;
+        }
+        if (u1 == '\0')
+        {
+            return 0;
+        }
+    }
+    return 0;
 }
 
 char *strcpy(char *dest, const char *src)
@@ -41,6 +93,54 @@ char *strcpy(char *dest, const char *src)
     {
         dest[i] = src[i];
         i++;
+    }
+    dest[i] = 0;
+    return dest;
+}
+
+char *strncpy(char *dest, const char *src, int n)
+{
+    int i = 0;
+    while (src[i] && i < n)
+    {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = 0;
+    return dest;
+}
+
+char *strcat(char *dest, const char *src)
+{
+    int i = 0;
+    int j = 0;
+    while (dest[i])
+    {
+        i++;
+    }
+    while (src[j])
+    {
+        dest[i] = src[j];
+        i++;
+        j++;
+    }
+    dest[i] = 0;
+    return dest;
+}
+
+char *strncat(char *dest, const char *src, int n)
+{
+    int i = 0;
+    int j = 0;
+    while (dest[i])
+    {
+        i++;
+    }
+    while (src[j] && j < n)
+    {
+        dest[i] = src[j];
+        i++;
+        j++;
     }
     dest[i] = 0;
     return dest;
