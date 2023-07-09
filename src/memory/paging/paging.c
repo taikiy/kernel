@@ -58,7 +58,7 @@ status_t paging_get_indexes(void *virtual_address, uint32_t *directory_index_out
 
     if (!paging_is_aligned(virtual_address))
     {
-        result = -EINVARG;
+        result = ERROR(EINVARG);
         goto out;
     }
 
@@ -78,12 +78,12 @@ status_t paging_set(uint32_t *directory, void *virtual_address, uint32_t table_e
 {
     if (!paging_is_aligned(virtual_address))
     {
-        return -EINVARG;
+        return ERROR(EINVARG);
     }
 
     uint32_t directory_index = 0;
     uint32_t table_index = 0;
-    int result = paging_get_indexes(virtual_address, &directory_index, &table_index);
+    status_t result = paging_get_indexes(virtual_address, &directory_index, &table_index);
     if (result < 0)
     {
         return result;

@@ -2,6 +2,7 @@
 #define HEAP_H
 
 #include "config.h"
+#include "status.h"
 #include <stdint.h>
 #include <stddef.h>
 
@@ -25,8 +26,8 @@ struct heap
     void *start_addr;
 };
 
-int heap_create(struct heap *heap, void *ptr, void *end, struct heap_table *table);
+status_t heap_create(struct heap *heap, void *ptr, void *end, struct heap_table *table);
 void *heap_malloc(struct heap *heap, size_t size);
-int heap_free(struct heap *heap, void *ptr);
+status_t heap_free(struct heap *heap, void *ptr);
 
 #endif

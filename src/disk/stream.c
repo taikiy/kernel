@@ -27,7 +27,7 @@ status_t disk_stream_seek(struct disk_stream *stream, unsigned int position)
 status_t disk_stream_read(struct disk_stream *stream, char *buf, unsigned int size)
 {
     char block[DISK_SECTOR_SIZE_BYTES];
-    status_t result = -EINVARG;
+    status_t result = ERROR(EINVARG);
 
     for (int i = 0; i < size; i++)
     {

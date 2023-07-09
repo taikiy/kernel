@@ -1,7 +1,6 @@
 #include "heap.h"
 #include "status.h"
 #include "memory/memory.h"
-#include "status.h"
 
 static int heap_validate_alignment(void *ptr)
 {
@@ -17,7 +16,7 @@ static status_t heap_validate_table(void *start, void *end, struct heap_table *t
 
     if (table->total != total_blocks)
     {
-        result = -EINVARG;
+        result = ERROR(EINVARG);
         goto out;
     }
 
@@ -31,7 +30,7 @@ status_t heap_create(struct heap *heap, void *start, void *end, struct heap_tabl
 
     if (!heap_validate_alignment(start) || !heap_validate_alignment(end))
     {
-        result = -EINVARG;
+        result = ERROR(EINVARG);
         goto out;
     }
 
@@ -185,7 +184,7 @@ status_t heap_free(struct heap *heap, void *ptr)
     uint32_t start_block = heap_address_to_block(heap, ptr);
     if (!(heap->table->entries[start_block] & HEAP_BLOCK_IS_FIRST))
     {
-        result = -EINVARG;
+        result = ERROR(EINVARG);
         goto out;
     }
 

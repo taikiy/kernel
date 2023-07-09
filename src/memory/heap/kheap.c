@@ -3,6 +3,7 @@
 #include "config.h"
 #include "memory/memory.h"
 #include "terminal/terminal.h"
+#include "status.h"
 
 struct heap kernel_heap;
 struct heap_table kernel_heap_table;
@@ -13,7 +14,7 @@ void kernel_heap_initialize()
     kernel_heap_table.total = HEAP_SIZE_BYTES / HEAP_BLOCK_SIZE_BYTES;
 
     void *end = (void *)HEAP_ADDRESS + HEAP_SIZE_BYTES;
-    int result = heap_create(&kernel_heap, (void *)HEAP_ADDRESS, end, &kernel_heap_table);
+    status_t result = heap_create(&kernel_heap, (void *)HEAP_ADDRESS, end, &kernel_heap_table);
 
     if (result < 0)
     {

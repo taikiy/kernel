@@ -72,7 +72,7 @@ status_t disk_read_block(struct disk *disk, unsigned int lba, unsigned int total
 {
     if (disk != &current_disk)
     {
-        return -EIO;
+        return ERROR(EIO);
     }
     return disk_read_sector(lba, total, buf);
 }

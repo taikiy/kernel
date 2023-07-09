@@ -1,7 +1,7 @@
 #ifndef STATUS_H
 #define STATUS_H
 
-typedef int status_t;
+typedef void *status_t;
 
 #define ALL_OK 0
 #define EIO 1
@@ -9,7 +9,8 @@ typedef int status_t;
 #define ENOMEM 3
 #define EINVPATH 4
 #define EFSNOTSUPPORTED 5
+#define EREADONLY 6
 
-#define ERROR(v) ((int)(v))
+#define ERROR(v) ((void *)(-v))
 
 #endif

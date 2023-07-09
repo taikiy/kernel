@@ -55,7 +55,7 @@ void file_system_initialize()
 
 static status_t put_file_descriptor(struct file_descriptor **fd)
 {
-    int result = -ENOMEM;
+    status_t result = ERROR(ENOMEM);
 
     for (int i = 0; i < MAX_FILE_DESCRIPTOR_COUNT; i++)
     {
@@ -116,14 +116,14 @@ static FILE_MODE file_mode_str_to_enum(const char *mode_str)
 
 int fopen(const char *file_name, const char *mode)
 {
-    status_t res = 0;
+    status_t res = ALL_OK;
 
     struct path_root *path = path_parse(file_name, NULL);
 
     // invalid path, or just the root directory
     if (!path || !path->first)
     {
-        res = -EINVPATH;
+        res = ERROR(EINVPATH);
         goto out;
     }
 
@@ -132,7 +132,7 @@ int fopen(const char *file_name, const char *mode)
     // invalid disk number, or no file system
     if (!disk || !disk->fs)
     {
-        res = -EIO;
+        res = ERROR(EIO);
         goto out;
     }
 
@@ -141,14 +141,14 @@ int fopen(const char *file_name, const char *mode)
     // invalid file mode
     if (file_mode == FILE_MODE_INVALID)
     {
-        res = -EINVARG;
+        res = ERROR(EINVARG);
         goto out;
     }
 
     void *private_data = disk->fs->open(disk, path->first, file_mode);
     if (!private_data)
     {
-        res = -ERROR(private_data);
+        res = ERROR(EIO);
         goto out;
     }
 
@@ -159,14 +159,12 @@ int fopen(const char *file_name, const char *mode)
         goto out;
     }
     fd->data = private_data;
-    ;
     fd->disk = disk;
-    res = fd->index;
 
 out:
     // fopen returns 0 on error
-    if (res < 0)
-        res = 0;
+    if (res != ALL_OK)
+        fd->index = 0;
 
-    return res;
+    return fd->index;
 }
