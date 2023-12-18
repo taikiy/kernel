@@ -168,3 +168,26 @@ out:
 
     return fd->index;
 }
+
+status_t fread(void *ptr, uint32_t size, uint32_t count, int file_descriptor)
+{
+    status_t res = ALL_OK;
+    if (size == 0 || count == 0 || file_descriptor < 1)
+    {
+        res = ERROR(EINVARG);
+        goto out;
+    }
+
+    struct file_descriptor *fd = get_file_descriptor(file_descriptor);
+    if (!fd)
+    {
+        res = ERROR(EINVARG);
+        goto out;
+    }
+
+out:
+    if (res != ALL_OK)
+        return 0;
+
+    return fd->disk->fs->read(fd->disk, fd->data, size, count, (char *)ptr);
+}
