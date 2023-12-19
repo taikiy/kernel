@@ -13,6 +13,10 @@
 
 static struct paging_4gb_chunk *paging_chunk = 0;
 
+void test_terminal();
+void test_path_parser();
+void test_file_system();
+
 void kernel_main()
 {
     // Initialize the heap. Currently allocates 100MB.
@@ -36,11 +40,28 @@ void kernel_main()
     // Enable the system interrupts
     enable_interrupts();
 
-    // Test: Write to the video memory
-    terminal_initialize();
-    print("Hello, World! You are in Protected Mode!\n");
+    // Bind the disk to FAT16
+    struct disk *current_disk;
+    current_disk = get_disk(0);
+    fs_resolve(current_disk);
 
-    // Test the path parser
+    // TESTS
+    test_terminal();
+    test_path_parser();
+    test_file_system();
+
+    print("End of kernel_main\n");
+}
+
+void test_terminal()
+{
+    // Write to the video memory
+    terminal_initialize();
+    print("Hello, World! You are in Protected Mode.\n");
+}
+
+void test_path_parser()
+{
     struct path_root *root_path = path_parse("0:/bin/sh.exe", 0);
     if (root_path)
     {
@@ -50,23 +71,38 @@ void kernel_main()
         print(root_path->first->next->name);
         print("\n");
     }
+}
 
-    // Test: Bind the disk to FAT16
-    struct disk *current_disk;
-    current_disk = get_disk(0);
-    fs_resolve(current_disk);
-
-    // Test: open a FAT16 file
+void test_file_system()
+{
     int fd = fopen("0:/hello.txt", "r");
-    if (fd)
+    if (!fd)
     {
-        print("File opened successfully!\n");
-        char buf[20];
-        fread(buf, 13, 1, fd);
-        buf[13] = '\0';
-        print(buf);
-        print("\n");
+        print("ERROR: File not found!\n");
+        return;
     }
 
-    print("End of kernel_main\n");
+    print("File opened successfully!\n");
+
+    // The content of hello.txt is " World! Hello,"
+    // We'll read it in 2 parts:
+    char buf[8];
+
+    // Move the fd's position index to the 'H' of "Hello,"
+    fseek(fd, 8, FILE_SEEK_CUR);
+
+    // Read 6 bytes from the file
+    fread(buf, 6, 1, fd);
+    buf[7] = '\0';
+    print(buf);
+
+    // Move the fd's position index back to the beginning of the file
+    fseek(fd, 0, FILE_SEEK_SET);
+
+    // Read 7 bytes from the file
+    fread(buf, 7, 1, fd);
+    buf[8] = '\0';
+    print(buf);
+
+    print("\n");
 }
