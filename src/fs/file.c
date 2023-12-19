@@ -169,17 +169,17 @@ out:
     return fd->index;
 }
 
-status_t fread(void *ptr, uint32_t size, uint32_t count, int file_descriptor)
+status_t fread(void *ptr, uint32_t size, uint32_t count, int fd)
 {
     status_t result = ALL_OK;
-    if (size == 0 || count == 0 || file_descriptor < 1)
+    if (size == 0 || count == 0 || fd < 1)
     {
         result = ERROR(EINVARG);
         goto out;
     }
 
-    struct file_descriptor *fd = get_file_descriptor(file_descriptor);
-    if (!fd)
+    struct file_descriptor *descriptor = get_file_descriptor(fd);
+    if (!descriptor)
     {
         result = ERROR(EINVARG);
         goto out;
@@ -189,5 +189,22 @@ out:
     if (result != ALL_OK)
         return 0;
 
-    return fd->disk->fs->read(fd->disk, fd->data, size, count, (char *)ptr);
+    return descriptor->disk->fs->read(descriptor->disk, descriptor->data, size, count, (char *)ptr);
+}
+
+status_t fseek(int fd, uint32_t offset, FILE_SEEK_MODE mode)
+{
+    status_t result = ALL_OK;
+
+    struct file_descriptor *descriptor = get_file_descriptor(fd);
+    if (!descriptor)
+    {
+        result = ERROR(EINVARG);
+        goto out;
+    }
+
+    result = descriptor->disk->fs->seek(descriptor->data, offset, mode);
+
+out:
+    return result;
 }
