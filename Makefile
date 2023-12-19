@@ -47,13 +47,13 @@ $(BUILD_DIR)/%.c.o: $(SRC_DIR)/%.c
 	mkdir -p $(dir $@)
 	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
 
-run:
-	qemu-system-x86_64 -hda $(BUILD_DIR)/$(OS_IMG)
-
 mount:
 	hdiutil attach -imagekey diskimage-class=CRawDiskImage -mount required $(BUILD_DIR)/$(OS_IMG)
 	cp ./hello.txt "/Volumes/taiOS BOOT/"
 	hdiutil detach `hdiutil info | tail -n 1 | cut -f 1`
+
+run:
+	qemu-system-x86_64 -hda $(BUILD_DIR)/$(OS_IMG)
 
 clean:
 	rm -rf $(BUILD_DIR)

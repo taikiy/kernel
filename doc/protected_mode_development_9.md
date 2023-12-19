@@ -19,4 +19,5 @@ File descriptors are just integers. The kernel maintains a table of file descrip
 - FAT16 resolver function [commit](https://github.com/taikiy/kernel/commit/a8812f846683dede5924adcf8bf42ef95673ea33)
 - VFS fopen function [commit](https://github.com/taikiy/kernel/commit/78a9064a744317bb2055a838c0ac2ab1524ce20f)
 - FAT16 fopen function [commit](https://github.com/taikiy/kernel/commit/2a7f7c00e89c2ecc8e7a2ce670db988bd2a3b944)
-- VFS fread function [commit]()
+- VFS fread function [commit](https://github.com/taikiy/kernel/commit/47fed5b14d8f3665a66531cbce7a0b891dc83815)
+- FAT16 fread function [commit]()

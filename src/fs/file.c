@@ -116,14 +116,14 @@ static FILE_MODE file_mode_str_to_enum(const char *mode_str)
 
 int fopen(const char *file_name, const char *mode)
 {
-    status_t res = ALL_OK;
+    status_t result = ALL_OK;
 
     struct path_root *path = path_parse(file_name, NULL);
 
     // invalid path, or just the root directory
     if (!path || !path->first)
     {
-        res = ERROR(EINVPATH);
+        result = ERROR(EINVPATH);
         goto out;
     }
 
@@ -132,7 +132,7 @@ int fopen(const char *file_name, const char *mode)
     // invalid disk number, or no file system
     if (!disk || !disk->fs)
     {
-        res = ERROR(EIO);
+        result = ERROR(EIO);
         goto out;
     }
 
@@ -141,20 +141,20 @@ int fopen(const char *file_name, const char *mode)
     // invalid file mode
     if (file_mode == FILE_MODE_INVALID)
     {
-        res = ERROR(EINVARG);
+        result = ERROR(EINVARG);
         goto out;
     }
 
     void *private_data = disk->fs->open(disk, path->first, file_mode);
     if (!private_data)
     {
-        res = ERROR(EIO);
+        result = ERROR(EIO);
         goto out;
     }
 
     struct file_descriptor *fd = 0;
-    res = put_file_descriptor(&fd);
-    if (res != ALL_OK)
+    result = put_file_descriptor(&fd);
+    if (result != ALL_OK)
     {
         goto out;
     }
@@ -163,7 +163,7 @@ int fopen(const char *file_name, const char *mode)
 
 out:
     // fopen returns 0 on error
-    if (res != ALL_OK)
+    if (result != ALL_OK)
         fd->index = 0;
 
     return fd->index;
@@ -171,22 +171,22 @@ out:
 
 status_t fread(void *ptr, uint32_t size, uint32_t count, int file_descriptor)
 {
-    status_t res = ALL_OK;
+    status_t result = ALL_OK;
     if (size == 0 || count == 0 || file_descriptor < 1)
     {
-        res = ERROR(EINVARG);
+        result = ERROR(EINVARG);
         goto out;
     }
 
     struct file_descriptor *fd = get_file_descriptor(file_descriptor);
     if (!fd)
     {
-        res = ERROR(EINVARG);
+        result = ERROR(EINVARG);
         goto out;
     }
 
 out:
-    if (res != ALL_OK)
+    if (result != ALL_OK)
         return 0;
 
     return fd->disk->fs->read(fd->disk, fd->data, size, count, (char *)ptr);

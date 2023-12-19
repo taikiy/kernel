@@ -38,7 +38,7 @@ void kernel_main()
 
     // Test: Write to the video memory
     terminal_initialize();
-    print("Hello, World!\nYou are in Protected Mode!\n");
+    print("Hello, World! You are in Protected Mode!\n");
 
     // Test the path parser
     struct path_root *root_path = path_parse("0:/bin/sh.exe", 0);
@@ -57,10 +57,15 @@ void kernel_main()
     fs_resolve(current_disk);
 
     // Test: open a FAT16 file
-    int fd = fopen("0:/hello2.txt", "r");
+    int fd = fopen("0:/hello.txt", "r");
     if (fd)
     {
         print("File opened successfully!\n");
+        char buf[20];
+        fread(buf, 13, 1, fd);
+        buf[13] = '\0';
+        print(buf);
+        print("\n");
     }
 
     print("End of kernel_main\n");

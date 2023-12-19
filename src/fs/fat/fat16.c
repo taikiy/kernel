@@ -121,11 +121,13 @@ struct fat_file_descriptor
 
 status_t fat16_resolve(struct disk *disk);
 void *fat16_open(struct disk *disk, struct path_part *path, FILE_MODE mode);
+status_t fat16_read(struct disk *disk, void *fd, uint32_t size, uint32_t count, char *out);
 
 struct file_system fat16_fs = {
     .name = "FAT16",
     .resolve = fat16_resolve,
     .open = fat16_open,
+    .read = fat16_read,
 };
 
 struct file_system *fat16_initialize()
@@ -644,4 +646,28 @@ out:
         descriptor = 0;
     }
     return descriptor;
+}
+
+status_t fat16_read(struct disk *disk, void *fd, uint32_t size, uint32_t count, char *out)
+{
+    status_t result = ALL_OK;
+
+    struct fat_file_descriptor *descriptor = fd;
+    struct fat_directory_item *item = descriptor->item->item;
+    int offset = descriptor->position;
+
+    for (uint32_t i = 0; i < count; i++)
+    {
+        result = fat16_read_internal(disk, fat16_get_first_cluster(item), offset, size, out);
+        if (result != ALL_OK)
+        {
+            goto out;
+        }
+        offset += size;
+        out += size;
+    }
+    result = (status_t)count;
+
+out:
+    return result;
 }
