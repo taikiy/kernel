@@ -84,6 +84,12 @@ void test_file_system()
 
     print("File opened successfully!\n");
 
+    struct file_stat *stat = kzalloc(sizeof(struct file_stat));
+    fstat(fd, stat);
+    print("File size: ");
+    print_int(stat->size);
+    print("\n");
+
     // The content of hello.txt is " World! Hello,"
     // We'll read it in 2 parts:
     char buf[8];

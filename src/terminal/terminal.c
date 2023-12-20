@@ -58,3 +58,10 @@ void print(const char *str)
         terminal_write_char(str[i], 15);
     }
 }
+
+void print_int(int n)
+{
+    char buf[32];
+    itoa(n, buf, 10);
+    print(buf);
+}

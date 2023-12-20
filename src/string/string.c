@@ -10,6 +10,21 @@ char tolower(char s1)
     return s1;
 }
 
+char *strrev(char *str)
+{
+    int i = 0;
+    int j = strlen(str) - 1;
+    while (i < j)
+    {
+        char temp = str[i];
+        str[i] = str[j];
+        str[j] = temp;
+        i++;
+        j--;
+    }
+    return str;
+}
+
 int strlen(const char *ptr)
 {
     int len = 0;
@@ -156,6 +171,36 @@ int atoi(const char *str)
         i++;
     }
     return result;
+}
+
+char *itoa(int n, char *str, int base)
+{
+    int i = 0;
+    bool is_negative = false;
+    if (n == 0)
+    {
+        str[i++] = '0';
+        str[i] = '\0';
+        return str;
+    }
+    if (n < 0 && base == 10)
+    {
+        is_negative = true;
+        n = -n;
+    }
+    while (n != 0)
+    {
+        int rem = n % base;
+        str[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
+        n = n / base;
+    }
+    if (is_negative)
+    {
+        str[i++] = '-';
+    }
+    str[i] = '\0';
+    strrev(str);
+    return str;
 }
 
 bool isdigit(char c)

@@ -208,3 +208,26 @@ status_t fseek(int fd, uint32_t offset, FILE_SEEK_MODE mode)
 out:
     return result;
 }
+
+status_t fstat(int fd, struct file_stat *stat)
+{
+    status_t result = ALL_OK;
+
+    if (!stat)
+    {
+        result = ERROR(EINVARG);
+        goto out;
+    }
+
+    struct file_descriptor *descriptor = get_file_descriptor(fd);
+    if (!descriptor)
+    {
+        result = ERROR(EINVARG);
+        goto out;
+    }
+
+    result = descriptor->disk->fs->stat(descriptor->data, stat);
+
+out:
+    return result;
+}

@@ -6,5 +6,6 @@
 
 void terminal_initialize();
 void print(const char *str);
+void print_int(int n);
 
 #endif

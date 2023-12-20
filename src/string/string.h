@@ -13,6 +13,7 @@ char *strncpy(char *dest, const char *src, int n);
 char *strcat(char *dest, const char *src);
 char *strncat(char *dest, const char *src, int n);
 int atoi(const char *str);
+char *itoa(int n, char *str, int base);
 bool isdigit(char c);
 
 #endif

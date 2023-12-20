@@ -23,7 +23,7 @@ typedef unsigned int FAT_ITEM_TYPE;
 #define FAT16_ATTR_SYSTEM 0x04
 #define FAT16_ATTR_VOLUME_ID 0x08
 #define FAT16_ATTR_SUBDIRECTORY 0x10
-#define FAT16_ATTR_ARCHIVED 0x20
+#define FAT16_ATTR_ARCHIVE 0x20
 #define FAT16_ATTR_DEVICE 0x40
 #define FAT16_ATTR_RESERVED 0x80
 
@@ -123,6 +123,7 @@ status_t fat16_resolve(struct disk *disk);
 void *fat16_open(struct disk *disk, struct path_part *path, FILE_MODE mode);
 status_t fat16_read(struct disk *disk, void *fd, uint32_t size, uint32_t count, char *out);
 status_t fat16_seek(void *private_data, uint32_t offset, FILE_SEEK_MODE mode);
+status_t fat16_stat(void *private_data, struct file_stat *stat);
 
 struct file_system fat16_fs = {
     .name = "FAT16",
@@ -130,6 +131,7 @@ struct file_system fat16_fs = {
     .open = fat16_open,
     .read = fat16_read,
     .seek = fat16_seek,
+    .stat = fat16_stat,
 };
 
 struct file_system *fat16_initialize()
@@ -708,6 +710,43 @@ status_t fat16_seek(void *private_data, uint32_t offset, FILE_SEEK_MODE mode)
     default:
         result = ERROR(EINVARG);
         break;
+    }
+
+out:
+    return result;
+}
+
+status_t fat16_stat(void *private_data, struct file_stat *stat)
+{
+    status_t result = ALL_OK;
+
+    struct fat_file_descriptor *descriptor = private_data;
+    struct fat_item *item = descriptor->item;
+
+    if (item->type != FAT_ITEM_TYPE_FILE)
+    {
+        result = ERROR(EINVARG);
+        goto out;
+    }
+
+    struct fat_directory_item *file_item = item->item;
+    stat->size = file_item->file_size;
+    stat->flags = 0;
+    if (file_item->attributes & FAT16_ATTR_HIDDEN)
+    {
+        stat->flags |= FILE_STAT_FLAG_HIDDEN;
+    }
+    if (file_item->attributes & FAT16_ATTR_SYSTEM)
+    {
+        stat->flags |= FILE_STAT_FLAG_SYSTEM;
+    }
+    if (file_item->attributes & FAT16_ATTR_READ_ONLY)
+    {
+        stat->flags |= FILE_STAT_FLAG_READONLY;
+    }
+    if (file_item->attributes & FAT16_ATTR_ARCHIVE)
+    {
+        stat->flags |= FILE_STAT_FLAG_ARCHIVE;
     }
 
 out:
