@@ -24,4 +24,4 @@ File descriptors are just integers. The kernel maintains a table of file descrip
 - VFS fseek function [commit](https://github.com/taikiy/kernel/commit/efc2b4e91401cc5688114b088aeb0113731618d9)
 - FAT16 fseek function [commit](https://github.com/taikiy/kernel/commit/f8149d446c528b5d89bb889c0e464778e715b707)
 - VFS/FAT16 fstat function [commit](https://github.com/taikiy/kernel/commit/76d2e92037a3e41e562628ce29f70bcbf418cf97)
-- VFS/FAT16 fclose function [commit]()
+- VFS/FAT16 fclose function [commit](https://github.com/taikiy/kernel/commit/628432bd05741835beb81e0cd7623239b1e3eb91)

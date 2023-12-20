@@ -13,9 +13,18 @@
 
 static struct paging_4gb_chunk *paging_chunk = 0;
 
-void test_terminal();
 void test_path_parser();
 void test_file_system();
+
+void panic(const char *message)
+{
+    print("PANIC: ");
+    print(message);
+    print("\n");
+    while (1)
+    {
+    };
+}
 
 void kernel_main()
 {
@@ -45,19 +54,18 @@ void kernel_main()
     current_disk = get_disk(0);
     fs_resolve(current_disk);
 
+    // Initialize the terminal
+    terminal_initialize();
+
+    print("Hello, World! You are in Protected Mode.\n");
+
+    panic("system cannot continue!");
+
     // TESTS
-    test_terminal();
     test_path_parser();
     test_file_system();
 
     print("End of kernel_main\n");
-}
-
-void test_terminal()
-{
-    // Write to the video memory
-    terminal_initialize();
-    print("Hello, World! You are in Protected Mode.\n");
 }
 
 void test_path_parser()
