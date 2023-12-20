@@ -41,6 +41,7 @@ typedef void *(*FS_OPEN_FUNCTION)(struct disk *disk, struct path_part *path, FIL
 typedef status_t (*FS_READ_FUNCTION)(struct disk *disk, void *private_data, uint32_t size, uint32_t count, char *out);
 typedef status_t (*FS_SEEK_FUNCTION)(void *private_data, uint32_t offset, FILE_SEEK_MODE mode);
 typedef status_t (*FS_STAT_FUNCTION)(void *private_data, struct file_stat *stat);
+typedef status_t (*FS_CLOSE_FUNCTION)(void *private_data);
 
 struct file_system
 {
@@ -50,6 +51,7 @@ struct file_system
     FS_READ_FUNCTION read;
     FS_SEEK_FUNCTION seek;
     FS_STAT_FUNCTION stat;
+    FS_CLOSE_FUNCTION close;
 };
 
 struct file_descriptor
@@ -72,5 +74,6 @@ int fopen(const char *file_name, const char *mode);
 status_t fread(void *ptr, uint32_t size, uint32_t count, int fd);
 status_t fseek(int fd, uint32_t offset, FILE_SEEK_MODE mode);
 status_t fstat(int fd, struct file_stat *stat);
+status_t fclose(int fd);
 
 #endif

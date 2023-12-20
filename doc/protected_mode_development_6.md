@@ -88,8 +88,8 @@ Paging is a feature provided by the CPU. We call assembly instructions and set t
 Here, I will show how a physical address is mapped to a virtual address using the debugger.
 
 ```shell
-> qemu-system-i386 -hda ./bin/os.bin -s -S &
-> i386-elf-gdb
+❯ qemu-system-i386 -hda ./bin/os.bin -s -S &
+❯ i386-elf-gdb
 (gdb) add-symbol-file ./build/kernelfull.o 0x100000
 add symbol table from file "./build/kernelfull.o" at
         .text_addr = 0x100000

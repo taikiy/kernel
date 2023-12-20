@@ -82,6 +82,16 @@ static struct file_descriptor *get_file_descriptor(int fd)
     return file_descriptors[fd - 1];
 }
 
+static status_t remove_file_descriptor(int fd)
+{
+    if (fd < 1 || fd > MAX_FILE_DESCRIPTOR_COUNT)
+    {
+        return ERROR(EINVARG);
+    }
+    file_descriptors[fd - 1] = 0;
+    return ALL_OK;
+}
+
 struct file_system *fs_resolve(struct disk *disk)
 {
     for (int i = 0; i < MAX_FILE_SYSTEM_COUNT; i++)
@@ -229,5 +239,31 @@ status_t fstat(int fd, struct file_stat *stat)
     result = descriptor->disk->fs->stat(descriptor->data, stat);
 
 out:
+    return result;
+}
+
+status_t fclose(int fd)
+{
+    status_t result = ALL_OK;
+
+    struct file_descriptor *descriptor = get_file_descriptor(fd);
+    if (!descriptor)
+    {
+        result = ERROR(EINVARG);
+        goto out;
+    }
+
+    result = descriptor->disk->fs->close(descriptor->data);
+    if (result != ALL_OK)
+    {
+        goto out;
+    }
+
+out:
+    if (result == ALL_OK)
+    {
+        kfree(descriptor);
+        result = remove_file_descriptor(fd);
+    }
     return result;
 }

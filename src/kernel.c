@@ -111,4 +111,7 @@ void test_file_system()
     print(buf);
 
     print("\n");
+
+    fclose(fd);
+    print("File closed successfully!\n");
 }
