@@ -1,4 +1,4 @@
-# Protected Mode Development 8 - File System
+# File System
 
 ## Before we implement FAT16...
 
@@ -152,4 +152,4 @@ Note that the [Makefile](../Makefile) already has a target `mount` that does the
 
 ---
 
-[previous](./protected_mode_development_7.md) | [next](./protected_mode_development_9.md)
+[previous](./9_file_system_disk_driver.md) | [next](./11_file_system_virtual_file_system.md)

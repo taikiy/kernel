@@ -1,4 +1,4 @@
-# Protected Mode Development 5 - Memory Management - Heap
+# Memory Management - Heap
 
 ## The heap and memory allocation
 
@@ -66,4 +66,4 @@ Use `qemu-system-i386` just so that we are truly in a 32-bit system. x86_64 is a
 
 ---
 
-[previous](./protected_mode_development_4.md) | [next](./protected_mode_development_6.md)
+[previous](./6_programmable_interrupt_controller.md) | [next](./8_memory_management_paging.md)

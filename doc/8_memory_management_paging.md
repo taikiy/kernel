@@ -1,4 +1,4 @@
-# Protected Mode Development 6 - Memory Management - Paging
+# Memory Management - Paging
 
 ## What is Paging?
 
@@ -192,4 +192,4 @@ We can see that the page table entry for virtual address `0x1000` points to phys
 
 ---
 
-[previous](./protected_mode_development_5.md) | [next](./protected_mode_development_7.md)
+[previous](./7_memory_management_heap.md) | [next](./9_file_system_disk_driver.md)

@@ -1,4 +1,4 @@
-# Protected Mode Development 4 - PIC (Programmable Interrupt Controller)
+# PIC (Programmable Interrupt Controller)
 
 ## Implement `in()` and `out()`
 
@@ -44,4 +44,4 @@ Imagine handling IRQ 0 timer interrupts (mapped to INT 20h) will allow us to swi
 
 ---
 
-[previous](./protected_mode_development_3.md) | [next](./protected_mode_development_5.md)
+[previous](./5_interrupt_descriptor_table.md) | [next](./7_memory_management_heap.md)

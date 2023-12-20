@@ -2,7 +2,7 @@
 
 ## Writing a bootloader
 
-Bootloader is a set of CPU instructions (usually written in assembly) that is loaded by the BIOS when a PC is booted. Bootloader's code sits at 0x7c00 when loaded into the memory, and must be 1 sector (= 512 bytes) long. The end of the bootloader code is marked by a 2-byte signature `0x55AA`.
+A bootloader is a set of CPU instructions (usually written in assembly) that is loaded by the BIOS when a PC is booted. Bootloader's code sits at 0x7c00 when loaded into the memory, and must be 1 sector (= 512 bytes) long. The end of the bootloader code is marked by a 2-byte signature `0x55AA`.
 
 ## Real Mode
 
@@ -137,4 +137,4 @@ Note how we created an empty label called `buffer` at the very end of the bootlo
 
 ---
 
-[previous](../README.md) | [next](./protected_mode_development_1.md)
+[previous](../README.md) | [next](./2_protected_mode.md)

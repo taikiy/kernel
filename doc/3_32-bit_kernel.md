@@ -1,4 +1,4 @@
-# Protected Mode Development 2 - Loading 32-bit kernel
+# Loading 32-bit kernel
 
 ## 1. Cross-Compiler
 
@@ -115,4 +115,4 @@ Quick summary of how our code works with memory.
 
 ---
 
-[previous](./protected_mode_development_1.md) | [next](./protected_mode_development_3.md)
+[previous](./2_protected_mode.md) | [next](./4_writing_kernel_in_C.md)

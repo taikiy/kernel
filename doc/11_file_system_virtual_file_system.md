@@ -1,4 +1,4 @@
-# Protected Mode Development 9 - VFS (Virtual File System) and FAT16
+# VFS (Virtual File System) and FAT16
 
 ## What is a Virtual File System?
 
@@ -25,3 +25,7 @@ File descriptors are just integers. The kernel maintains a table of file descrip
 - FAT16 fseek function [commit](https://github.com/taikiy/kernel/commit/f8149d446c528b5d89bb889c0e464778e715b707)
 - VFS/FAT16 fstat function [commit](https://github.com/taikiy/kernel/commit/76d2e92037a3e41e562628ce29f70bcbf418cf97)
 - VFS/FAT16 fclose function [commit](https://github.com/taikiy/kernel/commit/628432bd05741835beb81e0cd7623239b1e3eb91)
+
+---
+
+[previous](./10_file_system_fat16.md) | [next](./12_user_land.md)

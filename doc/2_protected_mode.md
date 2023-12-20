@@ -1,4 +1,4 @@
-# Protected Mode Development 1 - Entering Protected Mode
+# Entering Protected Mode
 
 Protected mode is an operation mode of x86 architectures. It gives access to 4GB of address space, memory protection, and much more. ([osdev wiki](https://wiki.osdev.org/Protected_mode))
 
@@ -77,7 +77,7 @@ general:
 
 ---
 
-[previous](./real_mode_development.md) | [next](./protected_mode_development_2.md)
+[previous](./1_real_mode.md) | [next](./3_32-bit_kernel.md)
 
 ---
 

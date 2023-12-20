@@ -1,4 +1,4 @@
-# Protected Mode Development 7 - Disk Driver
+# Disk Driver
 
 ## PCI IDE Controller
 
@@ -87,4 +87,4 @@ That's our bootloader code!
 
 ---
 
-[Previous](./protected_mode_development_6.md) | [Next](./protected_mode_development_8.md)
+[Previous](./8_memory_management_paging.md) | [Next](./10_file_system_fat16.md)
