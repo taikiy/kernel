@@ -110,7 +110,7 @@ Don't forget to configure the boot priority :)
 
 ## 5. Handling interrupts (exceptions)
 
-In Real Mode, Interrupt Vector Table (IVT) is loaded at 0x00. IVT is a table that specifies the addresses of interrupt _handlers_. Each slot takes 4 bytes - the first 2 bytes are the offset, and the second 2 bytes are the segment.
+In Real Mode, the Interrupt Vector Table (IVT) is loaded at 0x00. IVT is a table that specifies the addresses of interrupt _handlers_. Each slot takes 4 bytes - the first 2 bytes are the offset, and the second 2 bytes are the segment.
 
 ```
  +-----------+-----------+

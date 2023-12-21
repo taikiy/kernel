@@ -2,6 +2,7 @@
 #include "terminal/terminal.h"
 #include "idt/idt.h"
 #include "io/io.h"
+#include "memory/memory.h"
 #include "memory/heap/kheap.h"
 #include "memory/paging/paging.h"
 #include "config.h"
@@ -10,6 +11,7 @@
 #include "string/string.h"
 #include "fs/path_parser.h"
 #include "fs/file.h"
+#include "gdt/gdt.h"
 
 static struct paging_4gb_chunk *paging_chunk = 0;
 
@@ -26,8 +28,22 @@ void panic(const char *message)
     };
 }
 
+struct gdt gdt_entries[TOTAL_GDT_SEGMENTS];
+struct structured_gdt structured_gdt_entries[TOTAL_GDT_SEGMENTS] = {
+    {.base = 0x00000000, .limit = 0x00000000, .type = 0x00}, // NULL
+    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0x9A}, // Kernel Code Segment
+    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0x92}, // Kernel Data Segment
+    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0xFA}, // User Code Segment
+    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0xF2}, // User Data Segment
+};
+
 void kernel_main()
 {
+    // Initialize the Global Descriptor Table
+    memset(gdt_entries, 0, sizeof(gdt_entries));
+    structured_to_raw_gdt(structured_gdt_entries, gdt_entries, TOTAL_GDT_SEGMENTS);
+    load_gdt(gdt_entries, sizeof(gdt_entries));
+
     // Initialize the heap. Currently allocates 100MB.
     kernel_heap_initialize();
 
@@ -58,8 +74,6 @@ void kernel_main()
     terminal_initialize();
 
     print("Hello, World! You are in Protected Mode.\n");
-
-    panic("system cannot continue!");
 
     // TESTS
     test_path_parser();

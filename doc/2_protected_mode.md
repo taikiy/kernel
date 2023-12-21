@@ -26,6 +26,25 @@ In Protected Mode, we gain access to 32-bit instructions, which enable easy acce
 
 We create entries for the Global Descriptor Table (GDT) and load its address into the GDT register by `lgdt` instruction, with additional parameters to enter Protected Mode ([osdev wiki](https://wiki.osdev.org/GDT)). We will use the GDT default values since we'll be using the paging memory scheme. ([git commit](https://github.com/taikiy/kernel/commit/82f6dae884e016ec3045f76bd52ebc4f91b886aa))
 
+```
+Segment Descriptor
++-------------------------------------------------------------+
+| 63   56 | 55   52 | 51   48 | 47         40 | 39         32 |
++---------+---------+---------+---------------+---------------+
+| Base(hi)|  Flags  | Limit(h)|    Access     |  Base (mid)   |
+| 31   24 |	3     0 | 19   16 | 7           0 | 23         16 |
++---------+---------+---------+---------------+---------------+
+| 31                       16 | 15                          0 |
++-----------------------------+-------------------------------+
+|         Base (low)          |          Limit (low)          |
+| 15                        0 | 15                          0 |
++-----------------------------+-------------------------------+
+```
+
+```asm
+
+```
+
 ## 2. Verify using LLDB
 
 This repo assumes the development is done on an M1 Mac. For that, we need to use LLDB instead of GDB. Here's how:
