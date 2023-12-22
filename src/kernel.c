@@ -12,6 +12,7 @@
 #include "fs/path_parser.h"
 #include "fs/file.h"
 #include "gdt/gdt.h"
+#include "task/tss.h"
 
 static struct paging_4gb_chunk *paging_chunk = 0;
 
@@ -28,13 +29,15 @@ void panic(const char *message)
     };
 }
 
+struct tss tss;
 struct gdt gdt_entries[TOTAL_GDT_SEGMENTS];
 struct structured_gdt structured_gdt_entries[TOTAL_GDT_SEGMENTS] = {
-    {.base = 0x00000000, .limit = 0x00000000, .type = 0x00}, // NULL
-    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0x9A}, // Kernel Code Segment
-    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0x92}, // Kernel Data Segment
-    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0xFA}, // User Code Segment
-    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0xF2}, // User Data Segment
+    {.base = 0x00000000, .limit = 0x00000000, .type = 0x00},      // NULL
+    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0x9A},      // Kernel Code Segment
+    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0x92},      // Kernel Data Segment
+    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0xFA},      // User Code Segment
+    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0xF2},      // User Data Segment
+    {.base = (uint32_t)&tss, .limit = sizeof(tss), .type = 0x89}, // TSS
 };
 
 void kernel_main()
@@ -55,6 +58,9 @@ void kernel_main()
 
     // Initialize the Interrupt Descriptor Table
     idt_initialize();
+
+    // Initialize the Task State Segment
+    tss_initialize(&tss);
 
     // Enable paging
     paging_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);

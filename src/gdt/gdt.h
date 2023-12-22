@@ -27,7 +27,7 @@ struct structured_gdt
 {
     uint32_t base;
     uint32_t limit;
-    uint8_t type;
+    uint8_t type; // Access byte (https://wiki.osdev.org/Global_Descriptor_Table)
 };
 
 void load_gdt(struct gdt *gdt, uint16_t size);
