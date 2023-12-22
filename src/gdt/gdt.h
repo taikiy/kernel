@@ -2,7 +2,7 @@
 #define GDT_H
 
 #include <stdint.h>
-#include "../kernel.h"
+#include "kernel.h"
 
 /*
  * GDT segment structure:

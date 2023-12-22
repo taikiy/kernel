@@ -3,16 +3,7 @@
 
 void paging_load_directory(uint32_t *directory);
 
-static struct paging_4gb_chunk *paging_chunk = 0;
 static uint32_t *current_directory = 0;
-
-void initialize_paging()
-{
-    paging_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
-    uint32_t *kernel_page_directory = paging_4gb_chunk_get_directory(paging_chunk);
-    paging_switch(kernel_page_directory);
-    enable_paging();
-}
 
 struct paging_4gb_chunk *paging_new_4gb(uint8_t flags)
 {
@@ -43,6 +34,29 @@ struct paging_4gb_chunk *paging_new_4gb(uint8_t flags)
     chunk_4gb->directory = directory;
 
     return chunk_4gb;
+}
+
+status_t paging_free_4gb(struct paging_4gb_chunk *chunk)
+{
+    status_t result = ALL_OK;
+
+    if (!chunk)
+    {
+        result = ERROR(EINVARG);
+        goto out;
+    }
+
+    for (int i = 0; i < PAGING_TOTAL_ENTRIES; i++)
+    {
+        uint32_t *table = (uint32_t *)(chunk->directory[i] & 0xfffff000); // mask the flags to get the table address
+        kfree(table);
+    }
+
+    kfree(chunk->directory);
+    kfree(chunk);
+
+out:
+    return result;
 }
 
 void paging_switch(uint32_t *directory)

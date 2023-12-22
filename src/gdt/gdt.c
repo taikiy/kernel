@@ -1,7 +1,7 @@
 #include "gdt.h"
-#include "../config.h"
-#include "../task/tss.h"
-#include "../memory/memory.h"
+#include "config.h"
+#include "task/tss.h"
+#include "memory/memory.h"
 
 struct tss tss;
 struct gdt gdt_entries[TOTAL_GDT_SEGMENTS];

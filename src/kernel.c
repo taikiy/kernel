@@ -27,6 +27,16 @@ void panic(const char *message)
     };
 }
 
+static struct paging_4gb_chunk *paging_chunk = 0;
+
+void switch_to_kernel_page_directory()
+{
+    paging_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    uint32_t *kernel_page_directory = paging_4gb_chunk_get_directory(paging_chunk);
+    paging_switch(kernel_page_directory);
+    enable_paging();
+}
+
 void kernel_main()
 {
     terminal_initialize();
@@ -36,10 +46,9 @@ void kernel_main()
     initialize_gdt();
     print("You are in Protected Mode.\n");
 
-    print("...kernel heap\n");
+    print("...kernel heap and paging\n");
     initialize_kernel_heap();
-    print("...paging\n");
-    initialize_paging();
+    switch_to_kernel_page_directory();
 
     print("...IDT\n");
     initialize_idt();
