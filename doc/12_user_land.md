@@ -21,4 +21,4 @@ The task state segment (TSS) is a structure on x86-based computers, which holds 
 To make the implementation easier, we write code to control GDT and TSS in C.
 
 - Controlling GDT in C [commit](https://github.com/taikiy/kernel/commit/179c23dbee2cf3b89304606f1ed97447f3ca5cff)
-- Adding TSS to the GDT segment [commit]()
+- Adding TSS to the GDT segment [commit](https://github.com/taikiy/kernel/commit/018fc3a0de9570a2f883cf320131e387d8d8b861)

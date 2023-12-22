@@ -1,6 +1,6 @@
 section .asm
 
-global idt_load
+global load_idt
 global int21h
 global int_noop
 global enable_interrupts
@@ -17,7 +17,7 @@ disable_interrupts:
     cli
     ret
 
-idt_load:
+load_idt:
     push ebp
     mov ebp, esp
 

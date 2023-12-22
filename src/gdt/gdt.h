@@ -30,7 +30,9 @@ struct structured_gdt
     uint8_t type; // Access byte (https://wiki.osdev.org/Global_Descriptor_Table)
 };
 
-void load_gdt(struct gdt *gdt, uint16_t size);
+extern void load_gdt(struct gdt *gdt, uint16_t size);
+
+void initialize_gdt();
 void structured_to_raw_gdt(struct structured_gdt *structured, struct gdt *raw, uint16_t entries);
 
 #endif

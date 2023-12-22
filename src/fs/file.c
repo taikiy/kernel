@@ -10,7 +10,7 @@
 struct file_system *file_systems[MAX_FILE_SYSTEM_COUNT];
 struct file_descriptor *file_descriptors[MAX_FILE_DESCRIPTOR_COUNT];
 
-static struct file_system **fs_get_free_file_system()
+static struct file_system **get_free_file_system()
 {
     for (int i = 0; i < MAX_FILE_SYSTEM_COUNT; i++)
     {
@@ -22,9 +22,9 @@ static struct file_system **fs_get_free_file_system()
     return 0;
 }
 
-void fs_insert_file_system(struct file_system *fs)
+void insert_file_system(struct file_system *fs)
 {
-    struct file_system **free_fs = fs_get_free_file_system();
+    struct file_system **free_fs = get_free_file_system();
     if (free_fs == 0)
     {
         // TODO: Error handling
@@ -36,21 +36,21 @@ void fs_insert_file_system(struct file_system *fs)
     *free_fs = fs;
 }
 
-static void fs_load_static_file_systems()
+static void load_static_file_systems()
 {
-    fs_insert_file_system(fat16_initialize());
+    insert_file_system(fat16_initialize());
 }
 
-static void fs_load_file_systems()
+static void load_file_systems()
 {
-    fs_load_static_file_systems();
+    load_static_file_systems();
 }
 
-void file_system_initialize()
+void initialize_file_systems()
 {
     memset(file_systems, 0, sizeof(file_systems));
     memset(file_descriptors, 0, sizeof(file_descriptors));
-    fs_load_file_systems();
+    load_file_systems();
 }
 
 static status_t put_file_descriptor(struct file_descriptor **fd)

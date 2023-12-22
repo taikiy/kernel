@@ -14,8 +14,6 @@
 #include "gdt/gdt.h"
 #include "task/tss.h"
 
-static struct paging_4gb_chunk *paging_chunk = 0;
-
 void test_path_parser();
 void test_file_system();
 
@@ -29,57 +27,31 @@ void panic(const char *message)
     };
 }
 
-struct tss tss;
-struct gdt gdt_entries[TOTAL_GDT_SEGMENTS];
-struct structured_gdt structured_gdt_entries[TOTAL_GDT_SEGMENTS] = {
-    {.base = 0x00000000, .limit = 0x00000000, .type = 0x00},      // NULL
-    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0x9A},      // Kernel Code Segment
-    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0x92},      // Kernel Data Segment
-    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0xFA},      // User Code Segment
-    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0xF2},      // User Data Segment
-    {.base = (uint32_t)&tss, .limit = sizeof(tss), .type = 0x89}, // TSS
-};
-
 void kernel_main()
 {
-    // Initialize the Global Descriptor Table
-    memset(gdt_entries, 0, sizeof(gdt_entries));
-    structured_to_raw_gdt(structured_gdt_entries, gdt_entries, TOTAL_GDT_SEGMENTS);
-    load_gdt(gdt_entries, sizeof(gdt_entries));
+    terminal_initialize();
+    print("Welcome to your own kernel!\n\n");
 
-    // Initialize the heap. Currently allocates 100MB.
-    kernel_heap_initialize();
+    print("...GDT\n");
+    initialize_gdt();
+    print("You are in Protected Mode.\n");
 
-    // Initialize the file systems
-    file_system_initialize();
+    print("...kernel heap\n");
+    initialize_kernel_heap();
+    print("...paging\n");
+    initialize_paging();
 
-    // Search and initialize the disks
-    disk_search_and_initialize();
+    print("...IDT\n");
+    initialize_idt();
 
-    // Initialize the Interrupt Descriptor Table
-    idt_initialize();
+    print("...disks and file systems\n");
+    initialize_file_systems();
+    initialize_disks();
 
-    // Initialize the Task State Segment
-    tss_initialize(&tss);
-
-    // Enable paging
-    paging_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
-    uint32_t *kernel_page_directory = paging_4gb_chunk_get_directory(paging_chunk);
-    paging_switch(kernel_page_directory);
-    enable_paging();
-
-    // Enable the system interrupts
+    print("...enabling interrupts\n");
     enable_interrupts();
 
-    // Bind the disk to FAT16
-    struct disk *current_disk;
-    current_disk = get_disk(0);
-    fs_resolve(current_disk);
-
-    // Initialize the terminal
-    terminal_initialize();
-
-    print("Hello, World! You are in Protected Mode.\n");
+    print("\nKernel is ready!\n\n");
 
     // TESTS
     test_path_parser();
@@ -103,6 +75,11 @@ void test_path_parser()
 
 void test_file_system()
 {
+    // Bind the disk to FAT16
+    struct disk *current_disk;
+    current_disk = get_disk(0);
+    fs_resolve(current_disk);
+
     int fd = fopen("0:/hello.txt", "r");
     if (!fd)
     {
@@ -127,7 +104,7 @@ void test_file_system()
 
     // Read 6 bytes from the file
     fread(buf, 6, 1, fd);
-    buf[7] = '\0';
+    buf[6] = '\0';
     print(buf);
 
     // Move the fd's position index back to the beginning of the file
@@ -135,7 +112,7 @@ void test_file_system()
 
     // Read 7 bytes from the file
     fread(buf, 7, 1, fd);
-    buf[8] = '\0';
+    buf[7] = '\0';
     print(buf);
 
     print("\n");

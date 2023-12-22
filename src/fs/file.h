@@ -67,8 +67,8 @@ struct file_stat
     FILE_STAT_FLAGS flags; /* user defined flags for file */
 };
 
-void file_system_initialize();
-void fs_insert_file_system(struct file_system *fs);
+void initialize_file_systems();
+void insert_file_system(struct file_system *fs);
 struct file_system *fs_resolve(struct disk *disk);
 int fopen(const char *file_name, const char *mode);
 status_t fread(void *ptr, uint32_t size, uint32_t count, int fd);

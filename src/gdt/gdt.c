@@ -1,4 +1,28 @@
 #include "gdt.h"
+#include "../config.h"
+#include "../task/tss.h"
+#include "../memory/memory.h"
+
+struct tss tss;
+struct gdt gdt_entries[TOTAL_GDT_SEGMENTS];
+struct structured_gdt structured_gdt_entries[TOTAL_GDT_SEGMENTS] = {
+    {.base = 0x00000000, .limit = 0x00000000, .type = 0x00},      // NULL
+    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0x9A},      // Kernel Code Segment
+    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0x92},      // Kernel Data Segment
+    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0xFA},      // User Code Segment
+    {.base = 0x00000000, .limit = 0xFFFFFFFF, .type = 0xF2},      // User Data Segment
+    {.base = (uint32_t)&tss, .limit = sizeof(tss), .type = 0x89}, // TSS
+};
+
+void initialize_gdt()
+{
+    // Initialize the Global Descriptor Table
+    memset(gdt_entries, 0, sizeof(gdt_entries));
+    structured_to_raw_gdt(structured_gdt_entries, gdt_entries, TOTAL_GDT_SEGMENTS);
+    load_gdt(gdt_entries, sizeof(gdt_entries));
+
+    tss_initialize(&tss);
+}
 
 void encode_gdt_entry(uint8_t *target, struct structured_gdt source)
 {

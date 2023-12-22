@@ -7,7 +7,7 @@
 struct idt_desc idt_descriptors[TOTAL_INTERRUPTS];
 struct idtr_desc idtr_descriptor;
 
-extern void idt_load(struct idtr_desc *ptr);
+extern void load_idt(struct idtr_desc *ptr);
 extern void int21h();
 extern void int_noop();
 
@@ -42,7 +42,7 @@ void idt_set(int interrupt_number, void *address)
     desc->offset_2 = (uint32_t)address >> 16;
 }
 
-void idt_initialize()
+void initialize_idt()
 {
     memset(idt_descriptors, 0, sizeof(idt_descriptors));
     idtr_descriptor.limit = sizeof(idt_descriptors) - 1;
@@ -56,5 +56,5 @@ void idt_initialize()
     idt_set(0x21, int21h);
 
     // Load the IDT
-    idt_load(&idtr_descriptor);
+    load_idt(&idtr_descriptor);
 }

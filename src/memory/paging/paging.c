@@ -3,7 +3,16 @@
 
 void paging_load_directory(uint32_t *directory);
 
+static struct paging_4gb_chunk *paging_chunk = 0;
 static uint32_t *current_directory = 0;
+
+void initialize_paging()
+{
+    paging_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    uint32_t *kernel_page_directory = paging_4gb_chunk_get_directory(paging_chunk);
+    paging_switch(kernel_page_directory);
+    enable_paging();
+}
 
 struct paging_4gb_chunk *paging_new_4gb(uint8_t flags)
 {
