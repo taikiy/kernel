@@ -25,6 +25,14 @@ To make the implementation easier, we write code to control GDT and TSS in C.
 
 ## Tasks
 
-A task is a running process. The kernel can switch between tasks to run multiple processes at the same time. This is called multitasking. The kernel saves the state of the current task in the TSS (Task State Segment) and loads the state of the next task from the TSS.
+A task is a running process. The kernel can switch between tasks to run multiple processes at the same time. This is called multitasking. The kernel saves the state of the current task in the TSS (Task State Segment) and loads the state of the next task from the TSS. A state of a task is a set of registers and the memory page a task is using.
 
-- Task foundations: user program paging and registers structures [commit]()
+- Task foundations: user program paging and registers structures [commit](https://github.com/taikiy/kernel/commit/df3b99f09cc1f079a175de5b9ce8b35a83aff14d)
+
+## Mapping user program to memory
+
+Once a user program is loaded into memory, we need to map it to the virtual address space of the process. This is done by allocating a paging chunk and mapping each physical memory block to empty virtual memory blocks.
+
+Once the user program is mapped to the virtual address space, we can switch to user mode by setting the segment registers to the user code and data segments, the instruction pointer to the entry point of the user program, the stack pointer to the top of the stack, and other registers needed by the user program. Then we execute the `iret` instruction to switch to user mode.
+
+- User-Land functionality [commit]()

@@ -10,6 +10,7 @@ typedef void *status_t;
 #define EINVPATH 4
 #define EFSNOTSUPPORTED 5
 #define EREADONLY 6
+#define ETOOMANYPROCESSES 7
 
 #define ERROR(v) ((void *)(-v))
 

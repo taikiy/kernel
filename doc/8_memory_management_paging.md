@@ -44,11 +44,11 @@ This allows us to address a maximum amount of RAM in a 32-bit system which is 4G
 - `R/W` - Read-Write Bit\
   If this bit is set to 1, the table is readable and writable. If this is not set, then this table is read-only. Note the WP bit in the CR0 register can allow writing in all cases for the supervisor.
 - `P` - Present Bit\
-  If this bit is set to 1, then the table exists in real memory. If this table is not available, the kernel set it to 0. If someone accesses this table, a _Page Fault_ will occur and the kernel is expected to resolve it.
+  If this bit is set to 1, then the table exists in real memory. If this table is not available, the kernel sets it to 0. If someone accesses this table, a _Page Fault_ will occur and the kernel is expected to resolve it.
 
 #### Page Table Entry
 
-Basically the same as Page Directory Entry structure + `G` flag.
+Basically, the same as Page Directory Entry structure + `G` flag.
 
 ```
  +-----------------------------------------------------------------------+
