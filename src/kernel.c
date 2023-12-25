@@ -1,43 +1,45 @@
 #include "kernel.h"
-#include "terminal/terminal.h"
-#include "idt/idt.h"
-#include "io/io.h"
-#include "memory/memory.h"
-#include "memory/heap/kheap.h"
-#include "memory/paging/paging.h"
 #include "config.h"
 #include "disk/disk.h"
 #include "disk/stream.h"
-#include "string/string.h"
-#include "fs/path_parser.h"
 #include "fs/file.h"
+#include "fs/path_parser.h"
 #include "gdt/gdt.h"
+#include "idt/idt.h"
+#include "io/io.h"
+#include "memory/heap/kheap.h"
+#include "memory/memory.h"
+#include "memory/paging/paging.h"
+#include "string/string.h"
 #include "task/tss.h"
+#include "terminal/terminal.h"
 
 void test_path_parser();
 void test_file_system();
 
-void panic(const char *message)
+void
+panic(const char* message)
 {
     print("PANIC: ");
     print(message);
     print("\n");
-    while (1)
-    {
+    while (1) {
     };
 }
 
-static struct paging_4gb_chunk *paging_chunk = 0;
+static struct paging_4gb_chunk* paging_chunk = 0;
 
-void switch_to_kernel_page_directory()
+void
+switch_to_kernel_page_directory()
 {
     paging_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
-    uint32_t *kernel_page_directory = paging_4gb_chunk_get_directory(paging_chunk);
+    uint32_t* kernel_page_directory = paging_4gb_chunk_get_directory(paging_chunk);
     paging_switch(kernel_page_directory);
     enable_paging();
 }
 
-void kernel_main()
+void
+kernel_main()
 {
     terminal_initialize();
     print("Welcome to your own kernel!\n\n");
@@ -69,11 +71,11 @@ void kernel_main()
     print("End of kernel_main\n");
 }
 
-void test_path_parser()
+void
+test_path_parser()
 {
-    struct path_root *root_path = path_parse("0:/bin/sh.exe", 0);
-    if (root_path)
-    {
+    struct path_root* root_path = path_parse("0:/bin/sh.exe", 0);
+    if (root_path) {
         print("Root path: 0:/");
         print(root_path->first->name);
         print("/");
@@ -82,23 +84,23 @@ void test_path_parser()
     }
 }
 
-void test_file_system()
+void
+test_file_system()
 {
     // Bind the disk to FAT16
-    struct disk *current_disk;
+    struct disk* current_disk;
     current_disk = get_disk(0);
     fs_resolve(current_disk);
 
     int fd = fopen("0:/hello.txt", "r");
-    if (!fd)
-    {
+    if (!fd) {
         print("ERROR: File not found!\n");
         return;
     }
 
     print("File opened successfully!\n");
 
-    struct file_stat *stat = kzalloc(sizeof(struct file_stat));
+    struct file_stat* stat = kzalloc(sizeof(struct file_stat));
     fstat(fd, stat);
     print("File size: ");
     print_int(stat->size);

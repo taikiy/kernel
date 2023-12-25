@@ -2,6 +2,6 @@
 #define KERNEL_H
 
 void kernel_main();
-void panic(const char *message);
+void panic(const char* message);
 
 #endif

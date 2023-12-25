@@ -1,6 +1,6 @@
 #include "disk.h"
-#include "io/io.h"
 #include "config.h"
+#include "io/io.h"
 #include "memory/memory.h"
 
 struct disk current_disk;
@@ -10,7 +10,8 @@ struct disk current_disk;
 /// @param total Total blocks to read
 /// @param buf A buffer to store the data
 /// @return Status code
-status_t disk_read_sector(unsigned int lba, unsigned int total, void *buf)
+status_t
+disk_read_sector(unsigned int lba, unsigned int total, void* buf)
 {
     // This is the same deal as in `boot.asm`.
     // Refer to `ata_lba_read` in https://wiki.osdev.org/ATA_read/write_sectors for more.
@@ -26,14 +27,12 @@ status_t disk_read_sector(unsigned int lba, unsigned int total, void *buf)
     outb(0x1F7, 0x20);                        // Send "Read with retry" command to the command port
 
     // Cast the buffer pointer to `short`. The disk controller returns 1 word (2 bytes) at a time.
-    unsigned short *ptr = (unsigned short *)buf;
+    unsigned short* ptr = (unsigned short*)buf;
 
-    for (int b = 0; b < total; b++)
-    {
+    for (int b = 0; b < total; b++) {
         // Wait for the buffer to be ready
         char c = inb(0x1F7);
-        while (!(c & 0x08))
-        {
+        while (!(c & 0x08)) {
             c = inb(0x1F7);
         }
 
@@ -48,7 +47,8 @@ status_t disk_read_sector(unsigned int lba, unsigned int total, void *buf)
     return ALL_OK;
 }
 
-void initialize_disks()
+void
+initialize_disks()
 {
     // TODO: Search for disks to initialize
     memset(&current_disk, 0, sizeof(current_disk));
@@ -58,20 +58,20 @@ void initialize_disks()
     current_disk.fs = fs_resolve(&current_disk);
 }
 
-struct disk *get_disk(unsigned int disk_number)
+struct disk*
+get_disk(unsigned int disk_number)
 {
     // TODO: support more disks. we only have one FAT16 disk for now.
-    if (disk_number != 0)
-    {
+    if (disk_number != 0) {
         return 0;
     }
     return &current_disk;
 }
 
-status_t disk_read_block(struct disk *disk, unsigned int lba, unsigned int total, void *buf)
+status_t
+disk_read_block(struct disk* disk, unsigned int lba, unsigned int total, void* buf)
 {
-    if (disk != &current_disk)
-    {
+    if (disk != &current_disk) {
         return ERROR(EIO);
     }
     return disk_read_sector(lba, total, buf);

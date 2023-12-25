@@ -5,18 +5,20 @@
 #include "memory/memory.h"
 #include "status.h"
 
-struct task *current_task = 0;
-struct task *head_task = 0;
-struct task *tail_task = 0;
+struct task* current_task = 0;
+struct task* head_task = 0;
+struct task* tail_task = 0;
 
 extern void return_task();
 
-struct task *get_current_task()
+struct task*
+get_current_task()
 {
     return current_task;
 }
 
-static status_t initialize_task(struct task *task, struct process *process)
+static status_t
+initialize_task(struct task* task, struct process* process)
 {
     status_t result = ALL_OK;
 
@@ -25,8 +27,7 @@ static status_t initialize_task(struct task *task, struct process *process)
     // We set `PAGING_ACCESS_FROM_ALL` flag to avoid any complications. In reality, we shouldn't set
     // this flag.
     task->page_directory = paging_new_4gb(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
-    if (!task->page_directory)
-    {
+    if (!task->page_directory) {
         return ERROR(EIO);
     }
 
@@ -41,10 +42,10 @@ static status_t initialize_task(struct task *task, struct process *process)
 
 /// @brief  Returns the next task in the queue.
 /// @return The next task in the queue. This function returns 0 if there is no task in the queue.
-struct task *get_next_task()
+struct task*
+get_next_task()
 {
-    if (!current_task)
-    {
+    if (!current_task) {
         return 0;
     }
 
@@ -56,54 +57,46 @@ struct task *get_next_task()
     return current_task->next;
 }
 
-static status_t remove_task_from_queue(struct task *task)
+static status_t
+remove_task_from_queue(struct task* task)
 {
     status_t result = ALL_OK;
 
-    if (!task)
-    {
+    if (!task) {
         return ERROR(EINVARG);
     }
 
     // TODO: if there are no more tasks, set null to all task pointers
 
-    if (task->prev)
-    {
+    if (task->prev) {
         task->prev->next = task->next;
-    }
-    else
-    {
+    } else {
         head_task = task->next;
     }
 
-    if (task->next)
-    {
+    if (task->next) {
         task->next->prev = task->prev;
-    }
-    else
-    {
+    } else {
         tail_task = task->prev;
     }
 
-    if (current_task == task)
-    {
+    if (current_task == task) {
         current_task = get_next_task();
     }
 
     return result;
 }
 
-status_t free_task(struct task *task)
+status_t
+free_task(struct task* task)
 {
     status_t result = ALL_OK;
 
-    if (!task)
-    {
+    if (!task) {
         return ERROR(EINVARG);
     }
 
-    if (task->page_directory)
-    {
+    if (task->page_directory) {
         paging_free_4gb(task->page_directory);
     }
 
@@ -115,40 +108,34 @@ status_t free_task(struct task *task)
     return result;
 }
 
-struct task *create_task(struct process *process)
+struct task*
+create_task(struct process* process)
 {
     status_t result = ALL_OK;
 
-    struct task *task = (struct task *)kzalloc(sizeof(struct task));
-    if (!task)
-    {
+    struct task* task = (struct task*)kzalloc(sizeof(struct task));
+    if (!task) {
         result = ERROR(ENOMEM);
         goto out;
     }
 
     result = initialize_task(task, process);
-    if (result != ALL_OK)
-    {
+    if (result != ALL_OK) {
         goto out;
     }
 
-    if (!head_task)
-    {
+    if (!head_task) {
         head_task = task;
         tail_task = task;
-    }
-    else
-    {
+    } else {
         tail_task->next = task;
         task->prev = tail_task;
         tail_task = task;
     }
 
 out:
-    if (result != ALL_OK)
-    {
-        if (task)
-        {
+    if (result != ALL_OK) {
+        if (task) {
             free_task(task);
         }
         return 0;
@@ -156,17 +143,16 @@ out:
     return task;
 }
 
-static status_t switch_task(struct task *task)
+static status_t
+switch_task(struct task* task)
 {
     status_t result = ALL_OK;
 
-    if (!task)
-    {
+    if (!task) {
         return ERROR(EINVARG);
     }
 
-    if (!task->page_directory)
-    {
+    if (!task->page_directory) {
         return ERROR(EINVARG);
     }
 
@@ -194,7 +180,8 @@ static status_t switch_task(struct task *task)
 //     return result;
 // }
 
-status_t start_tasks()
+status_t
+start_tasks()
 {
     status_t result = ALL_OK;
 

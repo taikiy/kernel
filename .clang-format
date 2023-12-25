@@ -1,5 +1,11 @@
 # options: https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 BasedOnStyle: Mozilla
 IndentWidth: 4
-ColumnLimit: 100
+ColumnLimit: 120
 AlignAfterOpenBracket: BlockIndent
+AlignConsecutiveMacros: true
+AlignTrailingComments:
+  Kind: Always
+AllowAllArgumentsOnNextLine: true
+AlwaysBreakAfterReturnType: AllDefinitions
+InsertBraces: true

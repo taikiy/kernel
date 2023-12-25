@@ -39,6 +39,6 @@ struct tss
 } __attribute__((packed));
 
 extern void load_tss(int offset);
-void tss_initialize(struct tss *tss);
+void tss_initialize(struct tss* tss);
 
 #endif

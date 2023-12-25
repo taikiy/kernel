@@ -1,10 +1,10 @@
 #ifndef GDT_H
 #define GDT_H
 
-#include <stdint.h>
 #include "kernel.h"
+#include <stdint.h>
 
-/*
+/* clang-format off
  * GDT segment structure:
  * +-------------------------------------------------------------+---------+---------+---------+---------------+---------------+
  * | 63   56 | 55   52 | 51   48 | 47         40 | 39         32 | 31                       16 | 15                          0 |
@@ -30,9 +30,7 @@ struct structured_gdt
     uint8_t type; // Access byte (https://wiki.osdev.org/Global_Descriptor_Table)
 };
 
-extern void load_gdt(struct gdt *gdt, uint16_t size);
-
 void initialize_gdt();
-void structured_to_raw_gdt(struct structured_gdt *structured, struct gdt *raw, uint16_t entries);
+void structured_to_raw_gdt(struct structured_gdt* structured, struct gdt* raw, uint16_t entries);
 
 #endif

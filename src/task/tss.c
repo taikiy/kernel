@@ -1,8 +1,9 @@
 #include "tss.h"
-#include "memory/memory.h"
 #include "config.h"
+#include "memory/memory.h"
 
-void tss_initialize(struct tss *tss)
+void
+tss_initialize(struct tss* tss)
 {
     memset(tss, 0, sizeof(struct tss));
     tss->esp0 = KERNEL_STACK_ADDRESS;
