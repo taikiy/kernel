@@ -169,7 +169,7 @@ out:
     return fd->index;
 }
 
-status_t
+size_t
 fread(void* ptr, uint32_t size, uint32_t count, int fd)
 {
     status_t result = ALL_OK;

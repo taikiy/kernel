@@ -10,12 +10,16 @@
 #include "memory/heap/kheap.h"
 #include "memory/memory.h"
 #include "memory/paging/paging.h"
+#include "status.h"
 #include "string/string.h"
+#include "task/process.h"
+#include "task/task.h"
 #include "task/tss.h"
 #include "terminal/terminal.h"
 
 void test_path_parser();
 void test_file_system();
+void test_user_land();
 
 void
 panic(const char* message)
@@ -59,16 +63,30 @@ kernel_main()
     initialize_file_systems();
     initialize_disks();
 
-    print("...enabling interrupts\n");
-    enable_interrupts();
-
     print("\nKernel is ready!\n\n");
 
     // TESTS
-    test_path_parser();
-    test_file_system();
+    // test_path_parser();
+    // test_file_system();
+    test_user_land();
+
+    print("...enabling interrupts\n");
+    enable_interrupts();
 
     print("End of kernel_main\n");
+}
+
+void
+test_user_land()
+{
+    // Create a new process
+    struct process* proc = kzalloc(sizeof(struct process));
+    status_t result = create_process("0:/blank.bin", &proc);
+    if (result != ALL_OK || !proc) {
+        panic("Failed to create a process!");
+    }
+    print("Process created successfully!\n");
+    start_tasks();
 }
 
 void

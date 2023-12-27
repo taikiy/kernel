@@ -83,7 +83,7 @@ gdt_descriptor:
 load32:
     mov eax, 1                  ; Beginning of the sector to read from (Kernel starts at the first sector. 0 = bootloader)
     mov ecx, 100                ; End of the sector (we added 100 sectors in Makefile)
-    mov edi, 0x0100000          ; Address where the Kernel will be loaded into (linker.ld also specifies 1M)
+    mov edi, 0x0100000          ; Address where the Kernel will be loaded into (specified in linker.ld as 1M)
     call ata_lba_read
     jmp CODE_SEG:0x0100000      ; Jump to our kernel code
 

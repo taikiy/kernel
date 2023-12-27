@@ -2,6 +2,7 @@
 #define PROCESS_H
 
 #include "config.h"
+#include "status.h"
 #include <stdint.h>
 
 struct process
@@ -31,5 +32,7 @@ struct process
     // The size of the process memory pointed by `ptr`
     uint32_t size;
 };
+
+status_t create_process(const char* file_path, struct process** process);
 
 #endif

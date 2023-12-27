@@ -36,3 +36,13 @@ Once a user program is loaded into memory, we need to map it to the virtual addr
 Once the user program is mapped to the virtual address space, we can switch to user mode by setting the segment registers to the user code and data segments, the instruction pointer to the entry point of the user program, the stack pointer to the top of the stack, and other registers needed by the user program. Then we execute the `iret` instruction to switch to user mode.
 
 - User-Land functionality [commit](https://github.com/taikiy/kernel/commit/f2254c355692ae00c262040abe6ba85f22984104)
+
+## Writing our first user program
+
+To test the user-land functionality, we write a simple user program that goes into an infinite loop. We write it in assembly and build it with `nasm`, link it with `ld`, and copy it to the floppy disk image with `dd`. We also write a Makefile to automate these steps.
+
+[commit]()
+
+---
+
+[previous](./11_file_system_virtual_file_system.md) | [next](./13_.md)

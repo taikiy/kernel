@@ -34,6 +34,7 @@ initialize_task(struct task* task, struct process* process)
     task->registers.ip = USER_PROGRAM_VIRTUAL_ADDRESS_START;
     task->registers.esp = USER_PROGRAM_STACK_VIRTUAL_ADDRESS_START;
     task->registers.ss = USER_PROGRAM_DATA_SELECTOR;
+    task->registers.cs = USER_PROGRAM_CODE_SELECTOR;
 
     task->process = process;
 
@@ -143,23 +144,18 @@ out:
     return task;
 }
 
-static status_t
+static void
 switch_task(struct task* task)
 {
-    status_t result = ALL_OK;
-
     if (!task) {
-        return ERROR(EINVARG);
+        panic("Cannot switch to a null task!");
     }
 
     if (!task->page_directory) {
-        return ERROR(EINVARG);
+        panic("Cannot switch to a task with a null page directory!");
     }
 
     paging_switch(paging_4gb_chunk_get_directory(task->page_directory));
-    current_task = task;
-
-    return result;
 }
 
 // status_t
@@ -180,11 +176,9 @@ switch_task(struct task* task)
 //     return result;
 // }
 
-status_t
+void
 start_tasks()
 {
-    status_t result = ALL_OK;
-
     if (current_task) {
         panic("A task is already running!");
     }
@@ -193,11 +187,7 @@ start_tasks()
         panic("There is no task to run!");
     }
 
-    result = switch_task(head_task);
-    if (result != ALL_OK) {
-        return result;
-    }
-    return_task(&head_task->registers);
-
-    return result;
+    current_task = head_task;
+    switch_task(current_task);
+    return_task(&current_task->registers);
 }

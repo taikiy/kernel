@@ -1,5 +1,4 @@
 #include "paging.h"
-#include "math/math.h"
 #include "memory/heap/kheap.h"
 
 void paging_load_directory(uint32_t* directory);
@@ -98,7 +97,10 @@ out:
 static uint32_t*
 paging_get_aligned_address(void* address)
 {
-    return (uint32_t*)(ceiling((uint32_t)address / PAGING_PAGE_SIZE_BYTES) * PAGING_PAGE_SIZE_BYTES);
+    return (uint32_t)address % PAGING_PAGE_SIZE_BYTES == 0
+             ? address
+             : (uint32_t*)(((uint32_t)address / PAGING_PAGE_SIZE_BYTES) * PAGING_PAGE_SIZE_BYTES +
+                           PAGING_PAGE_SIZE_BYTES);
 }
 
 /// @brief Sets the `table_entry` value to the paging table, pointed by `virtual_address`, in the given `directory`.
@@ -158,13 +160,13 @@ map_physical_address_to_pages(
     }
 
     uint32_t* physical_start_address = (uint32_t*)physical_address;
-    uint32_t* physical_end_address = paging_get_aligned_address(physical_start_address + size);
+    uint32_t* physical_end_address = paging_get_aligned_address((void*)((uint32_t)physical_start_address + size));
 
     if (!paging_is_aligned(physical_start_address) || !paging_is_aligned(physical_end_address) || !paging_is_aligned(virtual_address)) {
         return ERROR(EINVARG);
     }
 
-    uint32_t total_pages = (uint32_t)physical_end_address - (uint32_t)physical_start_address / PAGING_PAGE_SIZE_BYTES;
+    uint32_t total_pages = ((uint32_t)physical_end_address - (uint32_t)physical_start_address) / PAGING_PAGE_SIZE_BYTES;
 
     for (uint32_t i = 0; i < total_pages; i++) {
         result = paging_map_4kb(chunk->directory, physical_address, virtual_address, flags);

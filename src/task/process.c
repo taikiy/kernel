@@ -41,8 +41,9 @@ load_binary_data(int fd, struct process* process)
         return ERROR(ENOMEM);
     }
 
-    result = fread(program_data_ptr, file_size, 1, fd);
-    if (result != ALL_OK) {
+    // TODO: Read the file in chunks
+    size_t read_items = fread(program_data_ptr, file_size, 1, fd);
+    if (read_items != 1) {
         result = ERROR(EIO);
         goto out;
     }
@@ -164,13 +165,13 @@ map_binary_data(struct process* process)
       process->size,
       PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
     );
-    map_physical_address_to_pages(
-      chunk,
-      process->stack,
-      (void*)USER_PROGRAM_STACK_VIRTUAL_ADDRESS_START,
-      USER_PROGRAM_STACK_SIZE,
-      PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
-    );
+    // map_physical_address_to_pages(
+    //   chunk,
+    //   process->stack,
+    //   (void*)USER_PROGRAM_STACK_VIRTUAL_ADDRESS_START,
+    //   USER_PROGRAM_STACK_SIZE,
+    //   PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
+    // );
 
     return result;
 }
@@ -240,7 +241,7 @@ out:
 }
 
 status_t
-load_process(const char* file_path, struct process** process)
+create_process(const char* file_path, struct process** process)
 {
     if (!file_path) {
         return ERROR(EINVARG);

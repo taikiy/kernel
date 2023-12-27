@@ -121,7 +121,7 @@ struct fat_file_descriptor
 
 status_t fat16_resolve(struct disk* disk);
 void* fat16_open(struct disk* disk, struct path_part* path, FILE_MODE mode);
-status_t fat16_read(struct disk* disk, void* fd, uint32_t size, uint32_t count, char* out);
+size_t fat16_read(struct disk* disk, void* fd, uint32_t size, uint32_t count, char* out);
 status_t fat16_seek(void* private_data, uint32_t offset, FILE_SEEK_MODE mode);
 status_t fat16_stat(void* private_data, struct file_stat* stat);
 status_t fat16_close(void* private_data);
@@ -460,22 +460,22 @@ fat16_read_internal(struct disk* disk, int cluster, int offset, int length, void
       (fat16_cluster_to_sector(private_data, cluster_to_use) * disk->sector_size) + offset_from_cluster;
     int total_to_read = length > cluster_size ? cluster_size : length;
 
-    status_t res = disk_stream_seek(stream, sector_to_read);
-    if (res != ALL_OK) {
-        return res;
+    status_t result = disk_stream_seek(stream, sector_to_read);
+    if (result != ALL_OK) {
+        return result;
     }
-    res = disk_stream_read(stream, buffer, total_to_read);
-    if (res != ALL_OK) {
-        return res;
+    result = disk_stream_read(stream, buffer, total_to_read);
+    if (result != ALL_OK) {
+        return result;
     }
 
     length -= total_to_read;
     if (length > 0) {
         // todo: avoid recursion in production
-        res = fat16_read_internal(disk, cluster_to_use, offset + total_to_read, length, buffer + total_to_read);
+        result = fat16_read_internal(disk, cluster_to_use, offset + total_to_read, length, buffer + total_to_read);
     }
 
-    return res;
+    return result;
 }
 
 struct fat_directory*
@@ -629,8 +629,8 @@ out:
     return descriptor;
 }
 
-status_t
-fat16_read(struct disk* disk, void* fd, uint32_t size, uint32_t count, char* out)
+size_t
+fat16_read(struct disk* disk, void* fd, size_t size, size_t count, char* out)
 {
     status_t result = ALL_OK;
 
@@ -638,6 +638,7 @@ fat16_read(struct disk* disk, void* fd, uint32_t size, uint32_t count, char* out
     struct fat_directory_item* item = descriptor->item->item;
     int offset = descriptor->position;
 
+    size_t read_items = 0;
     for (uint32_t i = 0; i < count; i++) {
         result = fat16_read_internal(disk, fat16_get_first_cluster(item), offset, size, out);
         if (result != ALL_OK) {
@@ -645,11 +646,11 @@ fat16_read(struct disk* disk, void* fd, uint32_t size, uint32_t count, char* out
         }
         offset += size;
         out += size;
+        read_items++;
     }
-    result = (status_t)count;
 
 out:
-    return result;
+    return read_items;
 }
 
 status_t
