@@ -155,7 +155,7 @@ switch_task(struct task* task)
         panic("Cannot switch to a task with a null page directory!");
     }
 
-    paging_switch(paging_4gb_chunk_get_directory(task->page_directory));
+    paging_switch(task->page_directory);
 }
 
 // status_t

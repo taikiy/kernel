@@ -58,16 +58,10 @@ out:
 }
 
 void
-paging_switch(uint32_t* directory)
+paging_switch(struct paging_4gb_chunk* chunk)
 {
-    paging_load_directory(directory);
-    current_directory = directory;
-}
-
-uint32_t*
-paging_4gb_chunk_get_directory(struct paging_4gb_chunk* chunk)
-{
-    return chunk->directory;
+    paging_load_directory(chunk->directory);
+    current_directory = chunk->directory;
 }
 
 static bool
@@ -109,13 +103,9 @@ paging_get_aligned_address(void* address)
 /// @param table_entry The 20-bit address of the physical memory that the given virtual address will point to and the
 /// page table entry flags.
 /// @return Status code ALL_OK if success, or <0 if fails.
-status_t
-paging_set(uint32_t* directory, void* virtual_address, uint32_t table_entry)
+static status_t
+paging_set(struct paging_4gb_chunk* chunk, void* virtual_address, uint32_t table_entry)
 {
-    if (!directory) {
-        return ERROR(EINVARG);
-    }
-
     if (!paging_is_aligned(virtual_address)) {
         return ERROR(EINVARG);
     }
@@ -127,7 +117,7 @@ paging_set(uint32_t* directory, void* virtual_address, uint32_t table_entry)
         return result;
     }
 
-    uint32_t directory_entry = directory[directory_index];
+    uint32_t directory_entry = chunk->directory[directory_index];
     uint32_t* table = (uint32_t*)(directory_entry & 0xfffff000);
     table[table_index] = table_entry;
 
@@ -135,9 +125,9 @@ paging_set(uint32_t* directory, void* virtual_address, uint32_t table_entry)
 }
 
 static status_t
-paging_map_4kb(uint32_t* directory, uint32_t* physical_address, uint32_t* virtual_address, uint32_t flags)
+paging_map_4kb(struct paging_4gb_chunk* chunk, uint32_t* physical_address, uint32_t* virtual_address, uint32_t flags)
 {
-    return paging_set(directory, virtual_address, (uint32_t)physical_address | flags);
+    return paging_set(chunk, virtual_address, (uint32_t)physical_address | flags);
 }
 
 status_t
@@ -151,7 +141,7 @@ map_physical_address_to_pages(
 {
     status_t result = ALL_OK;
 
-    if (!chunk) {
+    if (!chunk || !chunk->directory || !physical_address || !virtual_address) {
         return ERROR(EINVARG);
     }
 
@@ -162,6 +152,10 @@ map_physical_address_to_pages(
     uint32_t* physical_start_address = (uint32_t*)physical_address;
     uint32_t* physical_end_address = paging_get_aligned_address((void*)((uint32_t)physical_start_address + size));
 
+    if (physical_start_address >= physical_end_address) {
+        return ERROR(EINVARG);
+    }
+
     if (!paging_is_aligned(physical_start_address) || !paging_is_aligned(physical_end_address) || !paging_is_aligned(virtual_address)) {
         return ERROR(EINVARG);
     }
@@ -169,7 +163,7 @@ map_physical_address_to_pages(
     uint32_t total_pages = ((uint32_t)physical_end_address - (uint32_t)physical_start_address) / PAGING_PAGE_SIZE_BYTES;
 
     for (uint32_t i = 0; i < total_pages; i++) {
-        result = paging_map_4kb(chunk->directory, physical_address, virtual_address, flags);
+        result = paging_map_4kb(chunk, physical_address, virtual_address, flags);
         if (result < 0) {
             goto out;
         }

@@ -37,8 +37,7 @@ void
 switch_to_kernel_page_directory()
 {
     paging_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
-    uint32_t* kernel_page_directory = paging_4gb_chunk_get_directory(paging_chunk);
-    paging_switch(kernel_page_directory);
+    paging_switch(paging_chunk);
     enable_paging();
 }
 
