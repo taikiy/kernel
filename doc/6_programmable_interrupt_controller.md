@@ -30,7 +30,7 @@ Assuming we've remapped IRQ 0 to 0x20, that means we'll receive timer interrupts
 
 Previously, we implemented IDT (Interrupt Descriptor Table) where we define the mapping between interrupts and their handlers. This is the time we start using IDT. We can define IDT for INT 0x21, for example, to handle the keyboard interrupts.
 
-However, before handling the interrupt, we'll need to disable interrupts while in the handler block, store the register contents before handling the interrupt so that we can go back to the previous state, and enable interrupts back again. For these reasons, just calling `idt_set` with a C function to its argument isn't enough. We'll create a wrapper in assembly for that.
+However, before handling the interrupt, we'll need to disable interrupts while in the handler block, store the register contents before handling the interrupt so that we can go back to the previous state, and enable interrupts again. For these reasons, just calling `idt_set` with a C function to its argument isn't enough. We'll create a wrapper in assembly for that.
 
 Note that in the previous section where we implemented `idt_zero`. Strictly speaking, this handler also needs to be defined in assembly as we implement `int21h` in this section. The reason we didn't was just for a quick demonstration purpose.
 

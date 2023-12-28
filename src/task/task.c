@@ -1,5 +1,6 @@
 #include "task.h"
 #include "config.h"
+#include "idt/idt.h"
 #include "kernel.h"
 #include "memory/heap/kheap.h"
 #include "memory/memory.h"
@@ -9,7 +10,8 @@ struct task* current_task = 0;
 struct task* head_task = 0;
 struct task* tail_task = 0;
 
-extern void return_task();
+extern void return_to_task();
+extern void set_user_segment_registers();
 
 struct task*
 get_current_task()
@@ -26,8 +28,8 @@ initialize_task(struct task* task, struct process* process)
     // Map the entire 4GB address space to the task
     // We set `PAGING_ACCESS_FROM_ALL` flag to avoid any complications. In reality, we shouldn't set
     // this flag.
-    task->page_directory = paging_new_4gb(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
-    if (!task->page_directory) {
+    task->user_page = new_paging_map(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    if (!task->user_page) {
         return ERROR(EIO);
     }
 
@@ -97,8 +99,8 @@ free_task(struct task* task)
         return ERROR(EINVARG);
     }
 
-    if (task->page_directory) {
-        paging_free_4gb(task->page_directory);
+    if (task->user_page) {
+        free_paging_map(task->user_page);
     }
 
     remove_task_from_queue(task);
@@ -145,36 +147,53 @@ out:
 }
 
 static void
-switch_task(struct task* task)
+switch_to_task_page(struct task* task)
 {
     if (!task) {
         panic("Cannot switch to a null task!");
     }
 
-    if (!task->page_directory) {
+    if (!task->user_page) {
         panic("Cannot switch to a task with a null page directory!");
     }
 
-    paging_switch(task->page_directory);
+    switch_page(task->user_page);
 }
 
-// status_t
-// task_page()
-// {
-//     status_t result = ALL_OK;
+void
+switch_to_user_page()
+{
+    set_user_segment_registers();
+    switch_to_task_page(current_task);
+}
 
-//     if (!get_next_task()) {
-//         return ERROR(EINVARG);
-//     }
+/// @brief Saves the current task registers. This function must be called while the kernel space paging is active.
+/// @param frame The interrupt frame that contains the current task registers
+void
+save_current_task_state(struct interrupt_frame* frame)
+{
+    if (!current_task) {
+        panic("Cannot save the state of a null task!");
+    }
 
-//     set_segment_registers_for_userland();
-//     result = switch_task(get_next_task());
-//     if (result != ALL_OK) {
-//         return result;
-//     }
+    if (!frame) {
+        panic("Cannot save the state of a task with a null frame!");
+    }
 
-//     return result;
-// }
+    current_task->registers.ip = frame->ip;
+    current_task->registers.cs = frame->cs;
+    current_task->registers.flags = frame->flags;
+    current_task->registers.esp = frame->esp;
+    current_task->registers.ss = frame->ss;
+
+    current_task->registers.eax = frame->eax;
+    current_task->registers.ecx = frame->ecx;
+    current_task->registers.edx = frame->edx;
+    current_task->registers.ebp = frame->ebp;
+    current_task->registers.esi = frame->esi;
+    current_task->registers.edi = frame->edi;
+    current_task->registers.ebx = frame->ebx;
+}
 
 void
 start_tasks()
@@ -188,6 +207,6 @@ start_tasks()
     }
 
     current_task = head_task;
-    switch_task(current_task);
-    return_task(&current_task->registers);
+    switch_to_task_page(current_task);
+    return_to_task(&current_task->registers);
 }

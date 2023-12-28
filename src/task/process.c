@@ -152,7 +152,7 @@ map_binary_data(struct process* process)
         return ERROR(EINVARG);
     }
 
-    struct paging_4gb_chunk* chunk = process->task->page_directory;
+    struct paging_map* chunk = process->task->user_page;
 
     if (!chunk) {
         return ERROR(EINVARG);
@@ -165,13 +165,6 @@ map_binary_data(struct process* process)
       process->size,
       PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
     );
-    // map_physical_address_to_pages(
-    //   chunk,
-    //   process->stack,
-    //   (void*)USER_PROGRAM_STACK_VIRTUAL_ADDRESS_START,
-    //   USER_PROGRAM_STACK_SIZE,
-    //   PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
-    // );
 
     return result;
 }

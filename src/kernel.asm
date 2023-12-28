@@ -1,6 +1,7 @@
 [BITS 32]
 
 global _start
+global set_kernel_segment_registers
 
 extern kernel_main
 
@@ -37,6 +38,14 @@ _start:
     ; cld                       ; Clears direction flag
     ; cli                       ; Disables interrupts
     ; hlt                       ; This hangs the computer
+
+set_kernel_segment_registers:
+    mov ax, DATA_SEG
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    ret
 
 times 512 - ($ - $$) db 0       ; Pad the kernel code sector to 512 bytes
                                 ; This ensures that any object files written in C and linked with this assembly

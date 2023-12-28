@@ -18,6 +18,25 @@ struct idtr_desc
     uint32_t base;  // The address of the Interrupt Descriptor Table
 } __attribute__((packed));
 
+struct interrupt_frame
+{
+    // https://c9x.me/x86/html/file_module_x86_id_270.html
+    uint32_t edi;
+    uint32_t esi;
+    uint32_t ebp;
+    uint32_t reserved; // esp, but we don't use the one set by `pushad`.
+                       // We use the one below set by CPU when an interrupt occurs.
+    uint32_t ebx;
+    uint32_t edx;
+    uint32_t ecx;
+    uint32_t eax;
+    uint32_t ip;
+    uint32_t cs;
+    uint32_t flags;
+    uint32_t esp;
+    uint32_t ss;
+} __attribute__((packed));
+
 void initialize_idt();
 void enable_interrupts();
 void disable_interrupts();

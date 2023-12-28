@@ -1,7 +1,9 @@
 #include "idt.h"
 #include "config.h"
 #include "io/io.h"
+#include "kernel.h"
 #include "memory/memory.h"
+#include "task/task.h"
 #include "terminal/terminal.h"
 
 struct idt_desc idt_descriptors[TOTAL_INTERRUPTS];
@@ -10,6 +12,7 @@ struct idtr_desc idtr_descriptor;
 extern void load_idt(struct idtr_desc* ptr);
 extern void int21h();
 extern void int_noop();
+extern void isr80h();
 
 void
 idt_zero()
@@ -28,6 +31,27 @@ void
 int_noop_handler()
 {
     outb(0x20, 0x20);
+}
+
+void*
+syscall(int command, struct interrupt_frame* frame)
+{
+    return 0;
+}
+
+void*
+isr80h_handler(int command, struct interrupt_frame* frame)
+{
+    void* res = 0;
+
+    switch_to_kernel_page();
+    save_current_task_state(frame);
+
+    res = syscall(command, frame);
+
+    switch_to_user_page();
+
+    return res;
 }
 
 void

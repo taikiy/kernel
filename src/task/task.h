@@ -1,6 +1,7 @@
 #ifndef TASK_H
 #define TASK_H
 
+#include "idt/idt.h"
 #include "memory/paging/paging.h"
 #include "process.h"
 #include <stdint.h>
@@ -26,7 +27,7 @@ struct registers
 
 struct task
 {
-    struct paging_4gb_chunk* page_directory;
+    struct paging_map* user_page;
     struct registers registers;
     struct process* process;
     struct task* next;
@@ -35,6 +36,9 @@ struct task
 
 struct task* create_task(struct process* process);
 status_t free_task(struct task* task);
+void switch_to_user_page();
+void save_current_task_state(struct interrupt_frame* frame);
+void restore_current_task_state(struct interrupt_frame* frame);
 void start_tasks();
 
 #endif

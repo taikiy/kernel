@@ -17,6 +17,7 @@
 #include "task/tss.h"
 #include "terminal/terminal.h"
 
+extern void set_kernel_segment_registers();
 void test_path_parser();
 void test_file_system();
 void test_user_space();
@@ -31,14 +32,21 @@ panic(const char* message)
     };
 }
 
-static struct paging_4gb_chunk* paging_chunk = 0;
+static struct paging_map* kernel_page = 0;
 
 void
-switch_to_kernel_page_directory()
+initialize_kernel_space_paging()
 {
-    paging_chunk = paging_new_4gb(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
-    paging_switch(paging_chunk);
+    kernel_page = new_paging_map(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    switch_page(kernel_page);
     enable_paging();
+}
+
+void
+switch_to_kernel_page()
+{
+    set_kernel_segment_registers();
+    switch_page(kernel_page);
 }
 
 void
@@ -53,7 +61,7 @@ kernel_main()
 
     print("...kernel heap and paging\n");
     initialize_kernel_heap();
-    switch_to_kernel_page_directory();
+    initialize_kernel_space_paging();
 
     print("...IDT\n");
     initialize_idt();

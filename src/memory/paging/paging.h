@@ -15,17 +15,17 @@
 #define PAGING_TOTAL_ENTRIES   1024 // for both directory and table
 #define PAGING_PAGE_SIZE_BYTES 4096
 
-struct paging_4gb_chunk
+struct paging_map
 {
     uint32_t* directory;
 };
 
-struct paging_4gb_chunk* paging_new_4gb(uint8_t flags);
-status_t paging_free_4gb(struct paging_4gb_chunk* chunk);
-void paging_switch(struct paging_4gb_chunk* chunk);
+struct paging_map* new_paging_map(uint8_t flags);
+status_t free_paging_map(struct paging_map* map);
+void switch_page(struct paging_map* map);
 void enable_paging();
 status_t map_physical_address_to_pages(
-  struct paging_4gb_chunk* chunk,
+  struct paging_map* map,
   void* physical_address,
   void* virtual_address,
   uint32_t size,

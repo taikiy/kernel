@@ -2,10 +2,10 @@
 
 section .asm
 
-global paging_load_directory
+global load_directory
 global enable_paging
 
-paging_load_directory:
+load_directory:
     push ebp
     mov ebp, esp
 
