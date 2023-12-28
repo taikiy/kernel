@@ -1,10 +1,10 @@
-# User-Land
+# User Space
 
-"User-Land" describes a state where processes run in Ring 3 (user mode) (the kernel runs in Ring 0 (kernel mode)). This is the state that most operating systems are in most of the time. User-Land has lower privileges than Kernel-Land, and can only access hardware and memory in a controlled way, via the kernel. If something goes wrong in User-Land, the kernel can step in and prevent it from causing damage. [Memory and Hardware Protection](./2_protected_mode.md#memory-and-hardware-protection)
+"User Space" or "User Land" describes a state where processes run in Ring 3 (user mode) (the kernel runs in Ring 0 (kernel mode)). This is the state that most operating systems are in most of the time. User Space has lower privileges than Kernel Space, and can only access hardware and memory in a controlled way, via the kernel. If something goes wrong in User Space, the kernel can step in and prevent it from causing damage. [Memory and Hardware Protection](./2_protected_mode.md#memory-and-hardware-protection)
 
-## How to switch to User-Land
+## How to switch to User Space
 
-Entering or returning to User-Land is basically restoring register values and setting IP to whatever user instructions we want to run. Then we execute the `iret` instruction. This instruction is similar to `ret`, but it also loads the CS, EIP, EFLAGS, SS, and ESP registers from the stack.
+Entering or returning to User Space is basically restoring register values and setting IP to whatever user instructions we want to run. Then we execute the `iret` instruction. This instruction is similar to `ret`, but it also loads the CS, EIP, EFLAGS, SS, and ESP registers from the stack.
 
 In a multi-tasking system, we need to save the current process state before switching to another process. This is done by saving the current process state in the TSS (Task State Segment) and then loading the new process state from the TSS.
 
@@ -35,13 +35,13 @@ Once a user program is loaded into memory, we need to map it to the virtual addr
 
 Once the user program is mapped to the virtual address space, we can switch to user mode by setting the segment registers to the user code and data segments, the instruction pointer to the entry point of the user program, the stack pointer to the top of the stack, and other registers needed by the user program. Then we execute the `iret` instruction to switch to user mode.
 
-- User-Land functionality [commit](https://github.com/taikiy/kernel/commit/f2254c355692ae00c262040abe6ba85f22984104)
+- User Space functionality [commit](https://github.com/taikiy/kernel/commit/f2254c355692ae00c262040abe6ba85f22984104)
 
 ## Writing our first user program
 
-To test the user-land functionality, we write a simple user program that goes into an infinite loop. We write it in assembly and build it with `nasm`, link it with `ld`, and copy it to the floppy disk image with `dd`. We also write a Makefile to automate these steps.
+To test the User Space functionality, we write a simple user program that goes into an infinite loop. We write it in assembly and build it with `nasm`, link it with `ld`, and copy it to the floppy disk image with `dd`. We also write a Makefile to automate these steps.
 
-[commit]()
+[commit](https://github.com/taikiy/kernel/commit/a1b8407c727eec8c2bc35b38432c8c67fa9102b8)
 
 ---
 

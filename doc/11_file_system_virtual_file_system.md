@@ -28,4 +28,4 @@ File descriptors are just integers. The kernel maintains a table of file descrip
 
 ---
 
-[previous](./10_file_system_fat16.md) | [next](./12_user_land.md)
+[previous](./10_file_system_fat16.md) | [next](./12_user_space.md)

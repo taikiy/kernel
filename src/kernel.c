@@ -19,7 +19,7 @@
 
 void test_path_parser();
 void test_file_system();
-void test_user_land();
+void test_user_space();
 
 void
 panic(const char* message)
@@ -67,7 +67,7 @@ kernel_main()
     // TESTS
     // test_path_parser();
     // test_file_system();
-    test_user_land();
+    test_user_space();
 
     print("...enabling interrupts\n");
     enable_interrupts();
@@ -76,7 +76,7 @@ kernel_main()
 }
 
 void
-test_user_land()
+test_user_space()
 {
     // Create a new process
     struct process* proc = kzalloc(sizeof(struct process));
