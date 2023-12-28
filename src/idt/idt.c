@@ -9,15 +9,23 @@
 struct idt_desc idt_descriptors[TOTAL_INTERRUPTS];
 struct idtr_desc idtr_descriptor;
 
+static SYSCALL_HANDLER syscall_handlers[TOTAL_SYSCALL_COUNT];
+
 extern void load_idt(struct idtr_desc* ptr);
-extern void int21h();
 extern void int_noop();
+extern void int21h();
 extern void isr80h();
 
-void
-idt_zero()
+static void
+int0h()
 {
     print("Divide by zero error\n");
+}
+
+void
+int_noop_handler()
+{
+    outb(0x20, 0x20);
 }
 
 void
@@ -27,16 +35,35 @@ int21h_handler()
     outb(0x20, 0x20);
 }
 
-void
-int_noop_handler()
-{
-    outb(0x20, 0x20);
-}
-
-void*
+static void*
 syscall(int command, struct interrupt_frame* frame)
 {
-    return 0;
+    void* result = 0;
+
+    if (command < 0 || command >= TOTAL_SYSCALL_COUNT) {
+        return result;
+    }
+
+    SYSCALL_HANDLER handler = syscall_handlers[command];
+    if (handler) {
+        result = handler(frame);
+    }
+
+    return result;
+}
+
+void
+register_syscall(int command, SYSCALL_HANDLER handler)
+{
+    if (command < 0 || command >= TOTAL_SYSCALL_COUNT) {
+        panic("Invalid syscall command");
+    }
+
+    if (syscall_handlers[command]) {
+        panic("Syscall already registered");
+    }
+
+    syscall_handlers[command] = handler;
 }
 
 void*
@@ -54,7 +81,7 @@ isr80h_handler(int command, struct interrupt_frame* frame)
     return res;
 }
 
-void
+static void
 idt_set(int interrupt_number, void* address)
 {
     struct idt_desc* desc = &idt_descriptors[interrupt_number];
@@ -80,8 +107,9 @@ initialize_idt()
     for (int i = 0; i < TOTAL_INTERRUPTS; i++) {
         idt_set(i, int_noop);
     }
-    idt_set(0, idt_zero);
-    idt_set(0x21, int21h);
+    idt_set(INT_0H, int0h);
+    idt_set(INT_21H, int21h);
+    idt_set(INT_80H, isr80h);
 
     // Load the IDT
     load_idt(&idtr_descriptor);

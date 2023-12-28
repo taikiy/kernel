@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#define INT_0H  0x00
+#define INT_21H 0x21
+#define INT_80H 0x80
+
 struct idt_desc
 {
     uint16_t offset_1;     // offset bits 0..15
@@ -37,7 +41,10 @@ struct interrupt_frame
     uint32_t ss;
 } __attribute__((packed));
 
+typedef void* (*SYSCALL_HANDLER)(struct interrupt_frame*);
+
 void initialize_idt();
+void register_syscall(int command, SYSCALL_HANDLER handler);
 void enable_interrupts();
 void disable_interrupts();
 
