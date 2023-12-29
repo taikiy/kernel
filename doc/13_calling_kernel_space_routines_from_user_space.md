@@ -26,4 +26,4 @@ print:
 ```
 
 - Interrupt 0x80 handler [commit](https://github.com/taikiy/kernel/commit/42c0b6374e21e096060d27e3255a2e007c55b0cd)
-- Register 0x80 handler in IDT [commit]()
+- Register 0x80 handler in IDT [commit](https://github.com/taikiy/kernel/commit/2020d58d9047f2584ab03d95ccfab2b221ff2ced)

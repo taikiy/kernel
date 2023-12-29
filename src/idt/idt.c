@@ -3,13 +3,12 @@
 #include "io/io.h"
 #include "kernel.h"
 #include "memory/memory.h"
+#include "system/syscall.h"
 #include "task/task.h"
 #include "terminal/terminal.h"
 
 struct idt_desc idt_descriptors[TOTAL_INTERRUPTS];
 struct idtr_desc idtr_descriptor;
-
-static SYSCALL_HANDLER syscall_handlers[TOTAL_SYSCALL_COUNT];
 
 extern void load_idt(struct idtr_desc* ptr);
 extern void int_noop();
@@ -33,37 +32,6 @@ int21h_handler()
 {
     print("Keyboard pressed\n");
     outb(0x20, 0x20);
-}
-
-static void*
-syscall(int command, struct interrupt_frame* frame)
-{
-    void* result = 0;
-
-    if (command < 0 || command >= TOTAL_SYSCALL_COUNT) {
-        return result;
-    }
-
-    SYSCALL_HANDLER handler = syscall_handlers[command];
-    if (handler) {
-        result = handler(frame);
-    }
-
-    return result;
-}
-
-void
-register_syscall(int command, SYSCALL_HANDLER handler)
-{
-    if (command < 0 || command >= TOTAL_SYSCALL_COUNT) {
-        panic("Invalid syscall command");
-    }
-
-    if (syscall_handlers[command]) {
-        panic("Syscall already registered");
-    }
-
-    syscall_handlers[command] = handler;
 }
 
 void*

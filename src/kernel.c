@@ -12,6 +12,7 @@
 #include "memory/paging/paging.h"
 #include "status.h"
 #include "string/string.h"
+#include "system/syscall.h"
 #include "task/process.h"
 #include "task/task.h"
 #include "task/tss.h"
@@ -21,6 +22,7 @@ extern void set_kernel_segment_registers();
 void test_path_parser();
 void test_file_system();
 void test_user_space();
+void test_syscall();
 
 void
 panic(const char* message)
@@ -28,8 +30,7 @@ panic(const char* message)
     print("PANIC: ");
     print(message);
     print("\n");
-    while (1) {
-    };
+    while (1) {};
 }
 
 static struct paging_map* kernel_page = 0;
@@ -65,6 +66,8 @@ kernel_main()
 
     print("...IDT\n");
     initialize_idt();
+    print("...ISR\n");
+    initialize_syscall_handlers();
 
     print("...disks and file systems\n");
     initialize_file_systems();
@@ -75,12 +78,24 @@ kernel_main()
     // TESTS
     // test_path_parser();
     // test_file_system();
-    test_user_space();
+    // test_user_space();
+    test_syscall();
 
     print("...enabling interrupts\n");
     enable_interrupts();
 
     print("End of kernel_main\n");
+}
+
+void
+test_syscall()
+{
+    struct process* proc = kzalloc(sizeof(struct process));
+    status_t result = create_process("0:/syscall.bin", &proc);
+    if (result != ALL_OK || !proc) {
+        panic("Failed to create a process!");
+    }
+    start_tasks();
 }
 
 void

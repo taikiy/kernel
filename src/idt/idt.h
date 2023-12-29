@@ -41,10 +41,7 @@ struct interrupt_frame
     uint32_t ss;
 } __attribute__((packed));
 
-typedef void* (*SYSCALL_HANDLER)(struct interrupt_frame*);
-
 void initialize_idt();
-void register_syscall(int command, SYSCALL_HANDLER handler);
 void enable_interrupts();
 void disable_interrupts();
 
