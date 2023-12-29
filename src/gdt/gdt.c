@@ -1,6 +1,7 @@
 #include "gdt.h"
 #include "config.h"
 #include "memory/memory.h"
+#include "system/sys.h"
 #include "task/tss.h"
 
 struct tss tss;

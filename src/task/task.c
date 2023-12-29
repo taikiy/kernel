@@ -1,23 +1,17 @@
 #include "task.h"
 #include "config.h"
 #include "idt/idt.h"
-#include "kernel.h"
 #include "memory/heap/kheap.h"
 #include "memory/memory.h"
+#include "memory/paging/paging.h"
 #include "status.h"
+#include "system/sys.h"
 
 struct task* current_task = 0;
 struct task* head_task = 0;
 struct task* tail_task = 0;
 
-extern void return_to_task();
-extern void set_user_segment_registers();
-
-struct task*
-get_current_task()
-{
-    return current_task;
-}
+extern void return_to_user_space();
 
 static status_t
 initialize_task(struct task* task, struct process* process)
@@ -90,27 +84,6 @@ remove_task_from_queue(struct task* task)
     return result;
 }
 
-status_t
-free_task(struct task* task)
-{
-    status_t result = ALL_OK;
-
-    if (!task) {
-        return ERROR(EINVARG);
-    }
-
-    if (task->user_page) {
-        free_paging_map(task->user_page);
-    }
-
-    remove_task_from_queue(task);
-    kfree(task);
-
-    // Do not free the process here, because the process may be shared by other tasks
-
-    return result;
-}
-
 struct task*
 create_task(struct process* process)
 {
@@ -146,25 +119,31 @@ out:
     return task;
 }
 
-static void
-switch_to_task_page(struct task* task)
+status_t
+free_task(struct task* task)
 {
+    status_t result = ALL_OK;
+
     if (!task) {
-        panic("Cannot switch to a null task!");
+        return ERROR(EINVARG);
     }
 
-    if (!task->user_page) {
-        panic("Cannot switch to a task with a null page directory!");
+    if (task->user_page) {
+        free_paging_map(task->user_page);
     }
 
-    switch_page(task->user_page);
+    remove_task_from_queue(task);
+    kfree(task);
+
+    // Do not free the process here, because the process may be shared by other tasks
+
+    return result;
 }
 
-void
-switch_to_user_page()
+struct task*
+get_current_task()
 {
-    set_user_segment_registers();
-    switch_to_task_page(current_task);
+    return current_task;
 }
 
 /// @brief Saves the current task registers. This function must be called while the kernel space paging is active.
@@ -207,6 +186,6 @@ start_tasks()
     }
 
     current_task = head_task;
-    switch_to_task_page(current_task);
-    return_to_task(&current_task->registers);
+    switch_to_user_page();
+    return_to_user_space(&current_task->registers);
 }

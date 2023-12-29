@@ -20,10 +20,11 @@ struct paging_map
     uint32_t* directory;
 };
 
+extern void set_kernel_segment_registers();
+extern void set_user_segment_registers();
+
 struct paging_map* new_paging_map(uint8_t flags);
 status_t free_paging_map(struct paging_map* map);
-void switch_page(struct paging_map* map);
-void enable_paging();
 status_t map_physical_address_to_pages(
   struct paging_map* map,
   void* physical_address,
@@ -31,5 +32,8 @@ status_t map_physical_address_to_pages(
   uint32_t size,
   uint32_t flags
 );
+void initialize_kernel_space_paging();
+void switch_to_kernel_page();
+void switch_to_user_page();
 
 #endif

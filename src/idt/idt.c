@@ -1,7 +1,6 @@
 #include "idt.h"
 #include "config.h"
 #include "io/io.h"
-#include "kernel.h"
 #include "memory/memory.h"
 #include "system/syscall.h"
 #include "task/task.h"

@@ -2,11 +2,10 @@
 
 section .asm
 
-global return_to_task
-global set_user_segment_registers
+global return_to_user_space
 
-; void return_to_task(struct registers* registers);
-return_to_task:
+; void return_to_user_space(struct registers* registers);
+return_to_user_space:
     ; here, we don't push the base pointer because we call `iretd` at the end
     mov ebp, esp
     mov ebx, [ebp + 4] ; +4 becuase we didn't push EBP
@@ -51,12 +50,4 @@ restore_general_purpose_registers:
     mov edi, [ebx + 16]
     mov ebx, [ebx + 20]
     pop ebp
-    ret
-
-set_user_segment_registers:
-    mov ax, 0x23 ; user data segment | flags: 0x3
-    mov ds, ax
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
     ret

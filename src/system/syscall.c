@@ -1,6 +1,6 @@
 #include "syscall.h"
 #include "config.h"
-#include "kernel.h"
+#include "sys.h"
 #include "terminal/terminal.h"
 
 static SYSCALL_HANDLER syscall_handlers[TOTAL_SYSCALL_COUNT];

@@ -12,43 +12,17 @@
 #include "memory/paging/paging.h"
 #include "status.h"
 #include "string/string.h"
+#include "system/sys.h"
 #include "system/syscall.h"
 #include "task/process.h"
 #include "task/task.h"
 #include "task/tss.h"
 #include "terminal/terminal.h"
 
-extern void set_kernel_segment_registers();
 void test_path_parser();
 void test_file_system();
 void test_user_space();
 void test_syscall();
-
-void
-panic(const char* message)
-{
-    print("PANIC: ");
-    print(message);
-    print("\n");
-    while (1) {};
-}
-
-static struct paging_map* kernel_page = 0;
-
-void
-initialize_kernel_space_paging()
-{
-    kernel_page = new_paging_map(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
-    switch_page(kernel_page);
-    enable_paging();
-}
-
-void
-switch_to_kernel_page()
-{
-    set_kernel_segment_registers();
-    switch_page(kernel_page);
-}
 
 void
 kernel_main()

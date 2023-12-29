@@ -36,7 +36,7 @@ struct task
 
 struct task* create_task(struct process* process);
 status_t free_task(struct task* task);
-void switch_to_user_page();
+struct task* get_current_task();
 void save_current_task_state(struct interrupt_frame* frame);
 void restore_current_task_state(struct interrupt_frame* frame);
 void start_tasks();
