@@ -1,6 +1,7 @@
 #ifndef PAGING_H
 #define PAGING_H
 
+#include "task/task.h"
 #include <status.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -25,6 +26,7 @@ extern void set_user_segment_registers();
 
 struct paging_map* new_paging_map(uint8_t flags);
 status_t free_paging_map(struct paging_map* map);
+status_t copy_data_from_user_space(struct task* task, void* src, void* dest, size_t size);
 status_t map_physical_address_to_pages(
   struct paging_map* map,
   void* physical_address,

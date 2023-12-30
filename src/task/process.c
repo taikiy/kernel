@@ -4,6 +4,7 @@
 #include "fs/file.h"
 #include "memory/heap/kheap.h"
 #include "memory/memory.h"
+#include "memory/paging/paging.h"
 #include "string/string.h"
 #include "task.h"
 

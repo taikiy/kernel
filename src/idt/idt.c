@@ -2,6 +2,7 @@
 #include "config.h"
 #include "io/io.h"
 #include "memory/memory.h"
+#include "memory/paging/paging.h"
 #include "system/syscall.h"
 #include "task/task.h"
 #include "terminal/terminal.h"

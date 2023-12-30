@@ -1,7 +1,7 @@
 #include "paging.h"
 #include "memory/heap/kheap.h"
+#include "memory/memory.h"
 #include "system/sys.h"
-#include "task/task.h"
 
 extern void load_directory(uint32_t* directory);
 extern void enable_paging();
@@ -60,7 +60,7 @@ get_aligned_address(void* address)
 /// page table entry flags.
 /// @return Status code ALL_OK if success, or <0 if fails.
 static status_t
-set_page_frame(struct paging_map* map, void* virtual_address, uint32_t table_entry)
+set_table_entry(struct paging_map* map, void* virtual_address, uint32_t table_entry)
 {
     if (!page_is_aligned(virtual_address)) {
         return ERROR(EINVARG);
@@ -81,9 +81,30 @@ set_page_frame(struct paging_map* map, void* virtual_address, uint32_t table_ent
 }
 
 static status_t
-map_page_frame(struct paging_map* map, uint32_t* physical_address, uint32_t* virtual_address, uint32_t flags)
+get_table_entry(struct paging_map* map, void* virtual_address, uint32_t* table_entry_out)
 {
-    return set_page_frame(map, virtual_address, (uint32_t)physical_address | flags);
+    if (!map || !map->directory || !virtual_address || !table_entry_out) {
+        return ERROR(EINVARG);
+    }
+
+    uint32_t directory_index = 0;
+    uint32_t table_index = 0;
+    status_t result = get_page_indexes(virtual_address, &directory_index, &table_index);
+    if (result < 0) {
+        return ERROR(EPAGEFAULT);
+    }
+
+    uint32_t directory_entry = map->directory[directory_index];
+    uint32_t* table = (uint32_t*)(directory_entry & 0xfffff000);
+    uint32_t table_entry = table[table_index];
+
+    if (!(table_entry & PAGING_IS_PRESENT)) {
+        return ERROR(EPAGEFAULT);
+    }
+
+    *table_entry_out = table_entry;
+
+    return ALL_OK;
 }
 
 struct paging_map*
@@ -171,7 +192,8 @@ map_physical_address_to_pages(
     uint32_t total_pages = ((uint32_t)physical_end_address - (uint32_t)physical_start_address) / PAGING_PAGE_SIZE_BYTES;
 
     for (uint32_t i = 0; i < total_pages; i++) {
-        result = map_page_frame(map, physical_address, virtual_address, flags);
+        uint32_t table_entry = (uint32_t)physical_address | flags;
+        result = set_table_entry(map, virtual_address, table_entry);
         if (result < 0) {
             goto out;
         }
@@ -204,4 +226,71 @@ switch_to_user_page()
     set_user_segment_registers();
     struct task* current_task = get_current_task();
     switch_page(current_task->user_page);
+}
+
+/// @brief Copies the data from the user space to the kernel space.
+/// @param task The task that contains the user space paging map.
+/// @param src The user space virtual address to copy from.
+/// @param dest The kernel space physical address to copy to.
+/// @param size The size of the data to copy.
+/// @return
+status_t
+copy_data_from_user_space(struct task* task, void* src, void* dest, size_t size)
+{
+    status_t result = ALL_OK;
+    const size_t max_page_size_to_copy = PAGING_PAGE_SIZE_BYTES;
+
+    if (!task || !task->user_page || !dest || !src) {
+        return ERROR(EINVARG);
+    }
+
+    // TODO: allow copying more than 4KB
+    if (size <= 0 || size > max_page_size_to_copy) {
+        return ERROR(EINVARG);
+    }
+
+    // temporary kernel space memory to copy the data from the user space
+    char* buf = kzalloc(size);
+    if (!buf) {
+        return ERROR(ENOMEM);
+    }
+
+    struct paging_map* user_page = task->user_page;
+
+    // get the original table entry at address `buf` and save it for later
+    uint32_t original_table_entry = 0;
+    result = get_table_entry(user_page, buf, &original_table_entry);
+    if (result != ALL_OK) {
+        goto out;
+    }
+
+    // Map the user space virtual address `buf` (which points to some unknown physical address) to point to the kernel
+    // space physical address `buf`. We set the flags to be writable, and accessible from everyone so the task can write
+    // to the kernel space memory.
+    result = map_physical_address_to_pages(
+      user_page, buf, buf, max_page_size_to_copy, PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
+    );
+    if (result != ALL_OK) {
+        goto out;
+    }
+
+    // switch to the user space for a brief moment to be able to see the `src` address
+    switch_to_user_page();
+    memcpy(buf, src, size);
+    switch_to_kernel_page();
+
+    // restore the original table entry
+    result = set_table_entry(user_page, buf, original_table_entry);
+    if (result != ALL_OK) {
+        goto out;
+    }
+
+    // copy the data from the temporary space to the `dest`
+    memcpy(dest, buf, size);
+
+out:
+    if (buf) {
+        kfree(buf);
+    }
+    return result;
 }

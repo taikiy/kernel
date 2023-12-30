@@ -11,6 +11,7 @@ typedef void* status_t;
 #define EFSNOTSUPPORTED   5
 #define EREADONLY         6
 #define ETOOMANYPROCESSES 7
+#define EPAGEFAULT        8
 
 #define ERROR(v) ((void*)(-v))
 

@@ -2,7 +2,6 @@
 #define TASK_H
 
 #include "idt/idt.h"
-#include "memory/paging/paging.h"
 #include "process.h"
 #include <stdint.h>
 
