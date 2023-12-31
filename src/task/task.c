@@ -146,34 +146,6 @@ get_current_task()
     return current_task;
 }
 
-/// @brief Saves the current task registers. This function must be called while the kernel space paging is active.
-/// @param frame The interrupt frame that contains the current task registers
-void
-save_current_task_state(struct interrupt_frame* frame)
-{
-    if (!current_task) {
-        panic("Cannot save the state of a null task!");
-    }
-
-    if (!frame) {
-        panic("Cannot save the state of a task with a null frame!");
-    }
-
-    current_task->registers.ip = frame->ip;
-    current_task->registers.cs = frame->cs;
-    current_task->registers.flags = frame->flags;
-    current_task->registers.esp = frame->esp;
-    current_task->registers.ss = frame->ss;
-
-    current_task->registers.eax = frame->eax;
-    current_task->registers.ecx = frame->ecx;
-    current_task->registers.edx = frame->edx;
-    current_task->registers.ebp = frame->ebp;
-    current_task->registers.esi = frame->esi;
-    current_task->registers.edi = frame->edi;
-    current_task->registers.ebx = frame->ebx;
-}
-
 void
 start_tasks()
 {

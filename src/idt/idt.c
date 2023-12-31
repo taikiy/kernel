@@ -3,8 +3,8 @@
 #include "io/io.h"
 #include "memory/memory.h"
 #include "memory/paging/paging.h"
+#include "system/sys.h"
 #include "system/syscall.h"
-#include "task/task.h"
 #include "terminal/terminal.h"
 
 struct idt_desc idt_descriptors[TOTAL_INTERRUPTS];
@@ -14,6 +14,36 @@ extern void load_idt(struct idtr_desc* ptr);
 extern void int_noop();
 extern void int21h();
 extern void isr80h();
+
+/// @brief Saves the current task registers as it was when the interrupt 0x80 was made. This function must be called
+/// while the kernel space paging is active.
+/// @param frame The interrupt frame that contains the current task registers
+static void
+save_current_task_state(struct interrupt_frame* frame)
+{
+    struct task* current_task = get_current_task();
+    if (!current_task) {
+        panic("Cannot save the state of a null task!");
+    }
+
+    if (!frame) {
+        panic("Cannot save the state of a task with a null frame!");
+    }
+
+    current_task->registers.ip = frame->ip;
+    current_task->registers.cs = frame->cs;
+    current_task->registers.flags = frame->flags;
+    current_task->registers.esp = frame->esp;
+    current_task->registers.ss = frame->ss;
+
+    current_task->registers.eax = frame->eax;
+    current_task->registers.ecx = frame->ecx;
+    current_task->registers.edx = frame->edx;
+    current_task->registers.ebp = frame->ebp;
+    current_task->registers.esi = frame->esi;
+    current_task->registers.edi = frame->edi;
+    current_task->registers.ebx = frame->ebx;
+}
 
 static void
 int0h()
