@@ -69,6 +69,7 @@ test_syscall()
     if (result != ALL_OK || !proc) {
         panic("Failed to create a process!");
     }
+    print("Executing 0:/syscall.bin\n");
     start_tasks();
 }
 
@@ -81,7 +82,7 @@ test_user_space()
     if (result != ALL_OK || !proc) {
         panic("Failed to create a process!");
     }
-    print("Process created successfully!\n");
+    print("Executing 0:/blank.bin\n");
     start_tasks();
 }
 

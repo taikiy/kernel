@@ -8,7 +8,8 @@ typedef void* (*SYSCALL_HANDLER)(struct interrupt_frame*);
 
 enum SYSCALL_COMMAND
 {
-    SYSCALL_COMMAND_0_PRINT = 0,
+    SYSCALL_COMMAND_0_SUM = 0,
+    SYSCALL_COMMAND_1_PRINT = 1,
 };
 
 void initialize_syscall_handlers();

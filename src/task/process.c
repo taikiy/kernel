@@ -139,42 +139,45 @@ free_process(struct process* process)
 status_t
 map_binary_data(struct process* process)
 {
-    status_t result = ALL_OK;
-
-    if (!process) {
-        return ERROR(EINVARG);
-    }
-
-    if (!process->data) {
-        return ERROR(EINVARG);
-    }
-
-    if (!process->task) {
-        return ERROR(EINVARG);
-    }
-
-    struct paging_map* chunk = process->task->user_page;
-
-    if (!chunk) {
-        return ERROR(EINVARG);
-    }
-
-    map_physical_address_to_pages(
-      chunk,
+    return map_physical_address_to_pages(
+      process->task->user_page,
       process->data,
       (void*)USER_PROGRAM_VIRTUAL_ADDRESS_START,
       process->size,
       PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
     );
+}
 
-    return result;
+status_t
+map_stack(struct process* process)
+{
+    return map_physical_address_to_pages(
+      process->task->user_page,
+      process->stack,
+      (void*)USER_PROGRAM_STACK_VIRTUAL_ADDRESS_END, // END because the stack grows downwards
+      USER_PROGRAM_STACK_SIZE,
+      PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
+    );
 }
 
 status_t
 map_process_memory(struct process* process)
 {
+    status_t result = ALL_OK;
+
+    result = map_stack(process);
+    if (result != ALL_OK) {
+        goto out;
+    }
+
     // TODO: implement for different file types
-    return map_binary_data(process);
+    result = map_binary_data(process);
+    if (result != ALL_OK) {
+        goto out;
+    }
+
+out:
+    return result;
 }
 
 /// @brief Loads data from `file_path`, creates a new process and saves it at `slot` of `processes`.

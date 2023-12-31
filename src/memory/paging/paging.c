@@ -69,7 +69,7 @@ set_table_entry(struct paging_map* map, void* virtual_address, uint32_t table_en
     uint32_t directory_index = 0;
     uint32_t table_index = 0;
     status_t result = get_page_indexes(virtual_address, &directory_index, &table_index);
-    if (result < 0) {
+    if (result != ALL_OK) {
         return result;
     }
 
@@ -90,7 +90,7 @@ get_table_entry(struct paging_map* map, void* virtual_address, uint32_t* table_e
     uint32_t directory_index = 0;
     uint32_t table_index = 0;
     status_t result = get_page_indexes(virtual_address, &directory_index, &table_index);
-    if (result < 0) {
+    if (result != ALL_OK) {
         return ERROR(EPAGEFAULT);
     }
 
@@ -194,7 +194,7 @@ map_physical_address_to_pages(
     for (uint32_t i = 0; i < total_pages; i++) {
         uint32_t table_entry = (uint32_t)physical_address | flags;
         result = set_table_entry(map, virtual_address, table_entry);
-        if (result < 0) {
+        if (result != ALL_OK) {
             goto out;
         }
         physical_address += PAGING_PAGE_SIZE_BYTES;

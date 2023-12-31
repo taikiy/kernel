@@ -28,3 +28,42 @@ print:
 - Interrupt 0x80 handler [commit](https://github.com/taikiy/kernel/commit/42c0b6374e21e096060d27e3255a2e007c55b0cd)
 - Register 0x80 handler in IDT [commit](https://github.com/taikiy/kernel/commit/2020d58d9047f2584ab03d95ccfab2b221ff2ced)
 - `sys_print` function [commit](https://github.com/taikiy/kernel/commit/459b80a2d26d9ff61d42f026305b79abbe5acf4f)
+
+## Passing arguments
+
+We can pass arguments from the user space programs to the kernel space (syscall) by pushing them to the stack before making `int 0x80` call. The kernel can then read the arguments from the task's stack.
+
+`get_arg_from_task() @ syscall.c:18`
+
+---
+
+`--- User Space ---`
+
+1. The user program pushes the arguments to the stack.
+2. The user program sets the kernel command ID (`SYSCALL_COMMAND` in our source) to EAX.
+3. The user program executes the `int 0x80` instruction.
+
+`--- Kernel Space ---`
+
+4. The kernel saves the user program's registers to the task instance.
+5. The kernel calls the syscall handler.
+6. The syscall handler reads the saved registers from the task instance. ESP points to the top of the stack.
+7. The syscall handler switches to the User Space to read the arguments from the stack.
+
+`--- User Space ---`
+
+8. For each argument, the syscall reads the value at `$esp + index`. The value is `uint32_t` which is the address of the argument value at `index`. Then, we cast it to `uint32_t*` and dereference it to get the value.
+9. The syscall handler switches to the Kernel Space.
+
+`--- Kernel Space ---`
+
+10. The syscall casts the value to `void*` because the value could be of any type. The caller is responsible for casting the value to the correct type. If it's an address to some data (string, struct, etc.), the caller must call `copy_data_from_user_space()` to copy the user space data to the kernel space.
+
+---
+
+- Implement `copy_data_from_user_space()` [commit](https://github.com/taikiy/kernel/commit/ff3f410d753d25828b2af2442c19f19d95245d29)
+- Reading the task stack (syscall arguments) [commit]()
+
+---
+
+[Previous](./12_user_space.md) | [Next](./14_accessing_keyboard_in_protected_mode.md) | [Home](../README.md)

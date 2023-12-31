@@ -34,7 +34,7 @@ disk_stream_read(struct disk_stream* stream, char* buf, unsigned int size)
     for (int i = 0; i < size; i++) {
         if (stream->offset == 0 || i == 0) {
             result = disk_read_block(stream->disk, stream->sector, 1, block);
-            if (result < 0) {
+            if (result != ALL_OK) {
                 goto out;
             }
         }

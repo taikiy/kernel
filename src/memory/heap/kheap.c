@@ -3,6 +3,7 @@
 #include "heap.h"
 #include "memory/memory.h"
 #include "status.h"
+#include "system/sys.h"
 #include "terminal/terminal.h"
 
 struct heap kernel_heap;
@@ -17,8 +18,8 @@ initialize_kernel_heap()
     void* end = (void*)HEAP_ADDRESS + HEAP_SIZE_BYTES;
     status_t result = heap_create(&kernel_heap, (void*)HEAP_ADDRESS, end, &kernel_heap_table);
 
-    if (result < 0) {
-        print("Failed to create heap\n");
+    if (result != ALL_OK) {
+        panic("Failed to create heap\n");
     }
 }
 
