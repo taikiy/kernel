@@ -1,6 +1,6 @@
 # Accessing the keyboard from the Protected Mode
 
-## Keyboard Driver
+## Keyboard Drivers
 
 - Keyboard access is interrupt-driven.
 - Each process has its own keyboard buffer. The keyboard buffer is a circular buffer.
@@ -21,7 +21,8 @@ struct keyboard_buffer {
 };
 ```
 
-- Virtual keyboard driver [commit]()
+- Virtual keyboard driver [commit](https://github.com/taikiy/kernel/commit/1db81a07a2d5e855504dcbc827bea0fc9913b9dd)
+- PS/2 keyboard driver foundation [commit](https://github.com/taikiy/kernel/commit/965e1e415bb0bf78ea932fef0c7f7759d5be4dfa)
 
 ---
 

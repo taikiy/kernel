@@ -1,6 +1,8 @@
 #include "keyboard.h"
 #include "config.h"
 #include "memory/memory.h"
+#include "ps2_default_keyboard.h"
+#include "system/sys.h"
 #include "task/process.h"
 
 // We could have used a linked list here. Not sure if that's a better design though.
@@ -44,9 +46,9 @@ static status_t
 load_static_keyboard_drivers()
 {
     // It's okay to panic here because these are static drivers.
-    // if (register_keyboard_driver(ps2_keyboard_driver()) != ALL_OK) {
-    //     panic("Failed to register PS/2 keyboard driver\n");
-    // }
+    if (register_keyboard_driver(ps2_default_keyboard()) != ALL_OK) {
+        panic("Failed to register PS/2 keyboard driver\n");
+    }
     return ALL_OK;
 }
 
