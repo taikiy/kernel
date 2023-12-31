@@ -60,4 +60,4 @@ and with a bit more helper functions, we can call `print` and write "Hello, Worl
 
 ---
 
-[previous](./3_32-bit_kernel.md) | [next](./5_interrupt_descriptor_table.md)
+[Previous](./3_32-bit_kernel.md) | [Next](./5_interrupt_descriptor_table.md) | [Home](../README.md)

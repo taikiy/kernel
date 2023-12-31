@@ -192,4 +192,4 @@ We can see that the page table entry for virtual address `0x1000` points to phys
 
 ---
 
-[previous](./7_memory_management_heap.md) | [next](./9_file_system_disk_driver.md)
+[Previous](./7_memory_management_heap.md) | [Next](./9_file_system_disk_driver.md) | [Home](../README.md)

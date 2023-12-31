@@ -44,4 +44,4 @@ Imagine handling IRQ 0 timer interrupts (mapped to INT 20h) will allow us to swi
 
 ---
 
-[previous](./5_interrupt_descriptor_table.md) | [next](./7_memory_management_heap.md)
+[Previous](./5_interrupt_descriptor_table.md) | [Next](./7_memory_management_heap.md) | [Home](../README.md)

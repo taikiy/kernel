@@ -152,4 +152,4 @@ Note that the [Makefile](../Makefile) already has a target `mount` that does the
 
 ---
 
-[previous](./9_file_system_disk_driver.md) | [next](./11_file_system_virtual_file_system.md)
+[Previous](./9_file_system_disk_driver.md) | [Next](./11_file_system_virtual_file_system.md) | [Home](../README.md)

@@ -96,11 +96,11 @@ general:
 
 ---
 
-[previous](./1_real_mode.md) | [next](./3_32-bit_kernel.md)
-
----
-
 ## References
 
 - [GDB to LLDB command map](https://lldb.llvm.org/use/map.html#examining-thread-state)
 - [Entering Protected Mode tutorial](http://www.osdever.net/tutorials/view/the-world-of-protected-mode)
+
+---
+
+[Previous](./1_real_mode.md) | [Next](./3_32-bit_kernel.md) | [Home](../README.md)

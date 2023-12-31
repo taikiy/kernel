@@ -115,4 +115,4 @@ Quick summary of how our code works with memory.
 
 ---
 
-[previous](./2_protected_mode.md) | [next](./4_writing_kernel_in_C.md)
+[Previous](./2_protected_mode.md) | [Next](./4_writing_kernel_in_C.md) | [Home](../README.md)

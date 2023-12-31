@@ -66,4 +66,4 @@ Use `qemu-system-i386` just so that we are truly in a 32-bit system. x86_64 is a
 
 ---
 
-[previous](./6_programmable_interrupt_controller.md) | [next](./8_memory_management_paging.md)
+[Previous](./6_programmable_interrupt_controller.md) | [Next](./8_memory_management_paging.md) | [Home](../README.md)

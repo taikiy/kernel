@@ -62,7 +62,10 @@ We can pass arguments from the user space programs to the kernel space (syscall)
 ---
 
 - Implement `copy_data_from_user_space()` [commit](https://github.com/taikiy/kernel/commit/ff3f410d753d25828b2af2442c19f19d95245d29)
-- Reading the task stack (syscall arguments) [commit]()
+- Reading the user program stack (syscall arguments) [commit](https://github.com/taikiy/kernel/commit/c0c471c50d87aa256e21db74e8891221360f412b)
+
+There was an issue in the `linker.ld` files. The `.asm` section was defined at the end of the file, below `.data` section. I'm not sure the exact reason,
+but when I defined a constant string in the `.data` section in the `syscall.asm` file, `int 0x80` call didn't work. I'm guessing it's because of the memory alignment issue. I moved the `.asm` section closer to the top just below the `.text` section, and it worked.
 
 ---
 

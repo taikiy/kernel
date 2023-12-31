@@ -87,4 +87,4 @@ That's our bootloader code!
 
 ---
 
-[Previous](./8_memory_management_paging.md) | [Next](./10_file_system_fat16.md)
+[Previous](./8_memory_management_paging.md) | [Next](./10_file_system_fat16.md) | [Home](../README.md)

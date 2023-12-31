@@ -61,4 +61,4 @@ Use `lidt` instruction.
 
 ---
 
-[previous](./4_writing_kernel_in_C.md) | [next](./6_programmable_interrupt_controller.md)
+[Previous](./4_writing_kernel_in_C.md) | [Next](./6_programmable_interrupt_controller.md) | [Home](../README.md)

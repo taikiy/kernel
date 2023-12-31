@@ -137,4 +137,4 @@ Note how we created an empty label called `buffer` at the very end of the bootlo
 
 ---
 
-[previous](../README.md) | [next](./2_protected_mode.md)
+[Previous](../README.md) | [Next](./2_protected_mode.md) | [Home](../README.md)
