@@ -3,9 +3,15 @@ OUTPUT_FORMAT(binary)
 SECTIONS
 {
     . = 0x400000;          /* USER_PROGRAM_VIRTUAL_ADDRESS_START in config.h */
+
     .text : ALIGN(4096)
     {
         *(.text)
+    }
+
+    .asm : ALIGN(4096)
+    {
+        *(.asm)
     }
 
     .rodata : ALIGN(4096)
@@ -22,10 +28,5 @@ SECTIONS
     {
         *(COMMON)
         *(.bss)
-    }
-
-    .asm : ALIGN(4096)
-    {
-        *(.asm)
     }
 }
