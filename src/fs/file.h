@@ -69,7 +69,6 @@ struct file_stat
 };
 
 void initialize_file_systems();
-void insert_file_system(struct file_system* fs);
 struct file_system* fs_resolve(struct disk* disk);
 int fopen(const char* file_name, const char* mode);
 size_t fread(void* ptr, uint32_t size, uint32_t count, int fd);

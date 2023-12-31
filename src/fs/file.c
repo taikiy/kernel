@@ -5,13 +5,14 @@
 #include "memory/memory.h"
 #include "status.h"
 #include "string/string.h"
+#include "system/sys.h"
 #include "terminal/terminal.h"
 
-struct file_system* file_systems[MAX_FILE_SYSTEM_COUNT];
-struct file_descriptor* file_descriptors[MAX_FILE_DESCRIPTOR_COUNT];
+static struct file_system* file_systems[MAX_FILE_SYSTEM_COUNT];
+static struct file_descriptor* file_descriptors[MAX_FILE_DESCRIPTOR_COUNT];
 
 static struct file_system**
-get_free_file_system()
+get_free_file_system_slot()
 {
     for (int i = 0; i < MAX_FILE_SYSTEM_COUNT; i++) {
         if (file_systems[i] == 0) {
@@ -21,15 +22,12 @@ get_free_file_system()
     return 0;
 }
 
-void
-insert_file_system(struct file_system* fs)
+static void
+register_file_system(struct file_system* fs)
 {
-    struct file_system** free_fs = get_free_file_system();
+    struct file_system** free_fs = get_free_file_system_slot();
     if (free_fs == 0) {
-        // TODO: Error handling
-        print("No free file system slots\n");
-        while (1) {
-        };
+        panic("No free file system slots\n");
     }
     *free_fs = fs;
 }
@@ -37,7 +35,7 @@ insert_file_system(struct file_system* fs)
 static void
 load_static_file_systems()
 {
-    insert_file_system(fat16_initialize());
+    register_file_system(fat16_initialize());
 }
 
 static void

@@ -102,11 +102,8 @@ test_path_parser()
 void
 test_file_system()
 {
-    // Bind the disk to FAT16
-    struct disk* current_disk;
-    current_disk = get_disk(0);
-    fs_resolve(current_disk);
-
+    // Open a file. The file path contains the disk name, and the disk name is associated with a file system.
+    // Resolving the file system is done in `initialize_disks()`.
     int fd = fopen("0:/hello.txt", "r");
     if (!fd) {
         print("ERROR: File not found!\n");
