@@ -2,6 +2,7 @@
 #define PROCESS_H
 
 #include "config.h"
+#include "keyboard/keyboard.h"
 #include "status.h"
 #include <stdint.h>
 
@@ -31,8 +32,11 @@ struct process
 
     // The size of the process memory pointed by `ptr`
     uint32_t size;
+
+    struct keyboard_buffer keyboard_buffer;
 };
 
 status_t create_process(const char* file_path, struct process** process);
+struct process* get_current_process();
 
 #endif

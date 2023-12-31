@@ -12,6 +12,8 @@ typedef void* status_t;
 #define EREADONLY         6
 #define ETOOMANYPROCESSES 7
 #define EPAGEFAULT        8
+#define ENOCALLBACK       9
+#define ETOOMANYDRIVERS   10
 
 #define ERROR(v) ((void*)(-v))
 

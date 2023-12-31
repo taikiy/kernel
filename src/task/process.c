@@ -203,12 +203,13 @@ load_process_to_slot(const char* file_path, struct process** process, int slot)
 
     initialize_process(new_process);
 
-    new_process->id = slot;
+    // load the executable data from the file
     result = load_data_for_process(file_path, new_process);
     if (result != ALL_OK) {
         goto out;
     }
 
+    // allocate the stack memory
     void* program_stack_ptr = kzalloc(USER_PROGRAM_STACK_SIZE);
     if (!program_stack_ptr) {
         result = ERROR(ENOMEM);
@@ -216,6 +217,7 @@ load_process_to_slot(const char* file_path, struct process** process, int slot)
     }
     new_process->stack = program_stack_ptr;
 
+    // create the initial task
     struct task* new_task = create_task(new_process);
     if (!new_task) {
         result = ERROR(ENOMEM);
@@ -223,8 +225,11 @@ load_process_to_slot(const char* file_path, struct process** process, int slot)
     }
     new_process->task = new_task;
 
+    // map the data/stack memory to the process' virtual address space
     map_process_memory(new_process);
 
+    // assign the process ID
+    new_process->id = slot;
     processes[slot] = new_process;
     *process = new_process;
 

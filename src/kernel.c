@@ -47,6 +47,9 @@ kernel_main()
     initialize_file_systems();
     initialize_disks();
 
+    print("...keyboard drivers\n");
+    initialize_keyboard_drivers();
+
     print("\nKernel is ready!\n\n");
 
     // TESTS
