@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-#define INT_0H  0x00
-#define INT_21H 0x21
-#define INT_80H 0x80
+#define IRQ_0H  0x00
+#define IRQ_21H 0x21
+#define IRQ_80H 0x80
 
 struct idt_desc
 {
@@ -41,7 +41,10 @@ struct interrupt_frame
     uint32_t ss;
 } __attribute__((packed));
 
+typedef void* (*INTERRUPT_HANDLER_CALLBACK)(struct interrupt_frame*);
+
 void initialize_idt();
+void initialize_interrupt_handlers();
 void enable_interrupts();
 void disable_interrupts();
 

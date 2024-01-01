@@ -1,15 +1,11 @@
 section .asm
 
+global isr_pointer_table
 global load_idt
-global int_noop
-global int21h
-global isr80h
 global enable_interrupts
 global disable_interrupts
 
-extern int21h_handler
-extern int_noop_handler
-extern isr80h_handler
+extern interrupt_handler_wrapper
 
 enable_interrupts:
     sti
@@ -29,39 +25,43 @@ load_idt:
     pop ebp
     ret
 
-int21h:
-    pushad          ; pushes the contents of general-purpose registers (EAX, EBX, ECX, EDX, ESP, EBP, ESI and EDI) onto the stack.
+; Macro to generate Interrupt Service Routines for handling system calls
+%macro isr_wrapper 1
+    global isr%1
+    isr%1:
+                            ; ip, cs, flags, sp, ss are pushed onto the stack by the CPU.
+        pushad              ; pushes the contents of general-purpose registers onto the stack. 
 
-    call int21h_handler
+        push esp            ; push the stack pointer onto the stack so that we can access the arguments passed to the system call in C.
+        push dword %1       ; push the system call number
 
-    popad
-    iret
+        call interrupt_handler_wrapper
 
-int_noop:
-    pushad          ; pushes the contents of general-purpose registers (EAX, EBX, ECX, EDX, ESP, EBP, ESI and EDI) onto the stack.
+        mov dword[res], eax ; save the return value of the system call in the res variable in case we use eax for something else.
+        add esp, 8          ; remove the arguments from the stack
 
-    call int_noop_handler
+        popad               ; restore the contents of general-purpose registers from the stack.
+        mov eax, dword[res] ; move the return value of the system call into the eax register.
+        iret
+%endmacro
 
-    popad
-    iret
-
-; Interrupt Service Routines for handling system calls
-isr80h:
-                        ; ip, cs, flags, sp, ss are pushed onto the stack by the CPU.
-    pushad              ; pushes the contents of general-purpose registers onto the stack. 
-
-    push esp            ; push the stack pointer onto the stack so that we can access the arguments passed to the system call in C.
-    push eax            ; push the system call number
-
-    call isr80h_handler
-
-    mov dword[res], eax ; save the return value of the system call in the res variable in case we use eax for something else.
-    add esp, 8          ; remove the arguments from the stack
-
-    popad               ; restore the contents of general-purpose registers from the stack.
-    mov eax, dword[res] ; move the return value of the system call into the eax register.
-    iret
+%assign i 0
+%rep 512
+    isr_wrapper i
+%assign i i+1
+%endrep
 
 section .data
 ; used to store the return value of the system call in `isr80h`
 res: dd 0
+
+%macro isr_entry 1
+    dd isr%1
+%endmacro
+
+isr_pointer_table:
+%assign i 0
+%rep 512
+    isr_entry i
+%assign i i+1
+%endrep

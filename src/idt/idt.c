@@ -7,13 +7,12 @@
 #include "system/syscall.h"
 #include "terminal/terminal.h"
 
-struct idt_desc idt_descriptors[TOTAL_INTERRUPTS];
-struct idtr_desc idtr_descriptor;
-
 extern void load_idt(struct idtr_desc* ptr);
-extern void int_noop();
-extern void int21h();
-extern void isr80h();
+extern void* isr_pointer_table[TOTAL_INTERRUPTS];
+
+static struct idt_desc idt_descriptors[TOTAL_INTERRUPTS];
+static struct idtr_desc idtr_descriptor;
+static INTERRUPT_HANDLER_CALLBACK interrupt_handlers[TOTAL_INTERRUPTS];
 
 /// @brief Saves the current task registers as it was when the interrupt 0x80 was made. This function must be called
 /// while the kernel space paging is active.
@@ -45,29 +44,34 @@ save_current_task_state(struct interrupt_frame* frame)
     current_task->registers.ebx = frame->ebx;
 }
 
-static void
-int0h()
-{
-    print("Divide by zero error\n");
-}
-
 void
-int_noop_handler()
+default_interrupt_handler()
 {
-    outb(0x20, 0x20);
-}
-
-void
-int21h_handler()
-{
-    print("Keyboard pressed\n");
     outb(0x20, 0x20);
 }
 
 void*
-isr80h_handler(int command, struct interrupt_frame* frame)
+int0h_handler(struct interrupt_frame* frame)
+{
+    print("Divide by zero error\n");
+    // no ack. halt
+    return 0;
+}
+
+void*
+int21h_handler(struct interrupt_frame* frame)
+{
+    print("Keyboard pressed\n");
+    outb(0x20, 0x20);
+    return 0;
+}
+
+void*
+int80h_handler(struct interrupt_frame* frame)
 {
     void* res = 0;
+
+    int command = frame->eax;
 
     switch_to_kernel_page();
     save_current_task_state(frame);
@@ -79,10 +83,38 @@ isr80h_handler(int command, struct interrupt_frame* frame)
     return res;
 }
 
-static void
-idt_set(int interrupt_number, void* address)
+void*
+interrupt_handler_wrapper(int irq, struct interrupt_frame* frame)
 {
-    struct idt_desc* desc = &idt_descriptors[interrupt_number];
+    void* result = 0;
+
+    if (interrupt_handlers[irq]) {
+        result = interrupt_handlers[irq](frame);
+    } else {
+        default_interrupt_handler();
+    }
+
+    return result;
+}
+
+static void
+register_interrupt_handler(int irq, INTERRUPT_HANDLER_CALLBACK handler)
+{
+    if (irq < 0 || irq >= TOTAL_INTERRUPTS) {
+        panic("Invalid interrupt number");
+    }
+
+    if (interrupt_handlers[irq]) {
+        panic("Interrupt already registered");
+    }
+
+    interrupt_handlers[irq] = handler;
+}
+
+static void
+idt_set(int irq, void* address)
+{
+    struct idt_desc* desc = &idt_descriptors[irq];
 
     desc->offset_1 = (uint32_t)address & 0xffff;
     desc->selector = KERNEL_CODE_SELECTOR;
@@ -103,12 +135,18 @@ initialize_idt()
     idtr_descriptor.base = (uint32_t)idt_descriptors;
 
     for (int i = 0; i < TOTAL_INTERRUPTS; i++) {
-        idt_set(i, int_noop);
+        idt_set(i, isr_pointer_table[i]);
     }
-    idt_set(INT_0H, int0h);
-    idt_set(INT_21H, int21h);
-    idt_set(INT_80H, isr80h);
 
-    // Load the IDT
     load_idt(&idtr_descriptor);
+}
+
+void
+initialize_interrupt_handlers()
+{
+    memset(interrupt_handlers, 0, sizeof(interrupt_handlers));
+
+    register_interrupt_handler(IRQ_0H, int0h_handler);
+    register_interrupt_handler(IRQ_21H, int21h_handler);
+    register_interrupt_handler(IRQ_80H, int80h_handler);
 }
