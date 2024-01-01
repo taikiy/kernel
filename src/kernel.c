@@ -69,25 +69,22 @@ void
 test_syscall()
 {
     struct process* proc = kzalloc(sizeof(struct process));
-    status_t result = create_process("0:/syscall.bin", &proc);
+    print("Executing 0:/syscall.bin\n");
+    status_t result = create_process_and_switch("0:/syscall.bin", &proc);
     if (result != ALL_OK || !proc) {
         panic("Failed to create a process!");
     }
-    print("Executing 0:/syscall.bin\n");
-    start_tasks();
 }
 
 void
 test_user_space()
 {
-    // Create a new process
     struct process* proc = kzalloc(sizeof(struct process));
-    status_t result = create_process("0:/blank.bin", &proc);
+    print("Executing 0:/blank.bin\n");
+    status_t result = create_process_and_switch("0:/blank.bin", &proc);
     if (result != ALL_OK || !proc) {
         panic("Failed to create a process!");
     }
-    print("Executing 0:/blank.bin\n");
-    start_tasks();
 }
 
 void

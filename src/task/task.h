@@ -36,6 +36,6 @@ struct task
 struct task* create_task(struct process* process);
 status_t free_task(struct task* task);
 struct task* get_current_task();
-void start_tasks();
+status_t switch_task(struct task* task);
 
 #endif

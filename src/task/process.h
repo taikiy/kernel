@@ -37,6 +37,8 @@ struct process
 };
 
 status_t create_process(const char* file_path, struct process** process);
+status_t create_process_and_switch(const char* file_path, struct process** process);
 struct process* get_current_process();
+status_t switch_process(struct process* process);
 
 #endif

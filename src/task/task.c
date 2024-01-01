@@ -146,18 +146,16 @@ get_current_task()
     return current_task;
 }
 
-void
-start_tasks()
+status_t
+switch_task(struct task* task)
 {
-    if (current_task) {
-        panic("A task is already running!");
+    if (!task) {
+        return ERROR(EINVARG);
     }
 
-    if (!head_task) {
-        panic("There is no task to run!");
-    }
-
-    current_task = head_task;
+    current_task = task;
     switch_to_user_page();
     return_to_user_space(&current_task->registers);
+
+    return ALL_OK;
 }

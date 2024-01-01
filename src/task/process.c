@@ -243,6 +243,17 @@ out:
 }
 
 status_t
+switch_process(struct process* process)
+{
+    if (!process) {
+        return ERROR(EINVARG);
+    }
+
+    current_process = process;
+    return switch_task(process->task);
+}
+
+status_t
 create_process(const char* file_path, struct process** process)
 {
     if (!file_path) {
@@ -263,4 +274,17 @@ create_process(const char* file_path, struct process** process)
     }
 
     return load_process_to_slot(file_path, process, slot);
+}
+
+status_t
+create_process_and_switch(const char* file_path, struct process** process)
+{
+    status_t result = ALL_OK;
+
+    result = create_process(file_path, process);
+    if (result != ALL_OK) {
+        return result;
+    }
+
+    return switch_process(*process);
 }
