@@ -47,14 +47,13 @@ save_current_task_state(struct interrupt_frame* frame)
 void
 default_interrupt_handler()
 {
-    outb(0x20, 0x20);
+    // no-op
 }
 
 void*
 int0h_handler(struct interrupt_frame* frame)
 {
     print("Divide by zero error\n");
-    // no ack. halt
     return 0;
 }
 
@@ -62,7 +61,6 @@ void*
 int20h_handler(struct interrupt_frame* frame)
 {
     print("Timer tick\n");
-    outb(0x20, 0x20);
     return 0;
 }
 
@@ -70,7 +68,6 @@ void*
 int21h_handler(struct interrupt_frame* frame)
 {
     print("Keyboard pressed\n");
-    outb(0x20, 0x20);
     return 0;
 }
 
@@ -80,13 +77,7 @@ int80h_handler(struct interrupt_frame* frame)
     void* res = 0;
 
     int command = frame->eax;
-
-    switch_to_kernel_page();
-    save_current_task_state(frame);
-
     res = syscall(command, frame);
-
-    switch_to_user_page();
 
     return res;
 }
@@ -97,10 +88,16 @@ interrupt_handler_wrapper(int irq, struct interrupt_frame* frame)
     void* result = 0;
 
     if (interrupt_handlers[irq]) {
+        switch_to_kernel_page();
+        save_current_task_state(frame);
         result = interrupt_handlers[irq](frame);
+        switch_to_user_page();
     } else {
         default_interrupt_handler();
     }
+
+    // send ack
+    outb(0x20, 0x20);
 
     return result;
 }
@@ -155,7 +152,7 @@ initialize_interrupt_handlers()
     memset(interrupt_handlers, 0, sizeof(interrupt_handlers));
 
     register_interrupt_handler(IRQ_0H, int0h_handler);
-    register_interrupt_handler(0x20, int20h_handler);
+    // register_interrupt_handler(0x20, int20h_handler);
     register_interrupt_handler(IRQ_21H, int21h_handler);
     register_interrupt_handler(IRQ_80H, int80h_handler);
 }
