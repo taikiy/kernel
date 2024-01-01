@@ -2,7 +2,7 @@
 #define TERMINAL_H
 
 #define VGA_WIDTH  80
-#define VGA_HEIGHT 20
+#define VGA_HEIGHT 25
 
 void terminal_initialize();
 void print(const char* str);

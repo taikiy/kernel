@@ -59,6 +59,14 @@ int0h_handler(struct interrupt_frame* frame)
 }
 
 void*
+int20h_handler(struct interrupt_frame* frame)
+{
+    print("Timer tick\n");
+    outb(0x20, 0x20);
+    return 0;
+}
+
+void*
 int21h_handler(struct interrupt_frame* frame)
 {
     print("Keyboard pressed\n");
@@ -147,6 +155,7 @@ initialize_interrupt_handlers()
     memset(interrupt_handlers, 0, sizeof(interrupt_handlers));
 
     register_interrupt_handler(IRQ_0H, int0h_handler);
+    register_interrupt_handler(0x20, int20h_handler);
     register_interrupt_handler(IRQ_21H, int21h_handler);
     register_interrupt_handler(IRQ_80H, int80h_handler);
 }
