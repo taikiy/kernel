@@ -11,6 +11,8 @@
 
 The standard IRQ number for the keyboard is 1. Because we mapped the PIC to 0x20, the IRQ number for the keyboard is 0x21. (Refer to [PIC (Programmable Interrupt Controller)](./6_programmable_interrupt_controller.md))
 
+In this section, we will implement the virtual keyboard driver and the PS/2 keyboard driver.
+
 [PS/2 Keyboard](https://wiki.osdev.org/PS/2_Keyboard)
 
 ```c
@@ -23,7 +25,20 @@ struct keyboard_buffer {
 
 - Virtual keyboard driver [commit](https://github.com/taikiy/kernel/commit/1db81a07a2d5e855504dcbc827bea0fc9913b9dd)
 - PS/2 keyboard driver foundation [commit](https://github.com/taikiy/kernel/commit/d802c1ef99b515d0118798f50104e68d97c5b435)
-- PS/2 keyboard driver [commit]()
+- In between, I did IDT refactoring, terminal improvement, and adding switching processes functionality.
+- PS/2 keyboard driver [commit](https://github.com/taikiy/kernel/commit/87deb951b281b4315bbebd870386b7844ae4e267)
+
+## Keyboard Scan Code
+
+PS2 keyboard sends 1 byte of data at a time. The data is called _Scan Code_. The scan code is a byte that represents the key pressed or released. The scan code is different from the ASCII code. The scan code is a hardware-specific code. The ASCII code is a software-specific code. Keyboard drivers are responsible for converting, taking into account the SHIFT key, CAPS LOCK key, etc., to produce the lowercase or uppercase ASCII code.
+
+In the PS2 keyboard driver, we read the scan code using the `inb` instruction. The `inb` instruction reads a byte from the port. The port number is 0x60. The `inb` instruction is an x86 instruction. We pass the converted ASCII character back to the virtual keyboard driver. The virtual keyboard driver pushes the ASCII character to the keyboard buffer of the active process.
+
+## Accessing the keyboard buffer from the user program
+
+We can access the keyboard buffer from the user program by making a syscall. The syscall will pop the keyboard buffer of the active task's parent process.
+
+- sys_get_key() syscall [commit]()
 
 ---
 

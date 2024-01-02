@@ -27,5 +27,6 @@ struct keyboard_buffer
 void initialize_keyboard_drivers();
 void* keyboard_interrupt_handler(struct interrupt_frame* frame);
 void push_key(uint8_t key);
+uint8_t pop_key();
 
 #endif

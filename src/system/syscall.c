@@ -6,7 +6,7 @@
 #include "task/task.h"
 #include "terminal/terminal.h"
 
-static SYSCALL_HANDLER syscall_handlers[TOTAL_SYSCALL_COUNT];
+static SYSCALL_HANDLER_CALLBACK syscall_handlers[TOTAL_SYSCALL_COUNT];
 
 /// @brief Returns an argument value at the given index passed to the syscall. This function returns a void pointer
 /// because the argument can be of any type. The caller is responsible for casting the result to the correct type or
@@ -66,8 +66,16 @@ sys_print(struct interrupt_frame* frame)
     return 0;
 }
 
+void*
+sys_get_key(struct interrupt_frame* frame)
+{
+    // `sys_get_key` takes no argument. We can simply return the first key in the keyboard buffer.
+    uint8_t key = pop_key();
+    return (void*)(uint32_t)key;
+}
+
 static void
-register_syscall_handler(int command, SYSCALL_HANDLER handler)
+register_syscall_handler(int command, SYSCALL_HANDLER_CALLBACK handler)
 {
     if (command < 0 || command >= TOTAL_SYSCALL_COUNT) {
         panic("Invalid syscall command");
@@ -85,6 +93,7 @@ initialize_syscall_handlers()
 {
     register_syscall_handler(SYSCALL_COMMAND_0_SUM, sys_sum);
     register_syscall_handler(SYSCALL_COMMAND_1_PRINT, sys_print);
+    register_syscall_handler(SYSCALL_COMMAND_2_GET_KEY, sys_get_key);
 }
 
 void*
@@ -96,7 +105,7 @@ syscall(int command, struct interrupt_frame* frame)
         return result;
     }
 
-    SYSCALL_HANDLER handler = syscall_handlers[command];
+    SYSCALL_HANDLER_CALLBACK handler = syscall_handlers[command];
     if (handler) {
         result = handler(frame);
     }

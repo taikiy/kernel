@@ -10,8 +10,8 @@
 #define HEAP_BLOCK_SIZE_BYTES 4096
 #define HEAP_ADDRESS          0x01000000
 
-#define KERNEL_CODE_SELECTOR 0x08
-#define KERNEL_DATA_SELECTOR 0x10
+#define KERNEL_CODE_SELECTOR       0x08
+#define KERNEL_DATA_SELECTOR       0x10
 // Requested Protection Level (RPL) allows software to override the CPL to select a new protection
 // level. The Current Protection Level (CPL) is the protection level of the currently executing
 // program. The CPL is stored in bits 0 and 1 of SS and CS.

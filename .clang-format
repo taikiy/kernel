@@ -4,10 +4,13 @@ ColumnLimit: 120
 IndentWidth: 4
 
 AlignAfterOpenBracket: BlockIndent
-AlignConsecutiveMacros: true
+AlignConsecutiveMacros:
+  Enabled: true
+  AcrossComments: true
 AlignTrailingComments:
   Kind: Always
 AllowAllArgumentsOnNextLine: true
+AlignConsecutiveAssignments: true
 AllowShortBlocksOnASingleLine: Empty
 AlwaysBreakAfterReturnType: AllDefinitions
 InsertBraces: true

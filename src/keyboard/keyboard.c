@@ -4,6 +4,7 @@
 #include "ps2_default_keyboard.h"
 #include "system/sys.h"
 #include "task/process.h"
+#include "task/task.h"
 #include "terminal/terminal.h"
 
 // We could have used a linked list here. Not sure if that's a better design though.
@@ -83,7 +84,6 @@ keyboard_interrupt_handler(struct interrupt_frame* frame)
 
     char c = (uint32_t)keyboard->interrupt_handler(frame);
     if (c != 0) {
-        print(&c);
         push_key(c);
     }
 
@@ -108,4 +108,31 @@ push_key(uint8_t key)
 
     current_process->keyboard_buffer.buffer[tail] = key;
     current_process->keyboard_buffer.tail++;
+}
+
+uint8_t
+pop_key()
+{
+    struct task* current_task = get_current_task();
+    if (!current_task) {
+        return 0;
+    }
+
+    struct process* current_process = current_task->process;
+    if (!current_process) {
+        return 0;
+    }
+
+    int head = current_process->keyboard_buffer.head % KEYBOARD_BUFFER_SIZE;
+    int tail = current_process->keyboard_buffer.tail % KEYBOARD_BUFFER_SIZE;
+
+    if (head == tail) {
+        // Buffer is empty
+        return 0;
+    }
+
+    uint8_t key = current_process->keyboard_buffer.buffer[head];
+    current_process->keyboard_buffer.head++;
+
+    return key;
 }

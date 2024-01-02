@@ -51,13 +51,10 @@ ps2_keyboard_interrupt_handler(struct interrupt_frame* frame)
      * > should never need to send a command to the PS/2 controller itself after initialisation (and you can disable
      * > IRQs and both PS/2 devices where necessary during initialisation).
      *
-     * So, we'll just read the first scancode, and not do anything to read the second byte.
+     * So, we'll just read the first scancode, and not do anything to read the second byte. If there's any issue,
+     * uncomment the following line:
      */
     // uint8_t _ignore = inb(PS2_DATA_PORT);
-
-    print("scancode: 0x");
-    print_hex(scancode);
-    print("\n");
 
     if (scancode & PS2_KEYBOARD_KEY_RELEASED) {
         // TODO: handle key release. For now, we ignore key releases.
@@ -73,8 +70,8 @@ struct keyboard*
 ps2_default_keyboard_driver()
 {
     static struct keyboard keyboard = {
-        .name = "PS/2 Default Keyboard",
-        .initialize = ps2_initialize_keyboard_driver,
+        .name              = "PS/2 Default Keyboard",
+        .initialize        = ps2_initialize_keyboard_driver,
         .interrupt_handler = ps2_keyboard_interrupt_handler,
     };
 
