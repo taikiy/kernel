@@ -37,6 +37,17 @@ write_char(char c, char color)
             push_char_to_buffer(cursor_col, cursor_row, ' ', color);
             cursor_col += 1;
         }
+    } else if (c == 0x08) {
+        // Backspace
+        if (cursor_col == 0 && cursor_row == 0) {
+            return;
+        } else if (cursor_col == 0) {
+            cursor_col = VGA_WIDTH - 1;
+            cursor_row -= 1;
+        } else {
+            cursor_col -= 1;
+        }
+        push_char_to_buffer(cursor_col, cursor_row, ' ', color);
     } else {
         push_char_to_buffer(cursor_col, cursor_row, c, color);
         cursor_col += 1;

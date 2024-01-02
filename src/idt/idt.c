@@ -59,13 +59,6 @@ int0h_handler(struct interrupt_frame* frame)
 }
 
 void*
-int20h_handler(struct interrupt_frame* frame)
-{
-    print("Timer tick\n");
-    return 0;
-}
-
-void*
 int80h_handler(struct interrupt_frame* frame)
 {
     void* res   = 0;
