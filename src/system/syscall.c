@@ -74,6 +74,19 @@ sys_getchar(struct interrupt_frame* frame)
     return (void*)(uint32_t)key;
 }
 
+void*
+sys_putchar(struct interrupt_frame* frame)
+{
+    struct task* current_task = get_current_task();
+
+    // `sys_putchar` takes one `char` argument. Since `char` is a 1-byte primitive type, the value is directly stored in
+    // the stack. We can get the value by simply casting the argument value to `char`.
+    char c = (char)(uint32_t)get_arg_from_task(current_task, 0);
+    print(&c);
+
+    return 0;
+}
+
 static void
 register_syscall_handler(int command, SYSCALL_HANDLER_CALLBACK handler)
 {
@@ -93,7 +106,8 @@ initialize_syscall_handlers()
 {
     register_syscall_handler(SYSCALL_COMMAND_0_SUM, sys_sum);
     register_syscall_handler(SYSCALL_COMMAND_1_PRINT, sys_print);
-    register_syscall_handler(SYSCALL_COMMAND_2_GET_KEY, sys_getchar);
+    register_syscall_handler(SYSCALL_COMMAND_2_GETCHAR, sys_getchar);
+    register_syscall_handler(SYSCALL_COMMAND_3_PUTCHAR, sys_putchar);
 }
 
 void*

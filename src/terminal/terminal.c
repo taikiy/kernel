@@ -32,7 +32,7 @@ push_char_to_buffer(int x, int y, char c, char color)
 static void
 write_char(char c, char color)
 {
-    if (c == '\n') {
+    if (c == '\n' || c == '\r') {
         while (cursor_col < VGA_WIDTH) {
             push_char_to_buffer(cursor_col, cursor_row, ' ', color);
             cursor_col += 1;
@@ -74,7 +74,7 @@ terminal_initialize()
 {
     // TODO: https://wiki.osdev.org/Detecting_Colour_and_Monochrome_Monitors
 
-    video_mem = (uint16_t*)0xB8000;
+    video_mem  = (uint16_t*)0xB8000;
     cursor_col = 0;
     cursor_row = 0;
 

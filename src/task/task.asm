@@ -33,7 +33,7 @@ return_to_user_space:
 
     push dword [ebp + 4]
     call restore_general_purpose_registers
-    add esp, 4
+    add esp, 4  ; clean up the stack
 
     iretd
 
