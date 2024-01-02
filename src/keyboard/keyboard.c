@@ -4,6 +4,7 @@
 #include "ps2_default_keyboard.h"
 #include "system/sys.h"
 #include "task/process.h"
+#include "terminal/terminal.h"
 
 // We could have used a linked list here. Not sure if that's a better design though.
 static struct keyboard* keyboard_drivers[MAX_KEYBOARD_DRIVER_COUNT];
@@ -46,7 +47,7 @@ static status_t
 load_static_keyboard_drivers()
 {
     // It's okay to panic here because these are static drivers.
-    if (register_keyboard_driver(ps2_default_keyboard()) != ALL_OK) {
+    if (register_keyboard_driver(ps2_default_keyboard_driver()) != ALL_OK) {
         panic("Failed to register PS/2 keyboard driver\n");
     }
     return ALL_OK;
@@ -66,6 +67,27 @@ initialize_keyboard_drivers()
     load_keyboard_drivers();
 
     current_keyboard_index = 0;
+}
+
+/// @brief This function is called from the interrupt handler in src/idt/idt.c. The Interrupt handler calls
+/// `switch_to_kernel_page()` before calling this function.
+/// @param frame The interrupt frame that contains the current task registers.
+/// @return This interrupt handler always returns 0. Pressed keys are pushed to the keyboard buffer.
+void*
+keyboard_interrupt_handler(struct interrupt_frame* frame)
+{
+    struct keyboard* keyboard = current_keyboard();
+    if (!keyboard) {
+        return 0;
+    }
+
+    char c = (uint32_t)keyboard->interrupt_handler(frame);
+    if (c != 0) {
+        print(&c);
+        push_key(c);
+    }
+
+    return 0;
 }
 
 void

@@ -1,6 +1,7 @@
 #include "idt.h"
 #include "config.h"
 #include "io/io.h"
+#include "keyboard/keyboard.h"
 #include "memory/memory.h"
 #include "memory/paging/paging.h"
 #include "system/sys.h"
@@ -61,13 +62,6 @@ void*
 int20h_handler(struct interrupt_frame* frame)
 {
     print("Timer tick\n");
-    return 0;
-}
-
-void*
-int21h_handler(struct interrupt_frame* frame)
-{
-    print("Keyboard pressed\n");
     return 0;
 }
 
@@ -152,7 +146,6 @@ initialize_interrupt_handlers()
     memset(interrupt_handlers, 0, sizeof(interrupt_handlers));
 
     register_interrupt_handler(IRQ_0H, int0h_handler);
-    // register_interrupt_handler(0x20, int20h_handler);
-    register_interrupt_handler(IRQ_21H, int21h_handler);
+    register_interrupt_handler(IRQ_21H, keyboard_interrupt_handler);
     register_interrupt_handler(IRQ_80H, int80h_handler);
 }

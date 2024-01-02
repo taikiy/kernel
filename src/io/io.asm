@@ -5,6 +5,7 @@ global inw
 global outb
 global outw
 
+; write a byte to the specified port
 inb:
 	push ebp
 	mov ebp, esp
@@ -16,6 +17,7 @@ inb:
 	pop ebp
 	ret
 
+; write a word to the specified port
 inw:
 	push ebp
 	mov ebp, esp
@@ -27,6 +29,7 @@ inw:
 	pop ebp
 	ret
 
+; read a byte from the specified port
 outb:
 	push ebp
 	mov ebp, esp
@@ -38,6 +41,7 @@ outb:
 	pop ebp
 	ret
 
+; read a word from the specified port
 outw:
 	push ebp
 	mov ebp, esp

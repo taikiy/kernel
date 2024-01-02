@@ -48,16 +48,19 @@ We can pass arguments from the user space programs to the kernel space (syscall)
 4. The kernel saves the user program's registers to the task instance.
 5. The kernel calls the syscall handler.
 6. The syscall handler reads the saved registers from the task instance. ESP points to the top of the stack.
-7. The syscall handler switches to the User Space to read the arguments from the stack.
+7. The syscall handler switches to the user page to read the arguments from the stack.
 
-`--- User Space ---`
+   `--- user page ---`
 
 8. For each argument, the syscall reads the value at `$esp + index`. The value is `uint32_t` which is the address of the argument value at `index`. Then, we cast it to `uint32_t*` and dereference it to get the value.
-9. The syscall handler switches to the Kernel Space.
+9. The syscall handler switches to the kernel page.
 
-`--- Kernel Space ---`
+   `--- kernel page ---`
 
 10. The syscall casts the value to `void*` because the value could be of any type. The caller is responsible for casting the value to the correct type. If it's an address to some data (string, struct, etc.), the caller must call `copy_data_from_user_space()` to copy the user space data to the kernel space.
+11. The interrupt handler calls `iret` to return to the user program.
+
+`--- Use Space ---`
 
 ---
 

@@ -23,6 +23,7 @@ struct keyboard_buffer {
 
 - Virtual keyboard driver [commit](https://github.com/taikiy/kernel/commit/1db81a07a2d5e855504dcbc827bea0fc9913b9dd)
 - PS/2 keyboard driver foundation [commit](https://github.com/taikiy/kernel/commit/d802c1ef99b515d0118798f50104e68d97c5b435)
+- PS/2 keyboard driver [commit]()
 
 ---
 

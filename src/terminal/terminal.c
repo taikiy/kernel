@@ -104,3 +104,11 @@ print_int(int n)
     itoa(n, buf, 10);
     print(buf);
 }
+
+void
+print_hex(uint32_t n)
+{
+    char buf[32];
+    itoa(n, buf, 16);
+    print(buf);
+}
