@@ -41,7 +41,7 @@ struct interrupt_frame
     uint32_t ss;
 } __attribute__((packed));
 
-typedef void* (*INTERRUPT_HANDLER_CALLBACK)(struct interrupt_frame*);
+typedef void* (*INTERRUPT_HANDLER)(struct interrupt_frame*);
 
 void initialize_idt();
 void initialize_interrupt_handlers();

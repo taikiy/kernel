@@ -1,11 +1,11 @@
 section .asm
 
-global isr_pointer_table
+global isr_table
 global load_idt
 global enable_interrupts
 global disable_interrupts
 
-extern interrupt_handler_wrapper
+extern interrupt_handle_wrapper
 
 enable_interrupts:
     sti
@@ -26,7 +26,7 @@ load_idt:
     ret
 
 ; Macro to generate Interrupt Service Routines for handling system calls
-%macro isr_wrapper 1
+%macro isr 1
     global isr%1
     isr%1:
                             ; ip, cs, flags, sp, ss are pushed onto the stack by the CPU.
@@ -35,7 +35,7 @@ load_idt:
         push esp            ; push the stack pointer onto the stack so that we can access the arguments passed to the system call in C.
         push dword %1       ; push the system call number
 
-        call interrupt_handler_wrapper
+        call interrupt_handle_wrapper
 
         mov dword[res], eax ; save the return value of the system call in the res variable in case we use eax for something else.
         add esp, 8          ; remove the arguments from the stack
@@ -47,19 +47,19 @@ load_idt:
 
 %assign i 0
 %rep 512
-    isr_wrapper i
+    isr i
 %assign i i+1
 %endrep
 
 section .data
-; used to store the return value of the system call in `isr80h`
+; used to store the return value of the system call in `int80h`
 res: dd 0
 
 %macro isr_entry 1
     dd isr%1
 %endmacro
 
-isr_pointer_table:
+isr_table:
 %assign i 0
 %rep 512
     isr_entry i

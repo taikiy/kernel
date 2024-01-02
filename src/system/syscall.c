@@ -6,7 +6,9 @@
 #include "task/task.h"
 #include "terminal/terminal.h"
 
-static SYSCALL_HANDLER_CALLBACK syscall_handlers[TOTAL_SYSCALL_COUNT];
+// TODO: This file should be merged together with other ISR definitions in idt.c and placed in isr.c or something.
+
+static INTERRUPT_HANDLER syscall_handlers[TOTAL_SYSCALL_COUNT];
 
 /// @brief Returns an argument value at the given index passed to the syscall. This function returns a void pointer
 /// because the argument can be of any type. The caller is responsible for casting the result to the correct type or
@@ -88,7 +90,7 @@ sys_putchar(struct interrupt_frame* frame)
 }
 
 static void
-register_syscall_handler(int command, SYSCALL_HANDLER_CALLBACK handler)
+register_syscall_handler(int command, INTERRUPT_HANDLER handler)
 {
     if (command < 0 || command >= TOTAL_SYSCALL_COUNT) {
         panic("Invalid syscall command");
@@ -119,7 +121,7 @@ syscall(int command, struct interrupt_frame* frame)
         return result;
     }
 
-    SYSCALL_HANDLER_CALLBACK handler = syscall_handlers[command];
+    INTERRUPT_HANDLER handler = syscall_handlers[command];
     if (handler) {
         result = handler(frame);
     }

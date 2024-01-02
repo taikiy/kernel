@@ -14,7 +14,7 @@ struct keyboard
     char name[32];
 
     KB_INIT_CALLBACK initialize;
-    INTERRUPT_HANDLER_CALLBACK interrupt_handler;
+    INTERRUPT_HANDLER interrupt_handler;
 };
 
 struct keyboard_buffer

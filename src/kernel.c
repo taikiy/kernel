@@ -42,7 +42,6 @@ kernel_main()
     initialize_idt();
     print("...ISR\n");
     initialize_interrupt_handlers();
-    initialize_syscall_handlers();
 
     print("...disks and file systems\n");
     initialize_file_systems();

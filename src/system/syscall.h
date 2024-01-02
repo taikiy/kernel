@@ -4,8 +4,6 @@
 #include "idt/idt.h"
 #include <stdint.h>
 
-typedef INTERRUPT_HANDLER_CALLBACK SYSCALL_HANDLER_CALLBACK;
-
 enum SYSCALL_COMMAND
 {
     SYSCALL_COMMAND_0_SUM     = 0,

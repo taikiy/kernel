@@ -9,11 +9,11 @@
 #include "terminal/terminal.h"
 
 extern void load_idt(struct idtr_desc* ptr);
-extern void* isr_pointer_table[TOTAL_INTERRUPTS];
+extern void* isr_table[TOTAL_INTERRUPTS];
 
 static struct idt_desc idt_descriptors[TOTAL_INTERRUPTS];
 static struct idtr_desc idtr_descriptor;
-static INTERRUPT_HANDLER_CALLBACK interrupt_handlers[TOTAL_INTERRUPTS];
+static INTERRUPT_HANDLER interrupt_handlers[TOTAL_INTERRUPTS];
 
 /// @brief Saves the current task registers as it was when the interrupt 0x80 was made. This function must be called
 /// while the kernel space paging is active.
@@ -70,7 +70,7 @@ int80h_handler(struct interrupt_frame* frame)
 }
 
 void*
-interrupt_handler_wrapper(int irq, struct interrupt_frame* frame)
+interrupt_handle_wrapper(int irq, struct interrupt_frame* frame)
 {
     void* result = 0;
 
@@ -90,7 +90,7 @@ interrupt_handler_wrapper(int irq, struct interrupt_frame* frame)
 }
 
 static void
-register_interrupt_handler(int irq, INTERRUPT_HANDLER_CALLBACK handler)
+register_interrupt_handler(int irq, INTERRUPT_HANDLER handler)
 {
     if (irq < 0 || irq >= TOTAL_INTERRUPTS) {
         panic("Invalid interrupt number");
@@ -127,7 +127,7 @@ initialize_idt()
     idtr_descriptor.base  = (uint32_t)idt_descriptors;
 
     for (int i = 0; i < TOTAL_INTERRUPTS; i++) {
-        idt_set(i, isr_pointer_table[i]);
+        idt_set(i, isr_table[i]);
     }
 
     load_idt(&idtr_descriptor);
@@ -141,4 +141,6 @@ initialize_interrupt_handlers()
     register_interrupt_handler(IRQ_0H, int0h_handler);
     register_interrupt_handler(IRQ_21H, keyboard_interrupt_handler);
     register_interrupt_handler(IRQ_80H, int80h_handler);
+
+    initialize_syscall_handlers();
 }
