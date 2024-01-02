@@ -23,10 +23,10 @@ _start:
    jmp $
 
 get_key:
-   mov eax, 2     ; sys_get_key
+   mov eax, 2     ; sys_getchar
    int 0x80
-   cmp eax, 0x00  ; if sys_get_key() == 0x00
-   je get_key     ; loop until sys_get_key() returns a key
+   cmp eax, 0x00  ; if sys_getchar() == 0x00
+   je get_key     ; loop until sys_getchar() returns a key
    ret
 
 section .data

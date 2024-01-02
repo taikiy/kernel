@@ -67,9 +67,9 @@ sys_print(struct interrupt_frame* frame)
 }
 
 void*
-sys_get_key(struct interrupt_frame* frame)
+sys_getchar(struct interrupt_frame* frame)
 {
-    // `sys_get_key` takes no argument. We can simply return the first key in the keyboard buffer.
+    // `sys_getchar` takes no argument from the user program. We can simply return the first key in the keyboard buffer.
     uint8_t key = pop_key();
     return (void*)(uint32_t)key;
 }
@@ -93,7 +93,7 @@ initialize_syscall_handlers()
 {
     register_syscall_handler(SYSCALL_COMMAND_0_SUM, sys_sum);
     register_syscall_handler(SYSCALL_COMMAND_1_PRINT, sys_print);
-    register_syscall_handler(SYSCALL_COMMAND_2_GET_KEY, sys_get_key);
+    register_syscall_handler(SYSCALL_COMMAND_2_GET_KEY, sys_getchar);
 }
 
 void*

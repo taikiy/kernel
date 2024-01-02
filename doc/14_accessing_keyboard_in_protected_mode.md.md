@@ -38,7 +38,7 @@ In the PS2 keyboard driver, we read the scan code using the `inb` instruction. T
 
 We can access the keyboard buffer from the user program by making a syscall. The syscall will pop the keyboard buffer of the active task's parent process.
 
-- sys_get_key() syscall [commit]()
+- sys_getchar() [commit]()
 
 ---
 
