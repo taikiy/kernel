@@ -1,4 +1,4 @@
-#include "binary.h"
+#include "bin_loader.h"
 #include "fs/file.h"
 #include "memory/heap/kheap.h"
 #include <stdint.h>
@@ -18,7 +18,7 @@ load_binary_executable_file(int fd, void** out_ptr, size_t* out_size)
         return ERROR(EIO);
     }
 
-    uint32_t file_size     = stat.size;
+    uint32_t file_size = stat.size;
     void* program_data_ptr = kzalloc(file_size);
     if (!program_data_ptr) {
         return ERROR(ENOMEM);
@@ -31,7 +31,7 @@ load_binary_executable_file(int fd, void** out_ptr, size_t* out_size)
         goto out;
     }
 
-    *out_ptr  = program_data_ptr;
+    *out_ptr = program_data_ptr;
     *out_size = file_size;
 
 out:

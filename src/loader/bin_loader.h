@@ -1,5 +1,5 @@
-#ifndef FORMAT_BINARY_H
-#define FORMAT_BINARY_H
+#ifndef BIN_LOADER_H
+#define BIN_LOADER_H
 
 #include "status.h"
 #include <stddef.h>

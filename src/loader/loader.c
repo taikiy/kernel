@@ -1,5 +1,5 @@
 #include "loader.h"
-#include "format/binary.h"
+#include "bin_loader.h"
 #include "fs/file.h"
 #include "memory/heap/kheap.h"
 #include <stdint.h>

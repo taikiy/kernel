@@ -150,6 +150,4 @@ typedef struct
     Elf32_Half st_shndx;
 } __attribute__((packed)) Elf32_Sym;
 
-status_t load_elf_executable_file(int fd, void** out_ptr, size_t* out_size);
-
 #endif
