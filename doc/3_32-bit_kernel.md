@@ -2,7 +2,7 @@
 
 ## 1. Cross-Compiler
 
-Installing the i686-elf toolchain on M1 Mac is very easy.
+Since we are using Apple Silicon Mac, we need to use a cross-compiler to compile files into x86 binaries. Installing the GNU _binutils_ toolchain for x86 architecture on M1 Mac is very easy.
 
 ```shell
 > brew install i686-elf-binutils i686-elf-gcc i386-elf-gdb

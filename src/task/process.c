@@ -2,13 +2,14 @@
 
 #include "config.h"
 #include "fs/file.h"
+#include "loader/loader.h"
 #include "memory/heap/kheap.h"
 #include "memory/memory.h"
 #include "memory/paging/paging.h"
 #include "string/string.h"
 #include "task.h"
 
-struct process* current_process = 0;
+static struct process* current_process          = 0;
 static struct process* processes[MAX_PROCESSES] = {};
 
 static void
@@ -18,70 +19,15 @@ initialize_process(struct process* process)
 }
 
 static status_t
-load_binary_data(int fd, struct process* process)
-{
-    status_t result = ALL_OK;
-
-    if (fd <= 0) {
-        return ERROR(EINVARG);
-    }
-
-    if (!process) {
-        return ERROR(EINVARG);
-    }
-
-    struct file_stat stat;
-    result = fstat(fd, &stat);
-    if (result != ALL_OK) {
-        return ERROR(EIO);
-    }
-
-    uint32_t file_size = stat.size;
-    void* program_data_ptr = kzalloc(file_size);
-    if (!program_data_ptr) {
-        return ERROR(ENOMEM);
-    }
-
-    // TODO: Read the file in chunks
-    size_t read_items = fread(program_data_ptr, file_size, 1, fd);
-    if (read_items != 1) {
-        result = ERROR(EIO);
-        goto out;
-    }
-
-    process->data = program_data_ptr;
-    process->size = file_size;
-
-out:
-    if (result != ALL_OK) {
-        if (program_data_ptr) {
-            kfree(program_data_ptr);
-        }
-    }
-    return result;
-}
-
-static status_t
 load_data_for_process(const char* file_path, struct process* process)
 {
     status_t result = ALL_OK;
 
-    if (!file_path) {
-        return ERROR(EINVARG);
-    }
-
     if (!process) {
         return ERROR(EINVARG);
     }
 
-    int fd = fopen(file_path, "r");
-    if (!fd) {
-        return ERROR(EIO);
-    }
-
-    // TODO: Check if the file is executable, binary, ELF, etc.
-
-    result = load_binary_data(fd, process);
+    result = load_file(file_path, &process->data, &process->size);
     if (result != ALL_OK) {
         goto out;
     }
@@ -89,8 +35,6 @@ load_data_for_process(const char* file_path, struct process* process)
     strncpy(process->file_path, file_path, sizeof(process->file_path) - 1);
 
 out:
-    // We can safely call fclose() even if fd is 0.
-    fclose(fd);
     return result;
 }
 
@@ -231,7 +175,7 @@ load_process_to_slot(const char* file_path, struct process** process, int slot)
     // assign the process ID
     new_process->id = slot;
     processes[slot] = new_process;
-    *process = new_process;
+    *process        = new_process;
 
 out:
     if (result != ALL_OK) {
