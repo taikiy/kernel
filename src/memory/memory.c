@@ -12,11 +12,17 @@ memset(void* ptr, int c, size_t size)
     return ptr;
 }
 
+/// @brief Compares byte string
+/// @param ptr1 Byte string 1
+/// @param ptr2 Byte string 2
+/// @param size Both strings' size in bytes
+/// @return Returns zero if the two strings are identical, otherwise returns the difference between the first two
+/// differing bytes.
 int
-memcmp(const void* ptr1, const void* ptr2, size_t size)
+memcmp(const void* s1, const void* s2, size_t size)
 {
-    const char* c_ptr1 = ptr1;
-    const char* c_ptr2 = (const char*)ptr2;
+    const char* c_ptr1 = s1;
+    const char* c_ptr2 = s2;
 
     for (int i = 0; i < size; i++) {
         if (c_ptr1[i] != c_ptr2[i]) {

@@ -7,7 +7,7 @@ ELF is a format for storing programs or fragments of programs on disk, created a
 
 The kernel's ELF file loader is responsible for finding the symbols that are required by the program, resolving any conflicts, and loading them into memory. Linking is performed in memory at runtime.
 
-- Type, struct, macro definitions [commit]()
+- Type, struct, macro definitions [commit](https://github.com/taikiy/kernel/commit/4900ac6f21ac4fa42248265a22fb1ec1d65fb753)
 
 ## Loading ELF files
 

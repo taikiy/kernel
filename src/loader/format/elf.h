@@ -11,6 +11,12 @@ typedef uint32_t Elf32_Off;  // Unsigned file offset
 typedef int32_t Elf32_Sword; // Signed large integer
 typedef uint32_t Elf32_Word; // Unsigned large integer
 
+// Magic Number
+#define ELFMAG0 0x7F
+#define ELFMAG1 'E'
+#define ELFMAG2 'L'
+#define ELFMAG3 'F'
+
 // Program Header
 // p_flags - Segment Flag Bits
 #define PF_X        0x01
@@ -149,5 +155,7 @@ typedef struct
     unsigned char st_other;
     Elf32_Half st_shndx;
 } __attribute__((packed)) Elf32_Sym;
+
+void* get_elf_entry_address(Elf32_Ehdr* header);
 
 #endif
