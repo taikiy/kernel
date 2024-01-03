@@ -1,10 +1,13 @@
 # What is an ELF file?
 
+https://refspecs.linuxfoundation.org/elf/elf.pdf
 https://wiki.osdev.org/ELF
 
 ELF is a format for storing programs or fragments of programs on disk, created as a result of compiling and linking. An ELF file is divided into sections. For an executable program, these are the _text_ section for the code, the _data_ section for global variables and the _rodata_ section which usually contains constant strings. The ELF file contains headers that describe how these sections should be stored in memory. Because of this, multiple ELF files can be loaded and dynamically linked together at runtime into a single program in memory.
 
 The kernel's ELF file loader is responsible for finding the symbols that are required by the program, resolving any conflicts, and loading them into memory. Linking is performed in memory at runtime.
+
+- Type, struct, macro definitions [commit]()
 
 ## Loading ELF files
 
