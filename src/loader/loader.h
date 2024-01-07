@@ -13,6 +13,6 @@ enum PROGRAM_FILE_TYPE
     PROGRAM_FILE_TYPE_BIN,
 };
 
-status_t load_file(const char* file_path, struct process_memory_map* out_mem_map, PROGRAM_FILE_TYPE* out_type);
+status_t load_file(const char* file_path, struct program* out_program);
 
 #endif

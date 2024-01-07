@@ -69,7 +69,7 @@ kernel_main()
 void
 test_elf_loader()
 {
-    struct process* proc = kzalloc(sizeof(struct process));
+    struct process* proc = 0;
     print("Executing 0:/elf\n");
     status_t result = create_process_and_switch("0:/elf", &proc);
     if (result != ALL_OK || !proc) {
@@ -80,7 +80,7 @@ test_elf_loader()
 void
 test_syscall()
 {
-    struct process* proc = kzalloc(sizeof(struct process));
+    struct process* proc = 0;
     print("Executing 0:/syscall.bin\n");
     status_t result = create_process_and_switch("0:/syscall.bin", &proc);
     if (result != ALL_OK || !proc) {
@@ -91,7 +91,7 @@ test_syscall()
 void
 test_user_space()
 {
-    struct process* proc = kzalloc(sizeof(struct process));
+    struct process* proc = 0;
     print("Executing 0:/blank.bin\n");
     status_t result = create_process_and_switch("0:/blank.bin", &proc);
     if (result != ALL_OK || !proc) {

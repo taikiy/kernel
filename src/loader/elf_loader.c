@@ -33,13 +33,13 @@ is_elf_file(void* file_ptr)
 }
 
 static status_t
-process_program_loadable_segment(Elf32_Ehdr* e_header, Elf32_Phdr* p_header, struct process_memory_map* out_mem_map)
+process_program_loadable_segment(Elf32_Ehdr* e_header, Elf32_Phdr* p_header, struct program* out_program)
 {
     status_t result = ALL_OK;
 
-    out_mem_map->program_physical_address_start = (void*)((uint32_t)e_header + p_header->p_offset);
-    out_mem_map->program_virtual_address_start = (void*)p_header->p_vaddr;
-    out_mem_map->program_size = p_header->p_filesz;
+    out_program->text_physical_address_start = (void*)((uint32_t)e_header + p_header->p_offset);
+    out_program->text_virtual_address_start = (void*)p_header->p_vaddr;
+    out_program->text_size = p_header->p_filesz;
 
     // allocate the stack memory
     void* stack_ptr = kzalloc(USER_PROGRAM_STACK_SIZE);
@@ -47,9 +47,9 @@ process_program_loadable_segment(Elf32_Ehdr* e_header, Elf32_Phdr* p_header, str
         result = ERROR(ENOMEM);
         goto out;
     }
-    out_mem_map->stack_physical_address_start = stack_ptr;
-    out_mem_map->stack_size = USER_PROGRAM_STACK_SIZE;                                        // default
-    out_mem_map->stack_virtual_address_start = (void*)USER_PROGRAM_STACK_VIRTUAL_ADDRESS_END; // stack grows downwards
+    out_program->stack_physical_address_start = stack_ptr;
+    out_program->stack_size = USER_PROGRAM_STACK_SIZE;                                        // default
+    out_program->stack_virtual_address_start = (void*)USER_PROGRAM_STACK_VIRTUAL_ADDRESS_END; // stack grows downwards
 
 out:
     if (result != ALL_OK) {
@@ -61,7 +61,7 @@ out:
 }
 
 static status_t
-process_elf_program_headers(Elf32_Ehdr* e_header, struct process_memory_map* out_mem_map)
+process_elf_program_headers(Elf32_Ehdr* e_header, struct program* out_program)
 {
     status_t result = ALL_OK;
 
@@ -71,7 +71,7 @@ process_elf_program_headers(Elf32_Ehdr* e_header, struct process_memory_map* out
 
         switch (p_header->p_type) {
             case PT_LOAD:
-                result = process_program_loadable_segment(e_header, p_header, out_mem_map);
+                result = process_program_loadable_segment(e_header, p_header, out_program);
                 break;
             default:
                 // TODO: support other program header types
@@ -83,7 +83,7 @@ process_elf_program_headers(Elf32_Ehdr* e_header, struct process_memory_map* out
 }
 
 status_t
-load_elf_executable_file(void* file_ptr, size_t file_size, struct process_memory_map* out_mem_map)
+load_elf_executable_file(void* file_ptr, size_t file_size, struct program* out_program)
 {
     status_t result = ALL_OK;
 
@@ -93,7 +93,7 @@ load_elf_executable_file(void* file_ptr, size_t file_size, struct process_memory
     }
 
     // TODO: parse other header attributes to support dynamic linking, etc.
-    result = process_elf_program_headers(e_header, out_mem_map);
+    result = process_elf_program_headers(e_header, out_program);
 
     return result;
 }

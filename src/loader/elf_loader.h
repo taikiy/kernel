@@ -24,6 +24,6 @@ typedef struct
 } elf_file;
 
 bool is_elf_file(void* file_ptr);
-status_t load_elf_executable_file(void* file_ptr, size_t file_size, struct process_memory_map* out_mem_map);
+status_t load_elf_executable_file(void* file_ptr, size_t file_size, struct program* out_program);
 
 #endif

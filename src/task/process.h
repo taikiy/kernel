@@ -7,11 +7,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
-struct process_memory_map
+struct program
 {
-    void* program_physical_address_start;
-    void* program_virtual_address_start;
-    size_t program_size;
+    char file_path[MAX_PATH_LENGTH];
+
+    uint8_t file_type;
+
+    void* text_physical_address_start;
+    void* text_virtual_address_start;
+    size_t text_size;
 
     void* stack_physical_address_start;
     void* stack_virtual_address_start;
@@ -23,11 +27,6 @@ struct process
     // Process ID
     uint16_t id;
 
-    // Executable file name
-    char file_path[MAX_PATH_LENGTH];
-
-    uint8_t file_type;
-
     // The main process task
     // It's possible for a process to have multiple tasks (threads). For now, we only have 1.
     struct task* task;
@@ -36,8 +35,8 @@ struct process
     // TODO: This should be a pointer and malloced in the heap when we create a process.
     void* allocations[MAX_ALLOCATIONS_PER_PROCESS];
 
-    // Virtual-to-physical memory mappings for program and stack memory
-    struct process_memory_map mem_map;
+    // The program file that this process is running.
+    struct program* program;
 
     struct keyboard_buffer keyboard_buffer;
 };

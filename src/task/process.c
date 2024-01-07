@@ -6,7 +6,6 @@
 #include "memory/heap/kheap.h"
 #include "memory/memory.h"
 #include "memory/paging/paging.h"
-#include "string/string.h"
 #include "task.h"
 
 static struct process* current_process = 0;
@@ -19,20 +18,30 @@ initialize_process(struct process* process)
 }
 
 static status_t
-load_data_for_process(const char* file_path, struct process* process)
+load_program_for_process(const char* file_path, struct program** program)
 {
-    if (!process) {
-        return ERROR(EINVARG);
+    status_t result = ALL_OK;
+
+    struct program* new_program = kzalloc(sizeof(struct program));
+    if (!new_program) {
+        return ERROR(ENOMEM);
     }
 
-    PROGRAM_FILE_TYPE file_type = PROGRAM_FILE_TYPE_UNKNOWN;
-    status_t result = load_file(file_path, &process->mem_map, &file_type);
+    new_program->file_type = PROGRAM_FILE_TYPE_UNKNOWN;
+    result = load_file(file_path, new_program);
     if (result != ALL_OK) {
-        return result;
+        goto out;
     }
-    process->file_type = file_type;
 
-    return ALL_OK;
+    *program = new_program;
+
+out:
+    if (result != ALL_OK) {
+        if (new_program) {
+            kfree(new_program);
+        }
+    }
+    return result;
 }
 
 struct process*
@@ -60,12 +69,12 @@ free_process(struct process* process)
         return ERROR(EINVARG);
     }
 
-    if (process->mem_map.stack_physical_address_start) {
-        kfree(process->mem_map.stack_physical_address_start);
+    if (process->program->stack_physical_address_start) {
+        kfree(process->program->stack_physical_address_start);
     }
 
-    if (process->mem_map.program_physical_address_start) {
-        kfree(process->mem_map.program_physical_address_start);
+    if (process->program->text_physical_address_start) {
+        kfree(process->program->text_physical_address_start);
     }
 
     if (process->task) {
@@ -82,9 +91,9 @@ map_program_memory_space(struct process* process)
 {
     return map_physical_address_to_pages(
       process->task->user_page,
-      process->mem_map.program_physical_address_start,
-      process->mem_map.program_virtual_address_start,
-      process->mem_map.program_size,
+      process->program->text_physical_address_start,
+      process->program->text_virtual_address_start,
+      process->program->text_size,
       PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
     );
 }
@@ -94,9 +103,9 @@ map_stack_memory_space(struct process* process)
 {
     return map_physical_address_to_pages(
       process->task->user_page,
-      process->mem_map.stack_physical_address_start,
-      process->mem_map.stack_virtual_address_start,
-      process->mem_map.stack_size,
+      process->program->stack_physical_address_start,
+      process->program->stack_virtual_address_start,
+      process->program->stack_size,
       PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
     );
 }
@@ -136,7 +145,7 @@ load_process_to_slot(const char* file_path, struct process** process, int slot)
         return ERROR(EINVARG);
     }
 
-    struct process* new_process = (struct process*)kzalloc(sizeof(struct process));
+    struct process* new_process = kzalloc(sizeof(struct process));
     if (!new_process) {
         return ERROR(ENOMEM);
     }
@@ -144,7 +153,7 @@ load_process_to_slot(const char* file_path, struct process** process, int slot)
     initialize_process(new_process);
 
     // load the executable file and allocate data/stack memories
-    result = load_data_for_process(file_path, new_process);
+    result = load_program_for_process(file_path, &new_process->program);
     if (result != ALL_OK) {
         goto out;
     }
@@ -160,8 +169,7 @@ load_process_to_slot(const char* file_path, struct process** process, int slot)
     // map the data/stack memory to the process' virtual address space
     map_process_memory(new_process);
 
-    // assign the file path and process ID
-    strncpy(new_process->file_path, file_path, sizeof(new_process->file_path) - 1);
+    // assign the process ID
     new_process->id = slot;
     processes[slot] = new_process;
     *process = new_process;

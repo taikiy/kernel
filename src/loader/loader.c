@@ -3,6 +3,7 @@
 #include "elf_loader.h"
 #include "fs/file.h"
 #include "memory/heap/kheap.h"
+#include "string/string.h"
 #include "terminal/terminal.h"
 #include <stdint.h>
 
@@ -52,7 +53,7 @@ out:
 }
 
 status_t
-load_file(const char* file_path, struct process_memory_map* out_mem_map, PROGRAM_FILE_TYPE* out_type)
+load_file(const char* file_path, struct program* out_program)
 {
     status_t result = ALL_OK;
 
@@ -65,15 +66,17 @@ load_file(const char* file_path, struct process_memory_map* out_mem_map, PROGRAM
     }
 
     if (is_elf_file(file_ptr)) {
-        *out_type = PROGRAM_FILE_TYPE_ELF;
-        result = load_elf_executable_file(file_ptr, file_size, out_mem_map);
+        out_program->file_type = PROGRAM_FILE_TYPE_ELF;
+        result = load_elf_executable_file(file_ptr, file_size, out_program);
     } else {
-        *out_type = PROGRAM_FILE_TYPE_BIN;
-        result = load_binary_executable_file(file_ptr, file_size, out_mem_map);
+        out_program->file_type = PROGRAM_FILE_TYPE_BIN;
+        result = load_binary_executable_file(file_ptr, file_size, out_program);
     }
     if (result != ALL_OK) {
         return result;
     }
+
+    strncpy(out_program->file_path, file_path, sizeof(out_program->file_path) - 1);
 
     return result;
 }
