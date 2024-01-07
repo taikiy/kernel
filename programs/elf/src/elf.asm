@@ -42,3 +42,6 @@ putchar:
    mov esp, ebp
    pop ebp
    ret
+
+section .data
+message: db "Hello, World!", 0x00

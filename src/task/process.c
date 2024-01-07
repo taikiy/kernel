@@ -69,12 +69,27 @@ free_process(struct process* process)
         return ERROR(EINVARG);
     }
 
-    if (process->program->stack_physical_address_start) {
-        kfree(process->program->stack_physical_address_start);
-    }
+    if (process->program) {
+        struct program* program = process->program;
 
-    if (process->program->text_physical_address_start) {
-        kfree(process->program->text_physical_address_start);
+        if (program->program_sections) {
+            for (int i = 0; i < program->program_section_count; i++) {
+                if (program->program_sections[i]) {
+                    kfree(program->program_sections[i]);
+                }
+            }
+            kfree(program->program_sections);
+        }
+
+        if (program->stack_section) {
+            kfree(program->stack_section);
+        }
+
+        if (program->entry_point_address) {
+            kfree(program->entry_point_address);
+        }
+
+        kfree(program);
     }
 
     if (process->task) {
@@ -89,23 +104,36 @@ free_process(struct process* process)
 status_t
 map_program_memory_space(struct process* process)
 {
-    return map_physical_address_to_pages(
-      process->task->user_page,
-      process->program->text_physical_address_start,
-      process->program->text_virtual_address_start,
-      process->program->text_size,
-      PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
-    );
+    struct program* program = process->program;
+
+    for (int i = 0; i < program->program_section_count; i++) {
+        struct memory_layout* section = program->program_sections[i];
+
+        status_t result = map_physical_address_to_pages(
+          process->task->user_page,
+          section->physical_address_start,
+          section->virtual_address_start,
+          section->size,
+          section->flags
+        );
+        if (result != ALL_OK) {
+            return result;
+        }
+    }
+
+    return ALL_OK;
 }
 
 status_t
 map_stack_memory_space(struct process* process)
 {
+    struct program* program = process->program;
+
     return map_physical_address_to_pages(
       process->task->user_page,
-      process->program->stack_physical_address_start,
-      process->program->stack_virtual_address_start,
-      process->program->stack_size,
+      program->stack_section->physical_address_start,
+      program->stack_section->virtual_address_start,
+      program->stack_section->size,
       PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
     );
 }

@@ -27,7 +27,7 @@ initialize_task(struct task* task, struct process* process)
         return ERROR(EIO);
     }
 
-    task->registers.ip = USER_PROGRAM_VIRTUAL_ADDRESS_START;
+    task->registers.ip = (uint32_t)process->program->entry_point_address;
     task->registers.esp = USER_PROGRAM_STACK_VIRTUAL_ADDRESS_START;
     task->registers.ss = USER_PROGRAM_DATA_SELECTOR;
     task->registers.cs = USER_PROGRAM_CODE_SELECTOR;

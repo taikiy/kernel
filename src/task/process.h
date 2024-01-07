@@ -7,19 +7,25 @@
 #include <stddef.h>
 #include <stdint.h>
 
+struct memory_layout
+{
+    void* physical_address_start;
+    void* virtual_address_start;
+    size_t size;
+    uint32_t flags;
+};
+
 struct program
 {
     char file_path[MAX_PATH_LENGTH];
-
     uint8_t file_type;
 
-    void* text_physical_address_start;
-    void* text_virtual_address_start;
-    size_t text_size;
+    void* entry_point_address;
 
-    void* stack_physical_address_start;
-    void* stack_virtual_address_start;
-    size_t stack_size;
+    uint32_t program_section_count;
+    struct memory_layout** program_sections;
+
+    struct memory_layout* stack_section;
 };
 
 struct process
