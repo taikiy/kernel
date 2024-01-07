@@ -8,6 +8,6 @@ The very first step in implementing the _stdlib_ is the entry point of a user pr
 
 The user program file is processed by our ELF loader, where the entry point is set to _stdlib_'s `_start` address. The `_start` function then calls `main` which is the entry point of the user's C code.
 
-- Our first stdlib [commit]()
+- Our first stdlib [commit](https://github.com/taikiy/kernel/commit/22984b790428a6732a0037bdb52c9d939514b314)
 
 Note that running `hello` in this commit will cause a page fault. This is because we have not implemented the `exit` system call yet. The `exit` system call is called when the `main` function returns. The `exit` system call will be responsible for terminating tasks and the process and freeing the memory allocated by the user program.

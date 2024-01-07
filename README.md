@@ -25,6 +25,10 @@ Documents in this repo assume macOS on an Apple M1 chip.
 10. [File System - FAT16](./doc/10_file_system_fat16.md)
 11. [Virtual File System](./doc/11_file_system_virtual_file_system.md)
 12. [User Space](./12_user_space.md)
+13. [Talking with the kernel from User Space](./doc/13_calling_kernel_space_routines_from_user_space.md)
+14. [Accessing the Keyboard in Protected Mode](./doc/14_accessing_keyboard_in_protected_mode.md.md)
+15. [ELF files](./doc/15_elf_files.md)
+16. [Writing User Programs in C](./doc/16_writing_user_programs_in_C.md)
 
 # Resources
 
