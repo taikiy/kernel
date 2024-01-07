@@ -17,7 +17,7 @@ LD = i686-elf-ld
 
 AFLAGS = -f elf -g
 CFLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parammeter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc -std=gnu99
-LDFLAGS = -g -relocatable
+LDFLAGS = -relocatable
 
 all: build
 

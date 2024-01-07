@@ -20,8 +20,6 @@ initialize_task(struct task* task, struct process* process)
 
     memset(task, 0, sizeof(struct task));
     // Map the entire 4GB address space to the task
-    // We set `PAGING_ACCESS_FROM_ALL` flag to avoid any complications. In reality, we shouldn't set
-    // this flag.
     task->user_page = new_paging_map(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
     if (!task->user_page) {
         return ERROR(EIO);

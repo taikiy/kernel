@@ -23,7 +23,7 @@ INC_DIRS = $(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR)/boot/*)
 INCLUDES = $(addprefix -I,$(INC_DIRS))
 AFLAGS = -f elf -g
 CFLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parammeter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc -std=gnu99
-LDFLAGS = -g -relocatable
+LDFLAGS = -relocatable
 
 all: build usr_bin copy
 
@@ -55,6 +55,7 @@ copy:
 	cp $(USR_BIN_DIR)/blank/build/blank.bin "/Volumes/taiOS BOOT/"
 	cp $(USR_BIN_DIR)/syscall/build/syscall.bin "/Volumes/taiOS BOOT/"
 	cp $(USR_BIN_DIR)/elf/build/elf "/Volumes/taiOS BOOT/"
+	cp $(USR_BIN_DIR)/hello/build/hello "/Volumes/taiOS BOOT/"
 	hdiutil detach `hdiutil info | tail -n 1 | cut -f 1`
 
 usr_bin:

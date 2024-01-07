@@ -28,3 +28,7 @@ The following is a rough outline of the steps that an ELF executable loader must
 
 - Helper functions for parsing ELF files [commit](https://github.com/taikiy/kernel/commit/3f1146fa06f0d881ecc74a7a82d2a8805d439481)
 - Loading ELF files [commit](https://github.com/taikiy/kernel/commit/66201be4c08217a46b662f6b78dbb1cb302b6d89)
+
+---
+
+[Previous](./14_accessing_keyboard_in_protected_mode.md.md) | [Next](./16_writing_user_programs_in_C.md) | [Home](../README.md)
