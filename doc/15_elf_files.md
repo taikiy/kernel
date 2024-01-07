@@ -25,3 +25,6 @@ The following is a rough outline of the steps that an ELF executable loader must
    3. The p_memsz member specifies the size the segment occupies in memory. This can be zero. If the p_filesz and p_memsz members differ, this indicates that the segment is padded with zeros. All bytes in memory between the ending offset of the file size, and the segment's virtual memory size are to be cleared with zeros.
 6. Read the executable's entry point from the ELF header.
 7. Jump to the executable's entry point in the newly loaded memory.
+
+- Helper functions for parsing ELF files [commit](https://github.com/taikiy/kernel/commit/3f1146fa06f0d881ecc74a7a82d2a8805d439481)
+- Loading ELF files [commit]()

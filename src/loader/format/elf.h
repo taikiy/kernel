@@ -157,5 +157,8 @@ typedef struct
 } __attribute__((packed)) Elf32_Sym;
 
 void* get_elf_entry_address(Elf32_Ehdr* header);
+Elf32_Shdr* get_section_header_table(Elf32_Ehdr* header);
+Elf32_Phdr* get_program_header_table(Elf32_Ehdr* header);
+char* get_section_name_string_table(Elf32_Ehdr* header);
 
 #endif

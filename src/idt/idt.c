@@ -30,11 +30,11 @@ save_current_task_state(struct interrupt_frame* frame)
         panic("Cannot save the state of a task with a null frame!");
     }
 
-    current_task->registers.ip    = frame->ip;
-    current_task->registers.cs    = frame->cs;
+    current_task->registers.ip = frame->ip;
+    current_task->registers.cs = frame->cs;
     current_task->registers.flags = frame->flags;
-    current_task->registers.esp   = frame->esp;
-    current_task->registers.ss    = frame->ss;
+    current_task->registers.esp = frame->esp;
+    current_task->registers.ss = frame->ss;
 
     current_task->registers.eax = frame->eax;
     current_task->registers.ecx = frame->ecx;
@@ -59,9 +59,16 @@ int0h_handler(struct interrupt_frame* frame)
 }
 
 void*
+int0Eh_handler(struct interrupt_frame* frame)
+{
+    print("Page fault\n");
+    return 0;
+}
+
+void*
 int80h_handler(struct interrupt_frame* frame)
 {
-    void* res   = 0;
+    void* res = 0;
     int command = frame->eax;
 
     res = syscall(command, frame);
@@ -108,15 +115,15 @@ idt_set(int irq, void* address)
 {
     struct idt_desc* desc = &idt_descriptors[irq];
 
-    desc->offset_1 = (uint32_t)address & 0xffff;
+    desc->offset_low = (uint32_t)address & 0xffff;
     desc->selector = KERNEL_CODE_SELECTOR;
-    desc->zero     = 0x00;
+    desc->zero = 0x00;
     // Type:      0x0e/0b1110 = 32-bit interrupt gate
     // Attribute: Storage Segment = 0 (interrupt)
     //            DPL (Descriptor Privilege Level) = 0b11 or 3 (Ring 3)
     //            Present = 1 (0 for unused interrupt)
     desc->type_attr = 0x0e | 0xe0;
-    desc->offset_2  = (uint32_t)address >> 16;
+    desc->offset_high = (uint32_t)address >> 16;
 }
 
 void
@@ -124,7 +131,7 @@ initialize_idt()
 {
     memset(idt_descriptors, 0, sizeof(idt_descriptors));
     idtr_descriptor.limit = sizeof(idt_descriptors) - 1;
-    idtr_descriptor.base  = (uint32_t)idt_descriptors;
+    idtr_descriptor.base = (uint32_t)idt_descriptors;
 
     for (int i = 0; i < TOTAL_INTERRUPTS; i++) {
         idt_set(i, isr_table[i]);
@@ -139,6 +146,7 @@ initialize_interrupt_handlers()
     memset(interrupt_handlers, 0, sizeof(interrupt_handlers));
 
     register_interrupt_handler(IRQ_0H, int0h_handler);
+    register_interrupt_handler(IRQ_0EH, int0Eh_handler);
     register_interrupt_handler(IRQ_21H, keyboard_interrupt_handler);
     register_interrupt_handler(IRQ_80H, int80h_handler);
 

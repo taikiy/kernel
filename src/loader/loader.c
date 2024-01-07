@@ -1,11 +1,13 @@
 #include "loader.h"
 #include "bin_loader.h"
+#include "elf_loader.h"
 #include "fs/file.h"
 #include "memory/heap/kheap.h"
+#include "terminal/terminal.h"
 #include <stdint.h>
 
-status_t
-load_file(const char* file_path, void** out_ptr, size_t* out_size)
+static status_t
+load_file_in_memory(const char* file_path, void** out_file_ptr, size_t* out_file_size)
 {
     status_t result = ALL_OK;
 
@@ -18,15 +20,60 @@ load_file(const char* file_path, void** out_ptr, size_t* out_size)
         return ERROR(EIO);
     }
 
-    // TODO: Check if the file is binary, ELF, etc.
-
-    result = load_binary_executable_file(fd, out_ptr, out_size);
+    struct file_stat stat;
+    result = fstat(fd, &stat);
     if (result != ALL_OK) {
+        return ERROR(EIO);
+    }
+
+    void* file_ptr = kzalloc(stat.size);
+    if (!file_ptr) {
+        return ERROR(ENOMEM);
+    }
+
+    size_t read_items = fread(file_ptr, stat.size, 1, fd);
+    if (read_items != 1) {
+        result = ERROR(EIO);
         goto out;
     }
 
+    *out_file_ptr = file_ptr;
+    *out_file_size = stat.size;
+
 out:
+    if (result != ALL_OK) {
+        if (file_ptr) {
+            kfree(file_ptr);
+        }
+    }
     // We can safely call fclose() even if fd is 0.
     fclose(fd);
+    return result;
+}
+
+status_t
+load_file(const char* file_path, struct process_memory_map* out_mem_map, PROGRAM_FILE_TYPE* out_type)
+{
+    status_t result = ALL_OK;
+
+    // load the entire file in memory
+    void* file_ptr = 0;
+    size_t file_size = 0;
+    result = load_file_in_memory(file_path, &file_ptr, &file_size);
+    if (result != ALL_OK) {
+        return result;
+    }
+
+    if (is_elf_file(file_ptr)) {
+        *out_type = PROGRAM_FILE_TYPE_ELF;
+        result = load_elf_executable_file(file_ptr, file_size, out_mem_map);
+    } else {
+        *out_type = PROGRAM_FILE_TYPE_BIN;
+        result = load_binary_executable_file(file_ptr, file_size, out_mem_map);
+    }
+    if (result != ALL_OK) {
+        return result;
+    }
+
     return result;
 }

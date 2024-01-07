@@ -4,7 +4,19 @@
 #include "config.h"
 #include "keyboard/keyboard.h"
 #include "status.h"
+#include <stddef.h>
 #include <stdint.h>
+
+struct process_memory_map
+{
+    void* program_physical_address_start;
+    void* program_virtual_address_start;
+    size_t program_size;
+
+    void* stack_physical_address_start;
+    void* stack_virtual_address_start;
+    size_t stack_size;
+};
 
 struct process
 {
@@ -14,6 +26,8 @@ struct process
     // Executable file name
     char file_path[MAX_PATH_LENGTH];
 
+    uint8_t file_type;
+
     // The main process task
     // It's possible for a process to have multiple tasks (threads). For now, we only have 1.
     struct task* task;
@@ -22,16 +36,8 @@ struct process
     // TODO: This should be a pointer and malloced in the heap when we create a process.
     void* allocations[MAX_ALLOCATIONS_PER_PROCESS];
 
-    // The pointer to the process data loaded onto memory.
-    // A process data could be of a binary file, ELF file, etc. For now, we assume that this is a
-    // binary file. (no header, no sections, etc.)
-    void* data;
-
-    // The pointer to the stack memory
-    void* stack;
-
-    // The size of the process memory pointed by `ptr`
-    uint32_t size;
+    // Virtual-to-physical memory mappings for program and stack memory
+    struct process_memory_map mem_map;
 
     struct keyboard_buffer keyboard_buffer;
 };

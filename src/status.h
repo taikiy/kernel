@@ -14,6 +14,7 @@ typedef void* status_t;
 #define EPAGEFAULT        8
 #define ENOCALLBACK       9
 #define ETOOMANYDRIVERS   10
+#define EFILENOTSUPPORTED 11
 
 #define ERROR(v) ((void*)(-v))
 

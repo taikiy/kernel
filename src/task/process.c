@@ -9,7 +9,7 @@
 #include "string/string.h"
 #include "task.h"
 
-static struct process* current_process          = 0;
+static struct process* current_process = 0;
 static struct process* processes[MAX_PROCESSES] = {};
 
 static void
@@ -21,21 +21,18 @@ initialize_process(struct process* process)
 static status_t
 load_data_for_process(const char* file_path, struct process* process)
 {
-    status_t result = ALL_OK;
-
     if (!process) {
         return ERROR(EINVARG);
     }
 
-    result = load_file(file_path, &process->data, &process->size);
+    PROGRAM_FILE_TYPE file_type = PROGRAM_FILE_TYPE_UNKNOWN;
+    status_t result = load_file(file_path, &process->mem_map, &file_type);
     if (result != ALL_OK) {
-        goto out;
+        return result;
     }
+    process->file_type = file_type;
 
-    strncpy(process->file_path, file_path, sizeof(process->file_path) - 1);
-
-out:
-    return result;
+    return ALL_OK;
 }
 
 struct process*
@@ -63,12 +60,12 @@ free_process(struct process* process)
         return ERROR(EINVARG);
     }
 
-    if (process->stack) {
-        kfree(process->stack);
+    if (process->mem_map.stack_physical_address_start) {
+        kfree(process->mem_map.stack_physical_address_start);
     }
 
-    if (process->data) {
-        kfree(process->data);
+    if (process->mem_map.program_physical_address_start) {
+        kfree(process->mem_map.program_physical_address_start);
     }
 
     if (process->task) {
@@ -81,25 +78,25 @@ free_process(struct process* process)
 }
 
 status_t
-map_binary_data(struct process* process)
+map_program_memory_space(struct process* process)
 {
     return map_physical_address_to_pages(
       process->task->user_page,
-      process->data,
-      (void*)USER_PROGRAM_VIRTUAL_ADDRESS_START,
-      process->size,
+      process->mem_map.program_physical_address_start,
+      process->mem_map.program_virtual_address_start,
+      process->mem_map.program_size,
       PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
     );
 }
 
 status_t
-map_stack(struct process* process)
+map_stack_memory_space(struct process* process)
 {
     return map_physical_address_to_pages(
       process->task->user_page,
-      process->stack,
-      (void*)USER_PROGRAM_STACK_VIRTUAL_ADDRESS_END, // END because the stack grows downwards
-      USER_PROGRAM_STACK_SIZE,
+      process->mem_map.stack_physical_address_start,
+      process->mem_map.stack_virtual_address_start,
+      process->mem_map.stack_size,
       PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
     );
 }
@@ -109,13 +106,12 @@ map_process_memory(struct process* process)
 {
     status_t result = ALL_OK;
 
-    result = map_stack(process);
+    result = map_stack_memory_space(process);
     if (result != ALL_OK) {
         goto out;
     }
 
-    // TODO: implement for different file types
-    result = map_binary_data(process);
+    result = map_program_memory_space(process);
     if (result != ALL_OK) {
         goto out;
     }
@@ -147,19 +143,11 @@ load_process_to_slot(const char* file_path, struct process** process, int slot)
 
     initialize_process(new_process);
 
-    // load the executable data from the file
+    // load the executable file and allocate data/stack memories
     result = load_data_for_process(file_path, new_process);
     if (result != ALL_OK) {
         goto out;
     }
-
-    // allocate the stack memory
-    void* program_stack_ptr = kzalloc(USER_PROGRAM_STACK_SIZE);
-    if (!program_stack_ptr) {
-        result = ERROR(ENOMEM);
-        goto out;
-    }
-    new_process->stack = program_stack_ptr;
 
     // create the initial task
     struct task* new_task = create_task(new_process);
@@ -172,10 +160,11 @@ load_process_to_slot(const char* file_path, struct process** process, int slot)
     // map the data/stack memory to the process' virtual address space
     map_process_memory(new_process);
 
-    // assign the process ID
+    // assign the file path and process ID
+    strncpy(new_process->file_path, file_path, sizeof(new_process->file_path) - 1);
     new_process->id = slot;
     processes[slot] = new_process;
-    *process        = new_process;
+    *process = new_process;
 
 out:
     if (result != ALL_OK) {

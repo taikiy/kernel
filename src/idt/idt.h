@@ -4,16 +4,17 @@
 #include <stdint.h>
 
 #define IRQ_0H  0x00
+#define IRQ_0EH 0x0E
 #define IRQ_21H 0x21
 #define IRQ_80H 0x80
 
 struct idt_desc
 {
-    uint16_t offset_1;     // offset bits 0..15
+    uint16_t offset_low;   // offset bits 0..15
     uint16_t selector;     // a code segment selector in GDT or LDT
     uint8_t zero;          // unused bits, set to 0
     uint8_t type_attr;     // type and attributes
-    uint16_t offset_2;     // offset bits 16..31
+    uint16_t offset_high;  // offset bits 16..31
 } __attribute__((packed)); // ensures there's no unexpected padding
 
 struct idtr_desc

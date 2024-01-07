@@ -4,6 +4,8 @@
 #include "config.h"
 #include "format/elf.h"
 #include "status.h"
+#include "task/process.h"
+#include <stdbool.h>
 #include <stddef.h>
 
 typedef struct
@@ -21,6 +23,7 @@ typedef struct
     void* program_physical_address_stop;
 } elf_file;
 
-status_t load_elf_executable_file(int fd, void** out_ptr, size_t* out_size);
+bool is_elf_file(void* file_ptr);
+status_t load_elf_executable_file(void* file_ptr, size_t file_size, struct process_memory_map* out_mem_map);
 
 #endif
