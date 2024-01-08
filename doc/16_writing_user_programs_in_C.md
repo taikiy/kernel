@@ -11,3 +11,9 @@ The user program file is processed by our ELF loader, where the entry point is s
 - Our first stdlib [commit](https://github.com/taikiy/kernel/commit/22984b790428a6732a0037bdb52c9d939514b314)
 
 Note that running `hello` in this commit will cause a page fault. This is because we have not implemented the `exit` system call yet. The `exit` system call is called when the `main` function returns. The `exit` system call will be responsible for terminating tasks and the process and freeing the memory allocated by the user program.
+
+## print function
+
+The first function we implement is the `print` function. The `print` function is a wrapper of the INT80h command 1, `sys_print`, system call.
+
+- stdlib `print` function [commit](https://github.com/taikiy/kernel/commit/47a2fef03b73645c393992245d160666e08a44cd)
