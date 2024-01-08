@@ -1,4 +1,4 @@
- [BITS 32]
+[BITS 32]
 
 section .asm
 

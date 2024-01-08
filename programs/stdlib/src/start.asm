@@ -1,9 +1,9 @@
 [BITS 32]
 
+section .asm
+
 global _start
 extern main
-
-section .asm
 
 _start:
     call main

@@ -1,5 +1,7 @@
 [BITS 32]
 
+section .asm
+
 global getchar:function
 
 ; int getchar(void)

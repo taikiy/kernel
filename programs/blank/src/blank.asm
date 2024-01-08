@@ -1,10 +1,10 @@
- [BITS 32]
+[BITS 32]
 
- section .asm
+section .asm
 
- global _start
+global _start
 
 _start:
 
- label:
-    jmp label
+label:
+   jmp label

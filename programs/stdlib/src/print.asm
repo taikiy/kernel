@@ -1,5 +1,7 @@
 [BITS 32]
 
+section .asm
+
 global print:function
 
 ; void print(const char* str)

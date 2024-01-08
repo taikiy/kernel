@@ -95,6 +95,12 @@ free_process(struct process* process)
         free_task(process->task);
     }
 
+    for (int i = 0; i < MAX_ALLOCATIONS_PER_PROCESS; i++) {
+        if (process->allocations[i]) {
+            kfree(process->allocations[i]);
+        }
+    }
+
     kfree(process);
 
     return result;
@@ -255,4 +261,35 @@ create_process_and_switch(const char* file_path, struct process** process)
     }
 
     return switch_process(*process);
+}
+
+void*
+process_malloc(struct process* process, size_t size)
+{
+    void* ptr = kmalloc(size);
+    if (!ptr) {
+        return 0;
+    }
+
+    for (int i = 0; i < MAX_ALLOCATIONS_PER_PROCESS; i++) {
+        if (!process->allocations[i]) {
+            process->allocations[i] = ptr;
+            return ptr;
+        }
+    }
+
+    // no empty slot found
+    return 0;
+}
+
+void
+process_free(struct process* process, void* ptr)
+{
+    for (int i = 0; i < MAX_ALLOCATIONS_PER_PROCESS; i++) {
+        if (process->allocations[i] == ptr) {
+            kfree(ptr);
+            process->allocations[i] = 0;
+            return;
+        }
+    }
 }

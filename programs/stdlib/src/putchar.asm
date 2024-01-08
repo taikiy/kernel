@@ -1,5 +1,7 @@
 [BITS 32]
 
+section .asm
+
 global putchar:function
 
 ; int putchar(int c)

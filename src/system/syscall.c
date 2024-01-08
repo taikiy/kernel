@@ -1,9 +1,8 @@
 #include "syscall.h"
 #include "../config.h"
-#include "../memory/heap/kheap.h"
 #include "../memory/paging/paging.h"
-#include "../task/task.h"
 #include "../terminal/terminal.h"
+#include "heap.h"
 #include "sys.h"
 
 // TODO: This file should be merged together with other ISR definitions in idt.c and placed in isr.c or something.
@@ -16,7 +15,7 @@ static INTERRUPT_HANDLER syscall_handlers[TOTAL_SYSCALL_COUNT];
 /// @param task The task making the syscall.
 /// @param index The index of the argument.
 /// @return The argument value.
-static void*
+void*
 get_arg_from_task(struct task* task, int index)
 {
     switch_to_user_page();
@@ -106,6 +105,8 @@ initialize_syscall_handlers()
     register_syscall_handler(SYSCALL_COMMAND_1_PRINT, sys_print);
     register_syscall_handler(SYSCALL_COMMAND_2_GETCHAR, sys_getchar);
     register_syscall_handler(SYSCALL_COMMAND_3_PUTCHAR, sys_putchar);
+    register_syscall_handler(SYSCALL_COMMAND_4_MALLOC, sys_malloc);
+    register_syscall_handler(SYSCALL_COMMAND_5_FREE, sys_free);
 }
 
 void*
