@@ -14,6 +14,7 @@ COBJS = $(subst $(SRC_DIR),$(BUILD_DIR),$(CSRCS:.c=.c.o))
 OBJS = $(AOBJS) $(COBJS)
 
 LIBS = ../stdlib/build/stdlib.o
+INCLUDES = -I../stdlib/src
 
 CC = i686-elf-gcc
 ASM = nasm

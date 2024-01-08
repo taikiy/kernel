@@ -52,8 +52,6 @@ sys_sum(struct interrupt_frame* frame)
 void*
 sys_print(struct interrupt_frame* frame)
 {
-    print("sys_print\n");
-
     struct task* current_task = get_current_task();
 
     // `sys_print` takes one `char*` argument. Since `char*` is a pointer type, the value is the address of the string
@@ -63,7 +61,6 @@ sys_print(struct interrupt_frame* frame)
     copy_data_from_user_space(current_task, arg1, &buf, sizeof(buf));
 
     print(buf);
-    print("\n");
 
     return 0;
 }
