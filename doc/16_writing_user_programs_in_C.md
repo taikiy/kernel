@@ -17,3 +17,4 @@ Note that running `hello` in this commit will cause a page fault. This is becaus
 The first function we implement is the `print` function. The `print` function is a wrapper of the INT80h command 1, `sys_print`, system call.
 
 - stdlib `print` function [commit](https://github.com/taikiy/kernel/commit/47a2fef03b73645c393992245d160666e08a44cd)
+- `getchar`, `putchar` [commit]()
