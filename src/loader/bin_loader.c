@@ -28,6 +28,7 @@ load_program_section(void* file_ptr, size_t file_size, struct program* out_progr
     text_section->physical_address_start = file_ptr;
     text_section->size = file_size;
     text_section->virtual_address_start = (void*)USER_PROGRAM_VIRTUAL_ADDRESS_START; // default for plain binary
+    // TODO: Do we need to set the writable flag for assembly files? Does .bss section need to be writable?
     text_section->flags = PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL;
 
 out:
@@ -63,7 +64,7 @@ load_stack_section(struct program* out_program)
     stack_section->physical_address_start = stack_ptr;
     stack_section->virtual_address_start = (void*)USER_PROGRAM_STACK_VIRTUAL_ADDRESS_END; // stack grows downwards
     stack_section->size = USER_PROGRAM_STACK_SIZE;                                        // default
-    stack_section->flags = PAGING_IS_PRESENT | PAGING_IS_WRITABLE;
+    stack_section->flags = PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL;
 
     out_program->stack_section = stack_section;
 

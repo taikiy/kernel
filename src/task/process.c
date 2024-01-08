@@ -134,7 +134,7 @@ map_stack_memory_space(struct process* process)
       program->stack_section->physical_address_start,
       program->stack_section->virtual_address_start,
       program->stack_section->size,
-      PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
+      program->stack_section->flags
     );
 }
 

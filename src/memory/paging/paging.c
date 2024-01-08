@@ -127,7 +127,7 @@ new_paging_map(uint8_t flags)
         offset += (PAGING_TOTAL_ENTRIES * PAGING_PAGE_SIZE_BYTES);
         // set the page directory entry
         // this is the virtual address of the beginning of the page table at index `i`
-        directory[i] = (uint32_t)table | flags | PAGING_IS_WRITABLE;
+        directory[i] = (uint32_t)table | flags;
     }
 
     // this points to the first page directory entry, which will be fed to CR3 registry
@@ -208,7 +208,7 @@ out:
 void
 initialize_kernel_space_paging()
 {
-    kernel_page = new_paging_map(PAGING_IS_WRITABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    kernel_page = new_paging_map(PAGING_IS_PRESENT | PAGING_IS_WRITABLE);
     switch_page(kernel_page);
     enable_paging();
 }
@@ -265,11 +265,8 @@ copy_data_from_user_space(struct task* task, void* src, void* dest, size_t size)
     }
 
     // Map the user space virtual address `buf` (which points to some unknown physical address) to point to the kernel
-    // space physical address `buf`. We set the flags to be writable, and accessible from everyone so the task can write
-    // to the kernel space memory.
-    result = map_physical_address_to_pages(
-      user_page, buf, buf, max_page_size_to_copy, PAGING_IS_PRESENT | PAGING_IS_WRITABLE | PAGING_ACCESS_FROM_ALL
-    );
+    // space physical address `buf`. The memory space is set to be read-only.
+    result = map_physical_address_to_pages(user_page, buf, buf, max_page_size_to_copy, PAGING_IS_PRESENT);
     if (result != ALL_OK) {
         goto out;
     }

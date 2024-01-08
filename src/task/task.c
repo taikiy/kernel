@@ -20,7 +20,7 @@ initialize_task(struct task* task, struct process* process)
 
     memset(task, 0, sizeof(struct task));
     // Map the entire 4GB address space to the task
-    task->user_page = new_paging_map(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    task->user_page = new_paging_map(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL | PAGING_IS_WRITABLE);
     if (!task->user_page) {
         return ERROR(EIO);
     }
