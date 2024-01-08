@@ -1,12 +1,12 @@
 #include "idt.h"
-#include "config.h"
-#include "io/io.h"
-#include "keyboard/keyboard.h"
-#include "memory/memory.h"
-#include "memory/paging/paging.h"
-#include "system/sys.h"
-#include "system/syscall.h"
-#include "terminal/terminal.h"
+#include "../config.h"
+#include "../io/io.h"
+#include "../keyboard/keyboard.h"
+#include "../memory/memory.h"
+#include "../memory/paging/paging.h"
+#include "../system/sys.h"
+#include "../system/syscall.h"
+#include "../terminal/terminal.h"
 
 extern void load_idt(struct idtr_desc* ptr);
 extern void* isr_table[TOTAL_INTERRUPTS];

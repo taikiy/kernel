@@ -1,7 +1,7 @@
 #ifndef FORMAT_ELF_H
 #define FORMAT_ELF_H
 
-#include "status.h"
+#include "../../status.h"
 #include <stddef.h>
 #include <stdint.h>
 

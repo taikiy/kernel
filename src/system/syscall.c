@@ -1,10 +1,10 @@
 #include "syscall.h"
-#include "config.h"
-#include "memory/heap/kheap.h"
-#include "memory/paging/paging.h"
+#include "../config.h"
+#include "../memory/heap/kheap.h"
+#include "../memory/paging/paging.h"
+#include "../task/task.h"
+#include "../terminal/terminal.h"
 #include "sys.h"
-#include "task/task.h"
-#include "terminal/terminal.h"
 
 // TODO: This file should be merged together with other ISR definitions in idt.c and placed in isr.c or something.
 

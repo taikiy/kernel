@@ -19,8 +19,7 @@ CC = i686-elf-gcc
 ASM = nasm
 LD = i686-elf-ld
 
-INC_DIRS = $(shell find $(SRC_DIR) -type d -not -path $(SRC_DIR)/boot/*)
-INCLUDES = $(addprefix -I,$(INC_DIRS))
+INCLUDES =
 AFLAGS = -f elf -g
 CFLAGS = -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parammeter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc -std=gnu99
 LDFLAGS = -relocatable

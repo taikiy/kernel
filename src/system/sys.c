@@ -1,5 +1,5 @@
 #include "sys.h"
-#include "terminal/terminal.h"
+#include "../terminal/terminal.h"
 
 void
 panic(const char* message)

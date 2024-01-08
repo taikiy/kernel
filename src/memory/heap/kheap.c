@@ -1,10 +1,10 @@
 #include "kheap.h"
-#include "config.h"
+#include "../../config.h"
+#include "../../status.h"
+#include "../../system/sys.h"
+#include "../../terminal/terminal.h"
+#include "../memory.h"
 #include "heap.h"
-#include "memory/memory.h"
-#include "status.h"
-#include "system/sys.h"
-#include "terminal/terminal.h"
 
 struct heap kernel_heap;
 struct heap_table kernel_heap_table;

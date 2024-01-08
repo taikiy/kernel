@@ -1,7 +1,7 @@
 #include "disk.h"
-#include "config.h"
-#include "io/io.h"
-#include "memory/memory.h"
+#include "../config.h"
+#include "../io/io.h"
+#include "../memory/memory.h"
 
 struct disk current_disk;
 

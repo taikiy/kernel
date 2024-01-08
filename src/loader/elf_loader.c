@@ -1,7 +1,7 @@
 #include "elf_loader.h"
-#include "memory/heap/kheap.h"
-#include "memory/memory.h"
-#include "memory/paging/paging.h"
+#include "../memory/heap/kheap.h"
+#include "../memory/memory.h"
+#include "../memory/paging/paging.h"
 
 const char ELF_MAGIC_NUMBER[4] = { ELFMAG0, ELFMAG1, ELFMAG2, ELFMAG3 };
 elf_file file;

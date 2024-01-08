@@ -1,8 +1,8 @@
 #ifndef DISK_H
 #define DISK_H
 
-#include "fs/file.h"
-#include "status.h"
+#include "../fs/file.h"
+#include "../status.h"
 
 #define DISK_TYPE_REAL 0;
 

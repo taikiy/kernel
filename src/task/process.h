@@ -1,9 +1,9 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
-#include "config.h"
-#include "keyboard/keyboard.h"
-#include "status.h"
+#include "../config.h"
+#include "../keyboard/keyboard.h"
+#include "../status.h"
 #include <stddef.h>
 #include <stdint.h>
 

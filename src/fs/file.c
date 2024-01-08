@@ -1,12 +1,12 @@
 #include "file.h"
-#include "config.h"
+#include "../config.h"
+#include "../memory/heap/kheap.h"
+#include "../memory/memory.h"
+#include "../status.h"
+#include "../string/string.h"
+#include "../system/sys.h"
+#include "../terminal/terminal.h"
 #include "fat/fat16.h"
-#include "memory/heap/kheap.h"
-#include "memory/memory.h"
-#include "status.h"
-#include "string/string.h"
-#include "system/sys.h"
-#include "terminal/terminal.h"
 
 static struct file_system* file_systems[MAX_FILE_SYSTEM_COUNT];
 static struct file_descriptor* file_descriptors[MAX_FILE_DESCRIPTOR_COUNT];

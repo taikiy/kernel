@@ -1,6 +1,6 @@
 #include "stream.h"
-#include "config.h"
-#include "memory/heap/kheap.h"
+#include "../config.h"
+#include "../memory/heap/kheap.h"
 
 struct disk_stream*
 disk_stream_open(int disk_number)

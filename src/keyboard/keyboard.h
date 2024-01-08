@@ -1,8 +1,8 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#include "idt.h"
-#include "status.h"
+#include "../idt/idt.h"
+#include "../status.h"
 #include <stdint.h>
 
 #define KEYBOARD_BUFFER_SIZE 1024

@@ -1,10 +1,10 @@
 #ifndef ELF_LOADER_H
 #define ELF_LOADER_H
 
-#include "config.h"
+#include "../config.h"
+#include "../status.h"
+#include "../task/process.h"
 #include "format/elf.h"
-#include "status.h"
-#include "task/process.h"
 #include <stdbool.h>
 #include <stddef.h>
 

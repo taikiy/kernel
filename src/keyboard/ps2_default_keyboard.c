@@ -1,6 +1,6 @@
 #include "ps2_default_keyboard.h"
-#include "io/io.h"
-#include "terminal/terminal.h"
+#include "../io/io.h"
+#include "../terminal/terminal.h"
 
 static uint8_t keyboard_scancode_set_one[] = {
     /*
@@ -70,8 +70,8 @@ struct keyboard*
 ps2_default_keyboard_driver()
 {
     static struct keyboard keyboard = {
-        .name              = "PS/2 Default Keyboard",
-        .initialize        = ps2_initialize_keyboard_driver,
+        .name = "PS/2 Default Keyboard",
+        .initialize = ps2_initialize_keyboard_driver,
         .interrupt_handler = ps2_keyboard_interrupt_handler,
     };
 

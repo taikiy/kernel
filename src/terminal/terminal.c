@@ -1,5 +1,5 @@
 #include "terminal.h"
-#include "string/string.h"
+#include "../string/string.h"
 #include <stddef.h>
 #include <stdint.h>
 
@@ -85,7 +85,7 @@ terminal_initialize()
 {
     // TODO: https://wiki.osdev.org/Detecting_Colour_and_Monochrome_Monitors
 
-    video_mem  = (uint16_t*)0xB8000;
+    video_mem = (uint16_t*)0xB8000;
     cursor_col = 0;
     cursor_row = 0;
 

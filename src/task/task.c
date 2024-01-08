@@ -1,11 +1,11 @@
 #include "task.h"
-#include "config.h"
-#include "idt/idt.h"
-#include "memory/heap/kheap.h"
-#include "memory/memory.h"
-#include "memory/paging/paging.h"
-#include "status.h"
-#include "system/sys.h"
+#include "../config.h"
+#include "../idt/idt.h"
+#include "../memory/heap/kheap.h"
+#include "../memory/memory.h"
+#include "../memory/paging/paging.h"
+#include "../status.h"
+#include "../system/sys.h"
 
 struct task* current_task = 0;
 struct task* head_task = 0;

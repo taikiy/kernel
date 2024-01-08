@@ -1,8 +1,8 @@
 #ifndef STREAM_H
 #define STREAM_H
 
+#include "../status.h"
 #include "disk.h"
-#include "status.h"
 
 struct disk_stream
 {

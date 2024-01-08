@@ -1,6 +1,6 @@
 #include "tss.h"
-#include "config.h"
-#include "memory/memory.h"
+#include "../config.h"
+#include "../memory/memory.h"
 
 void
 tss_initialize(struct tss* tss)

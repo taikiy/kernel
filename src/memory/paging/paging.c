@@ -1,7 +1,7 @@
 #include "paging.h"
-#include "memory/heap/kheap.h"
-#include "memory/memory.h"
-#include "system/sys.h"
+#include "../../system/sys.h"
+#include "../heap/kheap.h"
+#include "../memory.h"
 
 extern void load_directory(uint32_t* directory);
 extern void enable_paging();

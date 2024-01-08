@@ -1,6 +1,6 @@
 #include "heap.h"
-#include "memory/memory.h"
-#include "status.h"
+#include "../../status.h"
+#include "../memory.h"
 
 static int
 heap_validate_alignment(void* ptr)

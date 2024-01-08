@@ -1,7 +1,7 @@
 #ifndef TASK_H
 #define TASK_H
 
-#include "idt/idt.h"
+#include "../idt/idt.h"
 #include "process.h"
 #include <stdint.h>
 

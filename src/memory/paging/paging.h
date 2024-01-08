@@ -1,8 +1,8 @@
 #ifndef PAGING_H
 #define PAGING_H
 
-#include "task/task.h"
-#include <status.h>
+#include "../../status.h"
+#include "../../task/task.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>

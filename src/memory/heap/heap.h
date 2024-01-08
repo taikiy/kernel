@@ -1,8 +1,8 @@
 #ifndef HEAP_H
 #define HEAP_H
 
-#include "config.h"
-#include "status.h"
+#include "../../config.h"
+#include "../../status.h"
 #include <stddef.h>
 #include <stdint.h>
 

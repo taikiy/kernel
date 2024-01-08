@@ -1,8 +1,8 @@
 #include "gdt.h"
-#include "config.h"
-#include "memory/memory.h"
-#include "system/sys.h"
-#include "task/tss.h"
+#include "../config.h"
+#include "../memory/memory.h"
+#include "../system/sys.h"
+#include "../task/tss.h"
 
 struct tss tss;
 struct gdt gdt_entries[TOTAL_GDT_SEGMENTS];

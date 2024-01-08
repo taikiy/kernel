@@ -1,11 +1,11 @@
 #include "fat16.h"
-#include "config.h"
-#include "disk/disk.h"
-#include "disk/stream.h"
-#include "memory/heap/kheap.h"
-#include "memory/memory.h"
-#include "status.h"
-#include "string.h"
+#include "../../config.h"
+#include "../../disk/disk.h"
+#include "../../disk/stream.h"
+#include "../../memory/heap/kheap.h"
+#include "../../memory/memory.h"
+#include "../../status.h"
+#include "../../string/string.h"
 #include <stdint.h>
 
 #define FAT16_SIGNATURE      0x29 // see boot.asm Extended BPB

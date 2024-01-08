@@ -1,11 +1,11 @@
 #include "keyboard.h"
-#include "config.h"
-#include "memory/memory.h"
+#include "../config.h"
+#include "../memory/memory.h"
+#include "../system/sys.h"
+#include "../task/process.h"
+#include "../task/task.h"
+#include "../terminal/terminal.h"
 #include "ps2_default_keyboard.h"
-#include "system/sys.h"
-#include "task/process.h"
-#include "task/task.h"
-#include "terminal/terminal.h"
 
 // We could have used a linked list here. Not sure if that's a better design though.
 static struct keyboard* keyboard_drivers[MAX_KEYBOARD_DRIVER_COUNT];

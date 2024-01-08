@@ -1,8 +1,8 @@
 #include "bin_loader.h"
-#include "config.h"
-#include "fs/file.h"
-#include "memory/heap/kheap.h"
-#include "memory/paging/paging.h"
+#include "../config.h"
+#include "../fs/file.h"
+#include "../memory/heap/kheap.h"
+#include "../memory/paging/paging.h"
 #include <stdint.h>
 
 status_t

@@ -1,9 +1,9 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include "disk/disk.h"
+#include "../disk/disk.h"
+#include "../status.h"
 #include "path_parser.h"
-#include "status.h"
 #include <stddef.h>
 #include <stdint.h>
 

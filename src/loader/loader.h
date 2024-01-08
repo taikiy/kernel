@@ -1,8 +1,8 @@
 #ifndef LOADER_H
 #define LOADER_H
 
-#include "status.h"
-#include "task/process.h"
+#include "../status.h"
+#include "../task/process.h"
 #include <stddef.h>
 
 typedef uint8_t PROGRAM_FILE_TYPE;

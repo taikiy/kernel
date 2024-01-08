@@ -1,11 +1,10 @@
 #include "process.h"
-
-#include "config.h"
-#include "fs/file.h"
-#include "loader/loader.h"
-#include "memory/heap/kheap.h"
-#include "memory/memory.h"
-#include "memory/paging/paging.h"
+#include "../config.h"
+#include "../fs/file.h"
+#include "../loader/loader.h"
+#include "../memory/heap/kheap.h"
+#include "../memory/memory.h"
+#include "../memory/paging/paging.h"
 #include "task.h"
 
 static struct process* current_process = 0;

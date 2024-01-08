@@ -1,9 +1,9 @@
 #include "path_parser.h"
-#include "config.h"
-#include "memory/heap/kheap.h"
-#include "memory/memory.h"
-#include "status.h"
-#include "string/string.h"
+#include "../config.h"
+#include "../memory/heap/kheap.h"
+#include "../memory/memory.h"
+#include "../status.h"
+#include "../string/string.h"
 
 const unsigned int MIN_PATH_LENGTH = 3;
 
