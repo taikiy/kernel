@@ -3,12 +3,10 @@
 
 #include <stddef.h>
 
+#define SYSCALL_MALLOC 4
+#define SYSCALL_FREE   5
+
 void* malloc(size_t size);
 void free(void* ptr);
-
-// TODO: Move the functions below to stdio.h
-void print(const char* str);
-int getchar();
-int putchar(int c);
 
 #endif
