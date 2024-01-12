@@ -41,7 +41,7 @@ process_program_loadable_segment(Elf32_Ehdr* e_header, Elf32_Phdr* p_header, str
     // Each loadable segment is located at the beginning of the file + an offset `p_header->p_offset`.
     out_layout->physical_address_start = (void*)((uint32_t)e_header + p_header->p_offset);
     out_layout->virtual_address_start = (void*)p_header->p_vaddr;
-    out_layout->size = p_header->p_filesz;
+    out_layout->size = p_header->p_memsz;
     out_layout->flags = PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL;
     if (p_header->p_flags & PF_W) {
         out_layout->flags |= PAGING_IS_WRITABLE;

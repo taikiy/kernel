@@ -21,7 +21,7 @@ The following is a rough outline of the steps that an ELF executable loader must
 4. Parse the program headers to determine the number of program segments that must be loaded. Each program header has an associated type, as described in Figure 2-2 of the ELF specification. Only headers with a type of PT_LOAD describe a loadable segment.
 5. Load each of the loadable segments. This is performed as follows:
    1. Allocate virtual memory for each segment, at the address specified by the p_vaddr member in the program header. The size of the segment in memory is specified by the p_memsz member.
-   2. Copy the segment data from the file offset specified by the p_offset member to the virtual memory address specified by the p_vaddr member. The size of the segment in the file is contained in the p_filesz member. This can be zero.
+   2. Copy the segment data from the file offset specified by the p_offset member to the virtual memory address specified by the p_vaddr member. The size of the segment in the file is contained in the p_memsz member.
    3. The p_memsz member specifies the size the segment occupies in memory. This can be zero. If the p_filesz and p_memsz members differ, this indicates that the segment is padded with zeros. All bytes in memory between the ending offset of the file size, and the segment's virtual memory size are to be cleared with zeros.
 6. Read the executable's entry point from the ELF header.
 7. Jump to the executable's entry point in the newly loaded memory.
