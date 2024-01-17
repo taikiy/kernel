@@ -4,23 +4,23 @@ section .asm
 
 global make_syscall:function
 
-; int make_syscall(uint32_t syscall_id, int argc, uint32_t argv[])
+; int make_syscall(uint32_t syscall_id, int argc, ...)
 make_syscall:
     push ebp
     mov ebp, esp
 
     mov edx, [ebp+12]   ; argc
-    mov ecx, [ebp+16]   ; argv
+    mov ebx, 16         ; offset from $ebp into &argv
 
 read_args:
     cmp edx, 0
     je send_int80h
 
-    mov eax, [ecx]      ; argv[i]
+    mov eax, [ebp+ebx]  ; argv[i]
     push eax
 
     sub edx, 1
-    add ecx, 4
+    add ebx, 4
     jmp read_args
 
 send_int80h:
