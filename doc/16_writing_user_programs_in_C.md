@@ -26,4 +26,4 @@ Implementing `malloc` and `free` functions is similar to what we did with the `p
 In this commit, we don't map the allocated memory to the user's virtual address space. That is because, in our system, the heap area's user space virtual address is the same as the kernel's virtual address. We will fix this later.
 
 - `malloc` and `free` [commit](https://github.com/taikiy/kernel/commit/c7b47a9c1139933fdedea99684122f22fc3f9dc0)
-- `make_syscall` assembly function [commit]()
+- Abstracting standard library system calls with `make_syscall` [commit](https://github.com/taikiy/kernel/commit/57ac430a09ce559101050ccc1010cbe4d97d95bb)
