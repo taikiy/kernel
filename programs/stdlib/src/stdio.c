@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "taios.h"
 #include <stdarg.h>
+#include <stdbool.h>
 #include <stdint.h>
 
 extern int make_syscall(uint32_t syscall_id, int argc, ...);
@@ -26,7 +27,7 @@ printf(const char* format, ...)
             }
             case 's': {
                 char* str = va_arg(args, char*);
-                for (char* c = str; *c != '\0'; c++) {
+                for (char* c = str; *c; c++) {
                     putchar(*c);
                 }
                 break;
@@ -85,11 +86,35 @@ getchar()
     while (1) {
         c = make_syscall(SYSCALL_GETCHAR, 0);
         // blocks until a character is available
-        if (c != 0) {
+        if (c) {
             break;
         }
     }
     return c;
+}
+
+char*
+gets(char* str)
+{
+    char* c = str;
+    while (1) {
+        *c = getchar();
+        if (is_newline(*c)) {
+            putchar(*c);
+            break;
+        }
+        if (*c == '\b') {
+            if (c > str) {
+                putchar(*c);
+                c--;
+            }
+            continue;
+        }
+        putchar(*c);
+        c++;
+    }
+    *c = '\0';
+    return str;
 }
 
 int

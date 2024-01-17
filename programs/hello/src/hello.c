@@ -14,16 +14,19 @@ main(int argc, char** argv)
     }
     printf("malloc(%d) succeeded\n", mem_size);
 
+    while (1) {
+        printf("Enter a string: ");
+        gets(str);
+        if (*str == 'Q') {
+            break;
+        }
+        printf("You entered: ");
+        printf("%s\n", str);
+    }
+
     free(str);
     printf("free succeeded\n");
 
-    while (1) {
-        int c = getchar();
-        if (c == 'Q') {
-            break;
-        }
-        putchar(c);
-    }
     while (1) {}
     return 0;
 }
