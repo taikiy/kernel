@@ -4,17 +4,18 @@
 int
 main(int argc, char** argv)
 {
-    print("Hello, World from User Program Written in C!\n");
+    printf("Hello, World from User Program Written in C!\n");
 
-    char* str = malloc(100);
+    const int mem_size = 100;
+    char* str = malloc(mem_size);
     if (!str) {
-        print("malloc failed\n");
+        printf("malloc failed\n");
         return 1;
     }
-    print("malloc succeeded\n");
+    printf("malloc(%d) succeeded\n", mem_size);
 
     free(str);
-    print("free succeeded\n");
+    printf("free succeeded\n");
 
     while (1) {
         int c = getchar();

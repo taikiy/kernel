@@ -1,4 +1,5 @@
 #include "stdlib.h"
+#include "taios.h"
 #include <stdint.h>
 
 extern int make_syscall(uint32_t syscall_id, int argc, ...);

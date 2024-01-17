@@ -27,43 +27,6 @@ get_arg_from_task(struct task* task, int index)
     return (void*)arg;
 }
 
-void*
-sys_sum(struct interrupt_frame* frame)
-{
-    print("sys_sum\n");
-
-    struct task* current_task = get_current_task();
-
-    // `sys_sum` takes two `int` arguments. Since `int` is a 4-byte primitive type, the value is directly stored in
-    // the stack. We can get the value by simply casting the argument value to `int`.
-    int arg1 = (int)get_arg_from_task(current_task, 0);
-    int arg2 = (int)get_arg_from_task(current_task, 1);
-
-    print("arg1: ");
-    print_int(arg1);
-    print("\narg2: ");
-    print_int(arg2);
-    print("\n");
-
-    return (void*)arg1 + arg2;
-}
-
-void*
-sys_print(struct interrupt_frame* frame)
-{
-    struct task* current_task = get_current_task();
-
-    // `sys_print` takes one `char*` argument. Since `char*` is a pointer type, the value is the address of the string
-    // in the user space. We can get the string from the address by using `copy_data_from_user_space()`.
-    char* arg1 = (char*)get_arg_from_task(current_task, 0);
-    char buf[4096];
-    copy_data_from_user_space(current_task, arg1, &buf, sizeof(buf));
-
-    print(buf);
-
-    return 0;
-}
-
 // int getchar();
 void*
 sys_getchar(struct interrupt_frame* frame)
@@ -101,12 +64,10 @@ register_syscall_handler(int command, INTERRUPT_HANDLER handler)
 void
 initialize_syscall_handlers()
 {
-    register_syscall_handler(SYSCALL_COMMAND_0_SUM, sys_sum);
-    register_syscall_handler(SYSCALL_COMMAND_1_PRINT, sys_print);
-    register_syscall_handler(SYSCALL_COMMAND_2_GETCHAR, sys_getchar);
-    register_syscall_handler(SYSCALL_COMMAND_3_PUTCHAR, sys_putchar);
-    register_syscall_handler(SYSCALL_COMMAND_4_MALLOC, sys_malloc);
-    register_syscall_handler(SYSCALL_COMMAND_5_FREE, sys_free);
+    register_syscall_handler(SYSCALL_COMMAND_GETCHAR, sys_getchar);
+    register_syscall_handler(SYSCALL_COMMAND_PUTCHAR, sys_putchar);
+    register_syscall_handler(SYSCALL_COMMAND_MALLOC, sys_malloc);
+    register_syscall_handler(SYSCALL_COMMAND_FREE, sys_free);
 }
 
 void*
