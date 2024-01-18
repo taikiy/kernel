@@ -21,7 +21,7 @@
 
 void test_path_parser();
 void test_file_system();
-void test_stdlib();
+void launch_shell();
 
 void
 kernel_main()
@@ -29,45 +29,48 @@ kernel_main()
     terminal_initialize();
     print("Welcome to your own kernel!\n\n");
 
-    print("...GDT\n");
+    print("Loading the Global Descriptor Table...");
     initialize_gdt();
-    print("You are in Protected Mode.\n");
+    printc("   OK\n", GREEN);
 
-    print("...kernel heap and paging\n");
+    print("\nYou are in Protected Mode.\n\n");
+
+    print("Initializing the kernel memory space...");
     initialize_kernel_heap();
     initialize_kernel_space_paging();
+    printc("   OK\n", GREEN);
 
-    print("...IDT\n");
+    print("Loading the Interrupt Descriptor Table...");
     initialize_idt();
-    print("...ISR\n");
-    initialize_interrupt_handlers();
+    printc("   OK\n", GREEN);
 
-    print("...disks and file systems\n");
+    print("Registering Interrupt Service Routines...");
+    initialize_interrupt_handlers();
+    printc("   OK\n", GREEN);
+
+    print("Loading disks and file systems...");
     initialize_file_systems();
     initialize_disks();
+    printc("   OK\n", GREEN);
 
-    print("...keyboard drivers\n");
+    print("Loading keyboard drivers...");
     initialize_keyboard_drivers();
+    printc("   OK\n", GREEN);
 
-    print("...enabling interrupts\n");
+    print("Enabling system interrupts...");
     enable_interrupts();
+    printc("   OK\n", GREEN);
 
-    print("\nKernel is ready!\n\n");
+    print("\nKernel initialization complete!\n\n");
 
-    // TESTS
-    // test_path_parser();
-    // test_file_system();
-    test_stdlib();
-
-    print("End of kernel_main\n");
+    launch_shell();
 }
 
 void
-test_stdlib()
+launch_shell()
 {
     struct process* proc = 0;
-    print("Executing 0:/hello\n");
-    status_t result = create_process_and_switch("0:/hello", &proc);
+    status_t result = create_process_and_switch("0:/shell", &proc);
     if (result != ALL_OK || !proc) {
         panic("Failed to create a process!");
     }

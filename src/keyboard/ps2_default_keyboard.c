@@ -16,8 +16,6 @@ static uint8_t keyboard_scancode_set_one[] = {
 static status_t
 ps2_initialize_keyboard_driver()
 {
-    print("Initializing PS/2 Default Keyboard\n");
-
     outb(PS2_COMMAND_PORT, PS2_COMMAND_ENABLE_FIRST_PORT);
 
     return ALL_OK;

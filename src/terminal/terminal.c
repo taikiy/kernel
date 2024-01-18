@@ -24,13 +24,13 @@ text_mode_character(char c, char color)
 }
 
 static void
-push_char_to_buffer(int x, int y, char c, char color)
+push_char_to_buffer(int x, int y, char c, enum COLORS color)
 {
     screen_buffer[(y % SCREEN_BUFFER_HEIGHT) * VGA_WIDTH + x] = text_mode_character(c, color);
 }
 
 static void
-write_char(char c, char color)
+write_char(char c, enum COLORS color)
 {
     if (c == '\n' || c == '\r') {
         while (cursor_col < VGA_WIDTH) {
@@ -101,9 +101,15 @@ terminal_initialize()
 void
 print(const char* str)
 {
+    printc(str, WHITE);
+}
+
+void
+printc(const char* str, enum COLORS color)
+{
     size_t len = strlen(str);
     for (int i = 0; i < len; i++) {
-        write_char(str[i], 15);
+        write_char(str[i], color);
     }
     flush_screen_buffer();
 }

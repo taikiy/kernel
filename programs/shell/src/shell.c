@@ -1,7 +1,19 @@
 #include "shell.h"
+#include "stdio.h"
 
 int
 main(int argc, char* argv[])
 {
-    return 0;
+    printf("\nshell v0.1\n\n");
+    char command[4098];
+    while (1) {
+        printf("> ");
+
+        gets(command);
+
+        if (*command == 'Q') {
+            printf("Quitting...\n");
+            break;
+        }
+    }
 }
