@@ -12,7 +12,7 @@ main(int argc, char* argv[])
         gets(command);
 
         if (*command == 'Q') {
-            printf("Quitting...\n");
+            printf("Quit\n");
             break;
         }
     }

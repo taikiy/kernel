@@ -64,6 +64,8 @@ kernel_main()
     print("\nKernel initialization complete!\n\n");
 
     launch_shell();
+
+    while (1) {}
 }
 
 void

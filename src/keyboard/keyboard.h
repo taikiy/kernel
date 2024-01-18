@@ -7,6 +7,10 @@
 
 #define KEYBOARD_BUFFER_SIZE 1024
 
+#define BACKSPACE 0x08
+#define CTRL_C    0x03
+#define CTRL_D    0x04
+
 typedef status_t (*KB_INIT_CALLBACK)(void);
 
 struct keyboard

@@ -1,4 +1,5 @@
 #include "terminal.h"
+#include "../keyboard/keyboard.h"
 #include "../string/string.h"
 #include <stddef.h>
 #include <stdint.h>
@@ -37,8 +38,7 @@ write_char(char c, enum COLORS color)
             push_char_to_buffer(cursor_col, cursor_row, ' ', color);
             cursor_col += 1;
         }
-    } else if (c == 0x08) {
-        // Backspace
+    } else if (c == BACKSPACE) {
         if (cursor_col == 0 && cursor_row == 0) {
             return;
         } else if (cursor_col == 0) {
