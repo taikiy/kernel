@@ -12,14 +12,16 @@ The user program file is processed by our ELF loader, where the entry point is s
 
 Note that running `hello` in this commit will cause a page fault. This is because we have not implemented the `exit` system call yet. The `exit` system call is called when the `main` function returns. The `exit` system call will be responsible for terminating tasks and the process and freeing the memory allocated by the user program.
 
-## print function
+## Standard Library
 
-The first function we implement is the `print` function. The `print` function is a wrapper of the INT80h command 1, `sys_print`, system call.
+### print function and getchar, putchar functions
+
+The first function we implement is the `print` function. The `print` function is a wrapper of the INT80h command 1, `sys_print`, system call. Note that this is for testing purposes only. We will implement the standard library's `printf` function later.
 
 - stdlib `print` function [commit](https://github.com/taikiy/kernel/commit/47a2fef03b73645c393992245d160666e08a44cd)
 - `getchar`, `putchar` [commit](https://github.com/taikiy/kernel/commit/ac10715ca82860e0589c04585c4ed57303be113c)
 
-## malloc & free functions
+### malloc & free functions
 
 Implementing `malloc` and `free` functions is similar to what we did with the `print` function. Each time the `malloc` function is called, we allocate a page of memory and record the address of the allocated memory in the current process's `allocations` array.
 
@@ -27,3 +29,7 @@ In this commit, we don't map the allocated memory to the user's virtual address 
 
 - `malloc` and `free` [commit](https://github.com/taikiy/kernel/commit/c7b47a9c1139933fdedea99684122f22fc3f9dc0)
 - Abstracting standard library system calls with `make_syscall` [commit](https://github.com/taikiy/kernel/commit/57ac430a09ce559101050ccc1010cbe4d97d95bb)
+
+---
+
+[Previous](./15_elf_files.md) | [Next](./17_shell_and_launching_other_programs.md) | [Home](../README.md)

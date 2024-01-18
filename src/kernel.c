@@ -21,9 +21,6 @@
 
 void test_path_parser();
 void test_file_system();
-void test_user_space();
-void test_syscall();
-void test_elf_loader();
 void test_stdlib();
 
 void
@@ -52,18 +49,15 @@ kernel_main()
     print("...keyboard drivers\n");
     initialize_keyboard_drivers();
 
+    print("...enabling interrupts\n");
+    enable_interrupts();
+
     print("\nKernel is ready!\n\n");
 
     // TESTS
     // test_path_parser();
     // test_file_system();
-    // test_user_space();
-    // test_syscall();
-    // test_elf_loader();
     test_stdlib();
-
-    print("...enabling interrupts\n");
-    enable_interrupts();
 
     print("End of kernel_main\n");
 }
@@ -74,39 +68,6 @@ test_stdlib()
     struct process* proc = 0;
     print("Executing 0:/hello\n");
     status_t result = create_process_and_switch("0:/hello", &proc);
-    if (result != ALL_OK || !proc) {
-        panic("Failed to create a process!");
-    }
-}
-
-void
-test_elf_loader()
-{
-    struct process* proc = 0;
-    print("Executing 0:/elf\n");
-    status_t result = create_process_and_switch("0:/elf", &proc);
-    if (result != ALL_OK || !proc) {
-        panic("Failed to create a process!");
-    }
-}
-
-void
-test_syscall()
-{
-    struct process* proc = 0;
-    print("Executing 0:/syscall.bin\n");
-    status_t result = create_process_and_switch("0:/syscall.bin", &proc);
-    if (result != ALL_OK || !proc) {
-        panic("Failed to create a process!");
-    }
-}
-
-void
-test_user_space()
-{
-    struct process* proc = 0;
-    print("Executing 0:/blank.bin\n");
-    status_t result = create_process_and_switch("0:/blank.bin", &proc);
     if (result != ALL_OK || !proc) {
         panic("Failed to create a process!");
     }

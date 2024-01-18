@@ -51,9 +51,7 @@ $(BUILD_DIR)/%.c.o: $(SRC_DIR)/%.c
 copy:
 	hdiutil attach -imagekey diskimage-class=CRawDiskImage -mount required $(BUILD_DIR)/$(OS_IMG)
 	cp ./hello.txt "/Volumes/taiOS BOOT/"
-	cp $(USR_BIN_DIR)/blank/build/blank.bin "/Volumes/taiOS BOOT/"
-	cp $(USR_BIN_DIR)/syscall/build/syscall.bin "/Volumes/taiOS BOOT/"
-	cp $(USR_BIN_DIR)/elf/build/elf "/Volumes/taiOS BOOT/"
+	cp $(USR_BIN_DIR)/shell/build/shell "/Volumes/taiOS BOOT/"
 	cp $(USR_BIN_DIR)/hello/build/hello "/Volumes/taiOS BOOT/"
 	hdiutil detach `hdiutil info | tail -n 1 | cut -f 1`
 
