@@ -64,7 +64,7 @@ get_visible_screen_top_row()
 {
     // TODO: This doesn't quite work. We are not accounting for the fact that the cursor can be moved up and down
 
-    int top = (cursor_row - VGA_HEIGHT) % SCREEN_BUFFER_HEIGHT;
+    int top = (cursor_row - VGA_HEIGHT + 1) % SCREEN_BUFFER_HEIGHT;
     return top < 0 ? 0 : top;
 }
 
