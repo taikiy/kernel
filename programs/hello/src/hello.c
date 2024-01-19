@@ -28,5 +28,8 @@ main(int argc, char** argv)
     free(str);
     printf("free succeeded\n");
 
+    str[0] = 'a'; // should cause a segfault
+
+    while (1) {}
     return 0;
 }

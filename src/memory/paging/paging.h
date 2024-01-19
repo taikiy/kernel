@@ -27,13 +27,14 @@ extern void set_user_segment_registers();
 struct paging_map* new_paging_map(uint8_t flags);
 status_t free_paging_map(struct paging_map* map);
 status_t copy_data_from_user_space(struct task* task, void* src, void* dest, size_t size);
-status_t map_physical_address_to_pages(
+status_t map_paging_addresses(
   struct paging_map* map,
-  void* physical_address,
   void* virtual_address,
+  void* physical_address,
   uint32_t size,
   uint32_t flags
 );
+status_t unmap_virtual_address(struct paging_map* map, void* virtual_address, size_t size);
 void initialize_kernel_space_paging();
 void switch_to_kernel_page();
 void switch_to_user_page();

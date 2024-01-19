@@ -5,6 +5,7 @@
 #include "../memory/heap/kheap.h"
 #include "../memory/memory.h"
 #include "../memory/paging/paging.h"
+#include "../system/sys.h"
 #include "task.h"
 
 static struct process* current_process = 0;
@@ -97,7 +98,9 @@ free_process(struct process* process)
 
     for (int i = 0; i < MAX_ALLOCATIONS_PER_PROCESS; i++) {
         if (process->allocations[i]) {
-            kfree(process->allocations[i]);
+            struct allocation* mem = process->allocations[i];
+            kfree(mem->ptr);
+            kfree(mem);
         }
     }
 
@@ -114,10 +117,10 @@ map_program_memory_space(struct process* process)
     for (int i = 0; i < program->program_section_count; i++) {
         struct memory_layout* section = program->program_sections[i];
 
-        status_t result = map_physical_address_to_pages(
+        status_t result = map_paging_addresses(
           process->task->user_page,
-          section->physical_address_start,
           section->virtual_address_start,
+          section->physical_address_start,
           section->size,
           section->flags
         );
@@ -134,10 +137,10 @@ map_stack_memory_space(struct process* process)
 {
     struct program* program = process->program;
 
-    return map_physical_address_to_pages(
+    return map_paging_addresses(
       process->task->user_page,
-      program->stack_section->physical_address_start,
       program->stack_section->virtual_address_start,
+      program->stack_section->physical_address_start,
       program->stack_section->size,
       program->stack_section->flags
     );
@@ -296,10 +299,20 @@ process_malloc(struct process* process, size_t size)
         result = ERROR(ETOOMANYPROCMALLOCS);
         goto out;
     }
-    process->allocations[slot] = ptr;
+
+    struct allocation* allocation = kmalloc(sizeof(struct allocation));
+    if (!allocation) {
+        result = ERROR(ENOMEM);
+        goto out;
+    }
+    allocation->ptr = ptr;
+    allocation->size = size;
+    process->allocations[slot] = allocation;
 
     // map the physical address to the process' virtual address space
-    result = map_physical_address_to_pages(
+    // TODO: if the system has more than one task per process, we need to loop through all tasks and map the address to
+    // each task's virtual address space.
+    result = map_paging_addresses(
       process->task->user_page, ptr, ptr, size, PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL | PAGING_IS_WRITABLE
     );
 
@@ -307,6 +320,9 @@ out:
     if (result != ALL_OK) {
         if (ptr) {
             kfree(ptr);
+        }
+        if (allocation) {
+            kfree(allocation);
         }
         ptr = 0;
     }
@@ -316,11 +332,31 @@ out:
 void
 process_free(struct process* process, void* ptr)
 {
+    struct allocation* mem = 0;
     for (int i = 0; i < MAX_ALLOCATIONS_PER_PROCESS; i++) {
-        if (process->allocations[i] == ptr) {
-            kfree(ptr);
+        if (process->allocations[i] && process->allocations[i]->ptr == ptr) {
+            mem = process->allocations[i];
             process->allocations[i] = 0;
-            return;
+            break;
         }
     }
+
+    if (!mem) {
+        // `ptr` doesn't belong to this process
+        return;
+    }
+
+    // Unlink the virtual address from the process' paging table. If we don't do this, any process that has access to
+    // the same virtual address can access the physical address. This is a security issue. Unlinking is done by setting
+    // the table_entry's flag to 0.
+    // TODO: if the system has more than one task per process, we need to loop through all tasks and unmap the address
+    // to each task's virtual address space.
+    status_t result = map_paging_addresses(process->task->user_page, ptr, ptr, mem->size, 0);
+    if (result != ALL_OK) {
+        panic("Failed to unmap virtual address!");
+    }
+
+    kfree(mem->ptr);
+    kfree(mem);
+    return;
 }

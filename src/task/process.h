@@ -28,6 +28,12 @@ struct program
     struct memory_layout* stack_section;
 };
 
+struct allocation
+{
+    void* ptr;
+    size_t size;
+};
+
 struct process
 {
     // Process ID
@@ -39,7 +45,7 @@ struct process
 
     // The main process heap allocations. This is used to free the heap when the process exits.
     // TODO: This should be a pointer and malloced in the heap when we create a process.
-    void* allocations[MAX_ALLOCATIONS_PER_PROCESS];
+    struct allocation* allocations[MAX_ALLOCATIONS_PER_PROCESS];
 
     // The program file that this process is running.
     struct program* program;

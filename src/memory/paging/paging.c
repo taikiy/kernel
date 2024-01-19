@@ -160,10 +160,10 @@ out:
 }
 
 status_t
-map_physical_address_to_pages(
+map_paging_addresses(
   struct paging_map* map,
-  void* physical_address,
   void* virtual_address,
+  void* physical_address,
   uint32_t size,
   uint32_t flags
 )
@@ -266,7 +266,7 @@ copy_data_from_user_space(struct task* task, void* src, void* dest, size_t size)
 
     // Map the user space virtual address `buf` (which points to some unknown physical address) to point to the kernel
     // space physical address `buf`. The memory space is set to be read-only.
-    result = map_physical_address_to_pages(user_page, buf, buf, max_page_size_to_copy, PAGING_IS_PRESENT);
+    result = map_paging_addresses(user_page, buf, buf, max_page_size_to_copy, PAGING_IS_PRESENT);
     if (result != ALL_OK) {
         goto out;
     }
