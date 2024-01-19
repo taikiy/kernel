@@ -6,6 +6,12 @@
 
 extern int make_syscall(uint32_t syscall_id, int argc, ...);
 
+static bool
+is_newline(char c)
+{
+    return c == '\n' || c == '\r';
+}
+
 void
 printf(const char* format, ...)
 {

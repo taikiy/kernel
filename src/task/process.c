@@ -5,6 +5,7 @@
 #include "../memory/heap/kheap.h"
 #include "../memory/memory.h"
 #include "../memory/paging/paging.h"
+#include "../terminal/terminal.h"
 #include "task.h"
 
 static struct process* current_process = 0;
@@ -227,6 +228,17 @@ switch_process(struct process* process)
     return switch_task(process->task);
 }
 
+static int
+find_empty_slot()
+{
+    for (int i = 0; i < MAX_PROCESSES; i++) {
+        if (!processes[i]) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 status_t
 create_process(const char* file_path, struct process** process)
 {
@@ -238,12 +250,8 @@ create_process(const char* file_path, struct process** process)
         return ERROR(EINVARG);
     }
 
-    int slot = 0;
-    for (int i = 0; i < MAX_PROCESSES; i++) {
-        if (!processes[i]) {
-            slot = i;
-            break;
-        }
+    int slot = find_empty_slot();
+    if (slot < 0) {
         return ERROR(ETOOMANYPROCESSES);
     }
 

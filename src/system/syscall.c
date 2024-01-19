@@ -1,9 +1,10 @@
 #include "syscall.h"
 #include "../config.h"
 #include "../memory/paging/paging.h"
-#include "heap.h"
-#include "io.h"
-#include "sys.h"
+#include "./heap.h"
+#include "./io.h"
+#include "./process.h"
+#include "./sys.h"
 
 // TODO: This file should be merged together with other ISR definitions in idt.c and placed in isr.c or something.
 
@@ -44,6 +45,7 @@ register_syscall_handler(int command, INTERRUPT_HANDLER handler)
 void
 initialize_syscall_handlers()
 {
+    register_syscall_handler(SYSCALL_COMMAND_EXEC, sys_exec);
     register_syscall_handler(SYSCALL_COMMAND_GETCHAR, sys_getchar);
     register_syscall_handler(SYSCALL_COMMAND_PUTCHAR, sys_putchar);
     register_syscall_handler(SYSCALL_COMMAND_MALLOC, sys_malloc);

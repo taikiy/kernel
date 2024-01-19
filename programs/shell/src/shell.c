@@ -1,5 +1,6 @@
 #include "shell.h"
 #include "stdio.h"
+#include "taios.h"
 
 int
 main(int argc, char* argv[])
@@ -14,6 +15,11 @@ main(int argc, char* argv[])
         if (*command == 'Q') {
             printf("Quit\n");
             break;
+        }
+
+        int result = exec(command);
+        if (result != 0) {
+            printf("exec failed: %d\n", result);
         }
     }
 }

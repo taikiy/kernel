@@ -14,6 +14,7 @@ main(int argc, char** argv)
     }
     printf("malloc(%d) succeeded\n", mem_size);
 
+    printf("Enter 'Q' to quit\n");
     while (1) {
         printf("Enter a string: ");
         gets(str);
@@ -27,6 +28,5 @@ main(int argc, char** argv)
     free(str);
     printf("free succeeded\n");
 
-    while (1) {}
     return 0;
 }

@@ -1,7 +1,10 @@
 #include "taios.h"
+#include <stdint.h>
 
-bool
-is_newline(char c)
+extern int make_syscall(uint32_t syscall_id, int argc, ...);
+
+int
+exec(const char* path)
 {
-    return c == '\n' || c == '\r';
+    return make_syscall(SYSCALL_EXEC, 1, (uint32_t)path);
 }
