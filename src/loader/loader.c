@@ -2,7 +2,6 @@
 #include "../fs/file.h"
 #include "../memory/heap/kheap.h"
 #include "../string/string.h"
-#include "../terminal/terminal.h"
 #include "bin_loader.h"
 #include "elf_loader.h"
 #include <stdint.h>

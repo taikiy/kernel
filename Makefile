@@ -53,6 +53,7 @@ copy:
 	cp ./hello.txt "/Volumes/taiOS BOOT/"
 	cp $(USR_BIN_DIR)/shell/build/shell "/Volumes/taiOS BOOT/"
 	cp $(USR_BIN_DIR)/hello/build/hello "/Volumes/taiOS BOOT/"
+	cp $(USR_BIN_DIR)/test/build/test "/Volumes/taiOS BOOT/"
 	hdiutil detach `hdiutil info | tail -n 1 | cut -f 1`
 
 usr_bin:
