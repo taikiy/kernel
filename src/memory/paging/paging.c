@@ -45,7 +45,7 @@ out:
 }
 
 static uint32_t*
-get_aligned_address(void* address)
+get_page_aligned_address(void* address)
 {
     return (uint32_t)address % PAGING_PAGE_SIZE_BYTES == 0
              ? address
@@ -179,7 +179,7 @@ map_physical_address_to_pages(
     }
 
     uint32_t* physical_start_address = (uint32_t*)physical_address;
-    uint32_t* physical_end_address = get_aligned_address((void*)((uint32_t)physical_start_address + size));
+    uint32_t* physical_end_address = get_page_aligned_address((void*)((uint32_t)physical_start_address + size));
 
     if (physical_start_address >= physical_end_address) {
         return ERROR(EINVARG);

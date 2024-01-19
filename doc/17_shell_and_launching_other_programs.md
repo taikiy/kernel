@@ -6,4 +6,8 @@ Now that we have implemented the system calls ([Talking with the kernel from Use
 
 To launch user programs from the shell, we need to implement a system call that will create a new process.
 
-[commit]()
+- sys_exec [commit](https://github.com/taikiy/kernel/commit/d508e93217b33e702c86592c5bc67e146af7166b)
+
+We also need to implement a system call that terminates the process.
+
+- sys_exit [commit]()

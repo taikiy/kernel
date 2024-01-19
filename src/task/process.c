@@ -5,7 +5,6 @@
 #include "../memory/heap/kheap.h"
 #include "../memory/memory.h"
 #include "../memory/paging/paging.h"
-#include "../terminal/terminal.h"
 #include "task.h"
 
 static struct process* current_process = 0;
@@ -229,7 +228,7 @@ switch_process(struct process* process)
 }
 
 static int
-find_empty_slot()
+find_empty_process_slot()
 {
     for (int i = 0; i < MAX_PROCESSES; i++) {
         if (!processes[i]) {
@@ -250,7 +249,7 @@ create_process(const char* file_path, struct process** process)
         return ERROR(EINVARG);
     }
 
-    int slot = find_empty_slot();
+    int slot = find_empty_process_slot();
     if (slot < 0) {
         return ERROR(ETOOMANYPROCESSES);
     }
@@ -271,23 +270,47 @@ create_process_and_switch(const char* file_path, struct process** process)
     return switch_process(*process);
 }
 
+int
+find_empty_malloc_slot(struct process* process)
+{
+    for (int i = 0; i < MAX_ALLOCATIONS_PER_PROCESS; i++) {
+        if (!process->allocations[i]) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void*
 process_malloc(struct process* process, size_t size)
 {
+    status_t result = ALL_OK;
+
     void* ptr = kmalloc(size);
     if (!ptr) {
         return 0;
     }
 
-    for (int i = 0; i < MAX_ALLOCATIONS_PER_PROCESS; i++) {
-        if (!process->allocations[i]) {
-            process->allocations[i] = ptr;
-            return ptr;
-        }
+    int slot = find_empty_malloc_slot(process);
+    if (slot < 0) {
+        result = ERROR(ETOOMANYPROCMALLOCS);
+        goto out;
     }
+    process->allocations[slot] = ptr;
 
-    // no empty slot found
-    return 0;
+    // map the physical address to the process' virtual address space
+    result = map_physical_address_to_pages(
+      process->task->user_page, ptr, ptr, size, PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL | PAGING_IS_WRITABLE
+    );
+
+out:
+    if (result != ALL_OK) {
+        if (ptr) {
+            kfree(ptr);
+        }
+        ptr = 0;
+    }
+    return ptr;
 }
 
 void
