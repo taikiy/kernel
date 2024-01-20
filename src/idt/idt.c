@@ -30,9 +30,9 @@ save_current_task_state(struct interrupt_frame* frame)
         panic("Cannot save the state of a task with a null frame!");
     }
 
-    current_task->registers.ip = frame->ip;
+    current_task->registers.eip = frame->eip;
     current_task->registers.cs = frame->cs;
-    current_task->registers.flags = frame->flags;
+    current_task->registers.eflags = frame->eflags;
     current_task->registers.esp = frame->esp;
     current_task->registers.ss = frame->ss;
 

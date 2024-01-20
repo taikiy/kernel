@@ -11,7 +11,7 @@ struct task* current_task = 0;
 struct task* head_task = 0;
 struct task* tail_task = 0;
 
-extern void return_to_user_space();
+extern void jump_to_user_space(struct registers* registers, int argc, char* argv[]);
 
 static status_t
 initialize_task(struct task* task, struct process* process)
@@ -25,7 +25,7 @@ initialize_task(struct task* task, struct process* process)
         return ERROR(EIO);
     }
 
-    task->registers.ip = (uint32_t)process->program->entry_point_address;
+    task->registers.eip = (uint32_t)process->program->entry_point_address;
     task->registers.esp = USER_PROGRAM_STACK_VIRTUAL_ADDRESS_START;
     task->registers.ss = USER_PROGRAM_DATA_SELECTOR;
     task->registers.cs = USER_PROGRAM_CODE_SELECTOR;
@@ -145,15 +145,29 @@ get_current_task()
 }
 
 status_t
-switch_task(struct task* task)
+start_task(struct task* task)
 {
     if (!task) {
         return ERROR(EINVARG);
     }
 
+    // get all the command arguments and join them into an array
+    struct command_args* command = task->process->program->command;
+    int argc = 0;
+    char* argv[MAX_COMMAND_ARGS]; // TODO: dynamically allocate this array
+    while (command) {
+        // skip the first argument, which is the program path
+        struct command_args* next = command->next;
+        argv[argc++] = next->value;
+        if (argc > MAX_COMMAND_ARGS) {
+            return ERROR(ETOOMANYARGS);
+        }
+        command = next;
+    }
+
     current_task = task;
     switch_to_user_page();
-    return_to_user_space(&current_task->registers);
+    jump_to_user_space(&current_task->registers, argc - 1, argv);
 
     return ALL_OK;
 }

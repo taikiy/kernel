@@ -18,7 +18,7 @@ initialize_process(struct process* process)
 }
 
 static status_t
-load_program_for_process(const char* file_path, struct program** program)
+load_program_for_process(struct command_args* command, struct program** program)
 {
     status_t result = ALL_OK;
 
@@ -28,10 +28,13 @@ load_program_for_process(const char* file_path, struct program** program)
     }
 
     new_program->file_type = PROGRAM_FILE_TYPE_UNKNOWN;
+    const char* file_path = command->value;
     result = load_file(file_path, new_program);
     if (result != ALL_OK) {
         goto out;
     }
+
+    new_program->command = command;
 
     *program = new_program;
 
@@ -87,6 +90,15 @@ free_process(struct process* process)
 
         if (program->entry_point_address) {
             kfree(program->entry_point_address);
+        }
+
+        if (program->command) {
+            struct command_args* command = program->command;
+            while (command) {
+                struct command_args* next = command->next;
+                kfree(command);
+                command = next;
+            }
         }
 
         kfree(program);
@@ -172,7 +184,7 @@ out:
 /// @param slot Process ID we want to assign to the process.
 /// @return ALL_OK if the process is loaded successfully.
 static status_t
-load_process_to_slot(const char* file_path, struct process** process, int slot)
+load_process_to_slot(struct command_args* command, struct process** process, int slot)
 {
     status_t result = ALL_OK;
 
@@ -189,7 +201,7 @@ load_process_to_slot(const char* file_path, struct process** process, int slot)
     initialize_process(new_process);
 
     // load the executable file and allocate data/stack memories
-    result = load_program_for_process(file_path, &new_process->program);
+    result = load_program_for_process(command, &new_process->program);
     if (result != ALL_OK) {
         goto out;
     }
@@ -220,14 +232,14 @@ out:
 }
 
 status_t
-switch_process(struct process* process)
+start_process(struct process* process)
 {
     if (!process) {
         return ERROR(EINVARG);
     }
 
     current_process = process;
-    return switch_task(process->task);
+    return start_task(process->task);
 }
 
 static int
@@ -242,9 +254,9 @@ find_empty_process_slot()
 }
 
 status_t
-create_process(const char* file_path, struct process** process)
+create_process(struct command_args* command, struct process** process)
 {
-    if (!file_path) {
+    if (!command || !command->value) {
         return ERROR(EINVARG);
     }
 
@@ -257,20 +269,20 @@ create_process(const char* file_path, struct process** process)
         return ERROR(ETOOMANYPROCESSES);
     }
 
-    return load_process_to_slot(file_path, process, slot);
+    return load_process_to_slot(command, process, slot);
 }
 
 status_t
-create_process_and_switch(const char* file_path, struct process** process)
+create_process_and_switch(struct command_args* command, struct process** process)
 {
     status_t result = ALL_OK;
 
-    result = create_process(file_path, process);
+    result = create_process(command, process);
     if (result != ALL_OK) {
         return result;
     }
 
-    return switch_process(*process);
+    return start_process(*process);
 }
 
 int

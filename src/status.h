@@ -16,6 +16,7 @@ typedef void* status_t;
 #define ETOOMANYDRIVERS     10
 #define EFILENOTSUPPORTED   11
 #define ETOOMANYPROCMALLOCS 12
+#define ETOOMANYARGS        13
 
 #define ERROR(v) ((void*)(-v))
 

@@ -29,6 +29,7 @@
 
 #define MAX_PROCESSES               10
 #define MAX_ALLOCATIONS_PER_PROCESS 1024
+#define MAX_COMMAND_ARGS            32
 
 #define DISK_SECTOR_SIZE_BYTES    512
 #define MAX_PATH_LENGTH           108

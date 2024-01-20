@@ -14,6 +14,7 @@ inb:
 	mov edx, [ebp+8]
 	in al, dx
 
+	mov esp, ebp
 	pop ebp
 	ret
 
@@ -26,6 +27,7 @@ inw:
 	mov edx, [ebp+8]
 	in ax, dx
 
+	mov esp, ebp
 	pop ebp
 	ret
 
@@ -38,6 +40,7 @@ outb:
 	mov edx, [ebp+8]
 	out dx, al
 
+	mov esp, ebp
 	pop ebp
 	ret
 
@@ -50,5 +53,6 @@ outw:
 	mov edx, [ebp+8]
 	out dx, ax
 
+	mov esp, ebp
 	pop ebp
 	ret

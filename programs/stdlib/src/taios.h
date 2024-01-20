@@ -3,6 +3,12 @@
 
 #include <stdbool.h>
 
+struct command_args
+{
+    char* value;
+    struct command_args* next;
+};
+
 #define SYSCALL_EXEC    1
 #define SYSCALL_GETCHAR 2
 #define SYSCALL_PUTCHAR 3

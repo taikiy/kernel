@@ -22,6 +22,7 @@ load_idt:
     mov ebx, [ebp+8] ; first argument passed to this function
     lidt [ebx]
 
+    mov esp, ebp
     pop ebp
     ret
 

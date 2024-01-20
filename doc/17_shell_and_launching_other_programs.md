@@ -8,6 +8,18 @@ To launch user programs from the shell, we need to implement a system call that 
 
 - sys_exec [commit](https://github.com/taikiy/kernel/commit/d508e93217b33e702c86592c5bc67e146af7166b)
 
+## Passing Arguments to the User Program
+
+We need to pass arguments to the user program. How we pass arguments to the user program is as follows.
+
+1. shell calls stdlib `exec` function.
+2. `exec` parses the command line arguments and makes a system call with the arguments.
+3. `sys_exec` system call creates a new process with the received arguments.
+4. the new process pushes the arguments to the user program's stack. [push_user_program_arguments@task.asm](../src/task/task.asm)
+5. the process calls `iret`
+
+- [commit]()
+
 We also need to implement a system call that terminates the process.
 
 - sys_exit [commit]()

@@ -9,21 +9,20 @@ make_syscall:
     push ebp
     mov ebp, esp
 
-    mov edx, [ebp+12]   ; argc
-    mov ebx, 16         ; offset from $ebp into &argv
+    mov edx, [ebp + 12]     ; argc
+    lea ecx, [ebp + 16]     ; argv
+    ; push the arguments in reverse order
+    _push_args_loop:
+        cmp edx, 0
+        je _push_args_loop_end
 
-read_args:
-    cmp edx, 0
-    je send_int80h
+        mov eax, [ecx + edx * 4 - 4]    ; argv[edx - 1]
+        push eax
 
-    mov eax, [ebp+ebx]  ; argv[i]
-    push eax
+        dec edx
+        jmp _push_args_loop
+    _push_args_loop_end:
 
-    sub edx, 1
-    add ebx, 4
-    jmp read_args
-
-send_int80h:
     mov eax, [ebp+8]    ; syscall_id
     int 0x80
 

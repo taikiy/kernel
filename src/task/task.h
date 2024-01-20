@@ -17,9 +17,9 @@ struct registers
     uint32_t ebx; // Bring ebx to the end to make it easier to save/restore. See
                   // `restore_general_purpose_registers` in `task.asm`
 
-    uint32_t ip;
+    uint32_t eip;
     uint32_t cs;
-    uint32_t flags;
+    uint32_t eflags;
     uint32_t esp;
     uint32_t ss;
 };
@@ -36,6 +36,6 @@ struct task
 struct task* create_task(struct process* process);
 status_t free_task(struct task* task);
 struct task* get_current_task();
-status_t switch_task(struct task* task);
+status_t start_task(struct task* task);
 
 #endif

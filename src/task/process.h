@@ -15,6 +15,12 @@ struct memory_layout
     uint32_t flags;
 };
 
+struct command_args
+{
+    char* value;
+    struct command_args* next;
+};
+
 struct program
 {
     char file_path[MAX_PATH_LENGTH];
@@ -26,6 +32,8 @@ struct program
     struct memory_layout** program_sections;
 
     struct memory_layout* stack_section;
+
+    struct command_args* command;
 };
 
 struct allocation
@@ -53,10 +61,10 @@ struct process
     struct keyboard_buffer keyboard_buffer;
 };
 
-status_t create_process(const char* file_path, struct process** process);
-status_t create_process_and_switch(const char* file_path, struct process** process);
+status_t create_process(struct command_args* command, struct process** process);
+status_t create_process_and_switch(struct command_args* command, struct process** process);
 struct process* get_current_process();
-status_t switch_process(struct process* process);
+status_t start_process(struct process* process);
 void* process_malloc(struct process* process, size_t size);
 void process_free(struct process* process, void* ptr);
 

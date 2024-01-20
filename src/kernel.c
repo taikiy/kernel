@@ -72,7 +72,8 @@ void
 launch_shell()
 {
     struct process* proc = 0;
-    status_t result = create_process_and_switch("0:/shell", &proc);
+    struct command_args command = { .value = "0:/shell", .next = 0 };
+    status_t result = create_process_and_switch(&command, &proc);
     if (result != ALL_OK || !proc) {
         panic("Failed to create a process!");
     }

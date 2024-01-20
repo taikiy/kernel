@@ -6,6 +6,11 @@ main(int argc, char** argv)
 {
     printf("Hello, World from User Program Written in C!\n");
 
+    printf("argc: %d\n", argc);
+    for (int i = 0; i < argc; i++) {
+        printf("argv[%d]: %s\n", i, argv[i]);
+    }
+
     const int mem_size = 100;
     char* str = malloc(mem_size);
     if (!str) {
@@ -28,7 +33,7 @@ main(int argc, char** argv)
     free(str);
     printf("free succeeded\n");
 
-    str[0] = 'a'; // should cause a segfault
+    // str[0] = 'a'; // should cause a segfault
 
     while (1) {}
     return 0;
