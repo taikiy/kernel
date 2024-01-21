@@ -9,7 +9,7 @@ main(int argc, char* argv[])
 {
     printf("\ntaiOS v0.1\n\n");
 
-    char command[4098];
+    char command[MAX_COMMAND_LENGTH];
     while (1) {
         printf("> ");
 

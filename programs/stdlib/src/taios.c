@@ -39,6 +39,10 @@ exec(const char* path)
         return -1;
     }
 
+    if (strlen(path) == 0 || strlen(path) > MAX_COMMAND_LENGTH) {
+        return -1;
+    }
+
     struct command_args* command = parse_command(path);
     if (!command) {
         return -1;
@@ -46,7 +50,10 @@ exec(const char* path)
 
     int result = make_syscall(SYSCALL_EXEC, 1, (uint32_t)command);
 
-    // free the command args
+    // Since the max command line length is less than one page (4KB), only the first command->value ptr is allocated
+    // by malloc. The rest of the command->value ptrs are just offsets from the first command->value ptr. So we only
+    // need to free the first command->value ptr.
+    free(command->value);
     while (command) {
         struct command_args* next = command->next;
         free(command);

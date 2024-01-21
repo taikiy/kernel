@@ -18,7 +18,9 @@ We need to pass arguments to the user program. How we pass arguments to the user
 4. the new process pushes the arguments to the user program's stack. [push_user_program_arguments@task.asm](../src/task/task.asm)
 5. the process calls `iret`
 
-- [commit]()
+There are other ways to pass arguments to the user program. For example, we can pass the arguments as a return value to another system call. The above method is how we implement it in this kernel. It's a bit more complicated than the system call method, but it's faster, uses less memory (no need to call `process_malloc()`), and is more practical.
+
+- [commit](https://github.com/taikiy/kernel/commit/2d8816ca275ba32c1d2d33ddb0f0660b0acef1b1)
 
 We also need to implement a system call that terminates the process.
 

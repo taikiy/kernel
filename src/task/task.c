@@ -5,6 +5,7 @@
 #include "../memory/memory.h"
 #include "../memory/paging/paging.h"
 #include "../status.h"
+#include "../string/string.h"
 #include "../system/sys.h"
 
 struct task* current_task = 0;
@@ -144,6 +145,18 @@ get_current_task()
     return current_task;
 }
 
+static int
+count_args(struct command_args* args)
+{
+    int count = 0;
+    struct command_args* command = args;
+    while (command) {
+        count++;
+        command = command->next;
+    }
+    return count;
+}
+
 status_t
 start_task(struct task* task)
 {
@@ -152,22 +165,32 @@ start_task(struct task* task)
     }
 
     // get all the command arguments and join them into an array
-    struct command_args* command = task->process->program->command;
-    int argc = 0;
-    char* argv[MAX_COMMAND_ARGS]; // TODO: dynamically allocate this array
-    while (command) {
-        // skip the first argument, which is the program path
-        struct command_args* next = command->next;
-        argv[argc++] = next->value;
-        if (argc > MAX_COMMAND_ARGS) {
-            return ERROR(ETOOMANYARGS);
+    struct command_args* next = task->process->program->command->next; // skip the program path
+    int argc = count_args(next);
+    if (argc > MAX_COMMAND_ARGS) {
+        return ERROR(ETOOMANYARGS);
+    }
+    char** argv = 0;
+    if (argc > 0) {
+        argv = process_malloc(task->process, argc * sizeof(char*));
+        if (!argv) {
+            panic("process_malloc failed");
         }
-        command = next;
+        for (int i = 0; i < argc; i++) {
+            struct command_args* current = next;
+            char* value = process_malloc(task->process, strlen(current->value) + 1);
+            if (!value) {
+                panic("process_malloc failed");
+            }
+            strcpy(value, current->value);
+            argv[i] = value;
+            next = current->next;
+        }
     }
 
     current_task = task;
     switch_to_user_page();
-    jump_to_user_space(&current_task->registers, argc - 1, argv);
+    jump_to_user_space(&current_task->registers, argc, argv);
 
     return ALL_OK;
 }

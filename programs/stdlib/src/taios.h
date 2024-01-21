@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#define MAX_COMMAND_LENGTH 1024
+
 struct command_args
 {
     char* value;
