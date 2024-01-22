@@ -14,7 +14,7 @@ uint16_t* video_mem = 0;
 // Screen buffer is twice the size of the video height to support scrolling.
 #define SCREEN_BUFFER_HEIGHT (VGA_HEIGHT * 2)
 // Screen buffer to save two bytes per character (uint16_t): one for the character and one for the color.
-static uint16_t screen_buffer[VGA_WIDTH * SCREEN_BUFFER_HEIGHT];
+static uint16_t screen_buffer[SCREEN_BUFFER_HEIGHT][VGA_WIDTH];
 
 static uint16_t
 text_mode_character(char c, char color)
@@ -25,17 +25,24 @@ text_mode_character(char c, char color)
 }
 
 static void
-push_char_to_buffer(int x, int y, char c, enum COLORS color)
+push_char(int x, int y, char c, enum COLORS color)
 {
-    screen_buffer[(y % SCREEN_BUFFER_HEIGHT) * VGA_WIDTH + x] = text_mode_character(c, color);
+    if (y >= SCREEN_BUFFER_HEIGHT && x == 0) {
+        for (int i = 0; i < VGA_WIDTH; i++) {
+            // writing to the dirty buffer, so clear the line first
+            screen_buffer[y % SCREEN_BUFFER_HEIGHT][i] = text_mode_character(' ', WHITE);
+        }
+    }
+    screen_buffer[y % SCREEN_BUFFER_HEIGHT][x] = text_mode_character(c, color);
 }
 
 static void
 write_char(char c, enum COLORS color)
 {
     if (c == '\n' || c == '\r') {
+        // fill the rest of the line with spaces, and move the cursor to the next line
         while (cursor_col < VGA_WIDTH) {
-            push_char_to_buffer(cursor_col, cursor_row, ' ', color);
+            push_char(cursor_col, cursor_row, ' ', color);
             cursor_col += 1;
         }
     } else if (c == BACKSPACE) {
@@ -47,9 +54,9 @@ write_char(char c, enum COLORS color)
         } else {
             cursor_col -= 1;
         }
-        push_char_to_buffer(cursor_col, cursor_row, ' ', color);
+        push_char(cursor_col, cursor_row, ' ', color);
     } else {
-        push_char_to_buffer(cursor_col, cursor_row, c, color);
+        push_char(cursor_col, cursor_row, c, color);
         cursor_col += 1;
     }
 
@@ -64,7 +71,7 @@ get_visible_screen_top_row()
 {
     // TODO: This doesn't quite work. We are not accounting for the fact that the cursor can be moved up and down
 
-    int top = (cursor_row - VGA_HEIGHT + 1) % SCREEN_BUFFER_HEIGHT;
+    int top = cursor_row - (VGA_HEIGHT - 1);
     return top < 0 ? 0 : top;
 }
 
@@ -75,7 +82,7 @@ flush_screen_buffer()
     for (int y = 0; y < VGA_HEIGHT; y++) {
         int buffer_y = (y + top_row) % SCREEN_BUFFER_HEIGHT;
         for (int x = 0; x < VGA_WIDTH; x++) {
-            video_mem[y * VGA_WIDTH + x] = screen_buffer[buffer_y * VGA_WIDTH + x];
+            video_mem[y * VGA_WIDTH + x] = screen_buffer[buffer_y][x];
         }
     }
 }
@@ -91,7 +98,7 @@ terminal_initialize()
 
     for (int y = 0; y < VGA_HEIGHT; y++) {
         for (int x = 0; x < VGA_WIDTH; x++) {
-            push_char_to_buffer(x, y, ' ', 0);
+            push_char(x, y, ' ', 0);
         }
     }
 
