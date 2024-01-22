@@ -343,7 +343,7 @@ create_process(struct command_args* command, struct process** process)
 }
 
 void
-exit_process(struct process* process, int status)
+terminate_process(struct process* process, int status)
 {
     if (!process) {
         return;

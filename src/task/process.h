@@ -62,7 +62,7 @@ struct process
 };
 
 status_t create_process(struct command_args* command, struct process** process);
-void exit_process(struct process* process, int status);
+void terminate_process(struct process* process, int status);
 struct process* get_current_process();
 void* process_malloc(struct process* process, size_t size);
 void process_free(struct process* process, void* ptr);

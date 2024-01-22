@@ -91,7 +91,7 @@ sys_exit(struct interrupt_frame* frame)
 {
     struct task* task = get_current_task();
     int status = (int)get_arg_from_task(task, 0);
-    exit_process(task->process, status);
+    terminate_process(task->process, status);
 
     return 0;
 }
