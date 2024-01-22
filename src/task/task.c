@@ -5,14 +5,13 @@
 #include "../memory/memory.h"
 #include "../memory/paging/paging.h"
 #include "../status.h"
-#include "../string/string.h"
 #include "../system/sys.h"
 
 struct task* current_task = 0;
 struct task* head_task = 0;
 struct task* tail_task = 0;
 
-extern void jump_to_user_space(struct registers* registers, int argc, char* argv[]);
+extern void jump_to_user_space(struct registers* registers);
 
 static status_t
 initialize_task(struct task* task, struct process* process)
@@ -38,11 +37,11 @@ initialize_task(struct task* task, struct process* process)
 
 /// @brief  Returns the next task in the queue.
 /// @return The next task in the queue. This function returns 0 if there is no task in the queue.
-struct task*
+static struct task*
 get_next_task()
 {
     if (!current_task) {
-        return 0;
+        panic("No task is running in the system!");
     }
 
     if (!current_task->next) // if current_task is the last task
@@ -102,6 +101,7 @@ create_task(struct process* process)
     if (!head_task) {
         head_task = task;
         tail_task = task;
+        current_task = task;
     } else {
         tail_task->next = task;
         task->prev = tail_task;
@@ -145,52 +145,15 @@ get_current_task()
     return current_task;
 }
 
-static int
-count_args(struct command_args* args)
+void
+switch_task()
 {
-    int count = 0;
-    struct command_args* command = args;
-    while (command) {
-        count++;
-        command = command->next;
-    }
-    return count;
-}
-
-status_t
-start_task(struct task* task)
-{
-    if (!task) {
-        return ERROR(EINVARG);
+    struct task* next_task = get_next_task();
+    if (!next_task) {
+        panic("No task is running in the system!");
     }
 
-    // get all the command arguments and join them into an array
-    struct command_args* next = task->process->program->command->next; // skip the program path
-    int argc = count_args(next);
-    if (argc > MAX_COMMAND_ARGS) {
-        return ERROR(ETOOMANYARGS);
-    }
-    char** argv = 0;
-    if (argc > 0) {
-        argv = process_malloc(task->process, argc * sizeof(char*));
-        if (!argv) {
-            panic("process_malloc failed");
-        }
-        for (int i = 0; i < argc; i++) {
-            struct command_args* current = next;
-            char* value = process_malloc(task->process, strlen(current->value) + 1);
-            if (!value) {
-                panic("process_malloc failed");
-            }
-            strcpy(value, current->value);
-            argv[i] = value;
-            next = current->next;
-        }
-    }
-
-    current_task = task;
-    switch_to_user_page();
-    jump_to_user_space(&current_task->registers, argc, argv);
-
-    return ALL_OK;
+    current_task = next_task;
+    switch_to_user_page(current_task);
+    jump_to_user_space(&current_task->registers);
 }

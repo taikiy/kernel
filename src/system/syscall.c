@@ -19,7 +19,7 @@ static INTERRUPT_HANDLER syscall_handlers[TOTAL_SYSCALL_COUNT];
 void*
 get_arg_from_task(struct task* task, int index)
 {
-    switch_to_user_page();
+    switch_to_user_page(task);
     // `$esp + index` is `uint32_t`. This is the address of the argument value at `index`.
     // Then, we cast it to `uint32_t*` and dereference it to get the value.
     uint32_t arg = *(uint32_t*)(task->registers.esp + (index * sizeof(uint32_t)));

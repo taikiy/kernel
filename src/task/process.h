@@ -62,7 +62,6 @@ struct process
 };
 
 status_t create_process(struct command_args* command, struct process** process);
-status_t create_process_and_switch(struct command_args* command, struct process** process);
 struct process* get_current_process();
 status_t start_process(struct process* process);
 void* process_malloc(struct process* process, size_t size);

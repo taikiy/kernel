@@ -221,11 +221,10 @@ switch_to_kernel_page()
 }
 
 void
-switch_to_user_page()
+switch_to_user_page(struct task* task)
 {
     set_user_segment_registers();
-    struct task* current_task = get_current_task();
-    switch_page(current_task->user_page);
+    switch_page(task->user_page);
 }
 
 /// @brief Copies the data from the user space to the kernel space.
@@ -272,7 +271,7 @@ copy_data_from_user_space(struct task* task, void* src, void* dest, size_t size)
     }
 
     // switch to the user space for a brief moment to be able to see the `src` address
-    switch_to_user_page();
+    switch_to_user_page(task);
     memcpy(buf, src, size);
     switch_to_kernel_page();
 

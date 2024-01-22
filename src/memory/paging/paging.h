@@ -37,6 +37,6 @@ status_t map_paging_addresses(
 status_t unmap_virtual_address(struct paging_map* map, void* virtual_address, size_t size);
 void initialize_kernel_space_paging();
 void switch_to_kernel_page();
-void switch_to_user_page();
+void switch_to_user_page(struct task* task);
 
 #endif

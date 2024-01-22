@@ -19,10 +19,9 @@ static INTERRUPT_HANDLER interrupt_handlers[TOTAL_INTERRUPTS];
 /// while the kernel space paging is active.
 /// @param frame The interrupt frame that contains the current task registers
 static void
-save_current_task_state(struct interrupt_frame* frame)
+save_task_state(struct task* task, struct interrupt_frame* frame)
 {
-    struct task* current_task = get_current_task();
-    if (!current_task) {
+    if (!task) {
         panic("Cannot save the state of a null task!");
     }
 
@@ -30,19 +29,19 @@ save_current_task_state(struct interrupt_frame* frame)
         panic("Cannot save the state of a task with a null frame!");
     }
 
-    current_task->registers.eip = frame->eip;
-    current_task->registers.cs = frame->cs;
-    current_task->registers.eflags = frame->eflags;
-    current_task->registers.esp = frame->esp;
-    current_task->registers.ss = frame->ss;
+    task->registers.eip = frame->eip;
+    task->registers.cs = frame->cs;
+    task->registers.eflags = frame->eflags;
+    task->registers.esp = frame->esp;
+    task->registers.ss = frame->ss;
 
-    current_task->registers.eax = frame->eax;
-    current_task->registers.ecx = frame->ecx;
-    current_task->registers.edx = frame->edx;
-    current_task->registers.ebp = frame->ebp;
-    current_task->registers.esi = frame->esi;
-    current_task->registers.edi = frame->edi;
-    current_task->registers.ebx = frame->ebx;
+    task->registers.eax = frame->eax;
+    task->registers.ecx = frame->ecx;
+    task->registers.edx = frame->edx;
+    task->registers.ebp = frame->ebp;
+    task->registers.esi = frame->esi;
+    task->registers.edi = frame->edi;
+    task->registers.ebx = frame->ebx;
 }
 
 void
@@ -82,10 +81,11 @@ interrupt_handle_wrapper(int irq, struct interrupt_frame* frame)
     void* result = 0;
 
     if (interrupt_handlers[irq]) {
+        struct task* current_task = get_current_task();
         switch_to_kernel_page();
-        save_current_task_state(frame);
+        save_task_state(current_task, frame);
         result = interrupt_handlers[irq](frame);
-        switch_to_user_page();
+        switch_to_user_page(current_task);
     } else {
         default_interrupt_handler();
     }

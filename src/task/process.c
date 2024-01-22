@@ -5,9 +5,15 @@
 #include "../memory/heap/kheap.h"
 #include "../memory/memory.h"
 #include "../memory/paging/paging.h"
+#include "../string/string.h"
 #include "../system/sys.h"
 #include "task.h"
 
+extern uint32_t inject_process_arguments_to_stack(struct registers* registers, int argc, char* argv[]);
+
+// The current process is the one that is currently running in the foreground. That means, it's the process that the
+// user is interacting with. In CUI, it's the one currently active in the terminal. In GUI, it's the window that is
+// currently above all others.
 static struct process* current_process = 0;
 static struct process* processes[MAX_PROCESSES] = {};
 
@@ -63,7 +69,7 @@ get_process(uint16_t process_id)
     return processes[process_id];
 }
 
-status_t
+static status_t
 free_process(struct process* process)
 {
     status_t result = ALL_OK;
@@ -116,7 +122,10 @@ free_process(struct process* process)
         }
     }
 
+    processes[process->id] = 0;
     kfree(process);
+
+    // We don't change the current process here. The caller needs to do that.
 
     return result;
 }
@@ -184,7 +193,7 @@ out:
 /// @param slot Process ID we want to assign to the process.
 /// @return ALL_OK if the process is loaded successfully.
 static status_t
-load_process_to_slot(struct command_args* command, struct process** process, int slot)
+load_process(struct command_args* command, struct process** process, int slot)
 {
     status_t result = ALL_OK;
 
@@ -231,17 +240,6 @@ out:
     return result;
 }
 
-status_t
-start_process(struct process* process)
-{
-    if (!process) {
-        return ERROR(EINVARG);
-    }
-
-    current_process = process;
-    return start_task(process->task);
-}
-
 static int
 find_empty_process_slot()
 {
@@ -253,9 +251,62 @@ find_empty_process_slot()
     return -1;
 }
 
+static int
+count_args(struct command_args* args)
+{
+    int count = 0;
+    struct command_args* command = args;
+    while (command) {
+        count++;
+        command = command->next;
+    }
+    return count;
+}
+
+static status_t
+set_command_line_arguments(struct process* process)
+{
+    if (!process) {
+        return ERROR(EINVARG);
+    }
+
+    // get all the command arguments and join them into an array
+    struct command_args* next = process->program->command->next; // skip the program path
+    int argc = count_args(next);
+    if (argc > MAX_COMMAND_ARGS) {
+        return ERROR(ETOOMANYARGS);
+    }
+    char** argv = 0;
+    if (argc > 0) {
+        argv = process_malloc(process, argc * sizeof(char*));
+        if (!argv) {
+            panic("process_malloc failed");
+        }
+        for (int i = 0; i < argc; i++) {
+            struct command_args* current = next;
+            char* value = process_malloc(process, strlen(current->value) + 1);
+            if (!value) {
+                panic("process_malloc failed");
+            }
+            strcpy(value, current->value);
+            argv[i] = value;
+            next = current->next;
+        }
+    }
+
+    switch_to_user_page(process->task);
+    uint32_t new_stack_pointer = inject_process_arguments_to_stack(&process->task->registers, argc, argv);
+    switch_to_kernel_page();
+    process->task->registers.esp = new_stack_pointer;
+
+    return ALL_OK;
+}
+
 status_t
 create_process(struct command_args* command, struct process** process)
 {
+    status_t status = ALL_OK;
+
     if (!command || !command->value) {
         return ERROR(EINVARG);
     }
@@ -269,20 +320,19 @@ create_process(struct command_args* command, struct process** process)
         return ERROR(ETOOMANYPROCESSES);
     }
 
-    return load_process_to_slot(command, process, slot);
-}
-
-status_t
-create_process_and_switch(struct command_args* command, struct process** process)
-{
-    status_t result = ALL_OK;
-
-    result = create_process(command, process);
-    if (result != ALL_OK) {
-        return result;
+    status = load_process(command, process, slot);
+    if (status != ALL_OK) {
+        return status;
     }
 
-    return start_process(*process);
+    current_process = *process;
+
+    set_command_line_arguments(current_process);
+
+    // TODO: We shouldn't call this here. We should let the scheduler do it.
+    switch_task();
+
+    return status;
 }
 
 int

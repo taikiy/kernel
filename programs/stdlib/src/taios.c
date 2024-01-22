@@ -9,6 +9,8 @@ extern int make_syscall(uint32_t syscall_id, int argc, ...);
 struct command_args*
 parse_command(const char* command)
 {
+    // TODO: handle quotes
+
     char* command_copy = malloc(strlen(command) + 1);
     strcpy(command_copy, command);
     command_copy[strlen(command)] = '\0';

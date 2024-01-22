@@ -81,7 +81,7 @@ sys_exec(struct interrupt_frame* frame)
     }
 
     struct process* proc = 0;
-    status = create_process_and_switch(command, &proc);
+    status = create_process(command, &proc);
 
     return (void*)status;
 }
