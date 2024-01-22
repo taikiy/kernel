@@ -91,6 +91,7 @@ free_process(struct process* process)
         if (program->program_sections) {
             for (int i = 0; i < program->program_section_count; i++) {
                 if (program->program_sections[i]) {
+                    kfree(program->program_sections[i]->physical_address_start);
                     kfree(program->program_sections[i]);
                 }
             }
@@ -98,6 +99,7 @@ free_process(struct process* process)
         }
 
         if (program->stack_section) {
+            kfree(program->stack_section->physical_address_start);
             kfree(program->stack_section);
         }
 
