@@ -80,6 +80,11 @@ free_process(struct process* process)
         return ERROR(EINVARG);
     }
 
+    // before anything, free the task so that the scheduler doesn't pick it up
+    if (process->task) {
+        free_task(process->task);
+    }
+
     if (process->program) {
         struct program* program = process->program;
 
@@ -110,10 +115,6 @@ free_process(struct process* process)
         }
 
         kfree(program);
-    }
-
-    if (process->task) {
-        free_task(process->task);
     }
 
     for (int i = 0; i < MAX_ALLOCATIONS_PER_PROCESS; i++) {
