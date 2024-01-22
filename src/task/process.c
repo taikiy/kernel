@@ -17,6 +17,8 @@ extern uint32_t inject_process_arguments_to_stack(struct registers* registers, i
 static struct process* current_process = 0;
 static struct process* processes[MAX_PROCESSES] = {};
 
+static struct process* root_process = 0;
+
 static void
 initialize_process(struct process* process)
 {
@@ -326,6 +328,10 @@ create_process(struct command_args* command, struct process** process)
     }
 
     current_process = *process;
+    // TODO: We shouldn't call this here. We should let the scheduler do it.
+    if (!root_process) {
+        root_process = current_process;
+    }
 
     set_command_line_arguments(current_process);
 
@@ -333,6 +339,20 @@ create_process(struct command_args* command, struct process** process)
     switch_task();
 
     return status;
+}
+
+void
+exit_process(struct process* process, int status)
+{
+    if (!process) {
+        return;
+    }
+
+    free_process(process);
+
+    // TODO: need a better design
+    current_process = root_process;
+    switch_task();
 }
 
 int

@@ -12,6 +12,7 @@ struct command_args
 };
 
 #define SYSCALL_EXEC    0
+#define SYSCALL_EXIT    1
 #define SYSCALL_GETCHAR 2
 #define SYSCALL_PUTCHAR 3
 #define SYSCALL_MALLOC  4

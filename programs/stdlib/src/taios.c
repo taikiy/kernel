@@ -64,3 +64,9 @@ exec(const char* path)
 
     return result;
 }
+
+void
+exit(int status)
+{
+    make_syscall(SYSCALL_EXIT, 1, status);
+}

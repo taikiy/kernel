@@ -46,6 +46,7 @@ void
 initialize_syscall_handlers()
 {
     register_syscall_handler(SYSCALL_COMMAND_EXEC, sys_exec);
+    register_syscall_handler(SYSCALL_COMMAND_EXIT, sys_exit);
     register_syscall_handler(SYSCALL_COMMAND_GETCHAR, sys_getchar);
     register_syscall_handler(SYSCALL_COMMAND_PUTCHAR, sys_putchar);
     register_syscall_handler(SYSCALL_COMMAND_MALLOC, sys_malloc);

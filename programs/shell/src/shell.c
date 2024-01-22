@@ -7,21 +7,19 @@
 int
 main(int argc, char* argv[])
 {
-    printf("\ntaiOS v0.1\n\n");
+    printf("\ntaiOS v0.1\n");
 
     char command[MAX_COMMAND_LENGTH];
     while (1) {
-        printf("> ");
+        printf("\n> ");
 
         gets(command);
-        if (*command == 'Q') {
-            printf("Quit\n");
-            break;
-        }
 
         int result = exec(command);
         if (result != 0) {
             printf("exec failed: %d\n", result);
         }
     }
+
+    return 0;
 }
