@@ -24,4 +24,4 @@ There are other ways to pass arguments to the user program. For example, we can 
 
 We also need to implement a system call that terminates the process.
 
-- sys_exit [commit]()
+- sys_exit [commit](https://github.com/taikiy/kernel/commit/155b780001d7894da542c2ff81619fdf0d75aeac)
