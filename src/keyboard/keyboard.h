@@ -3,6 +3,7 @@
 
 #include "../idt/idt.h"
 #include "../status.h"
+#include <stdbool.h>
 #include <stdint.h>
 
 #define KEYBOARD_BUFFER_SIZE 1024
@@ -19,6 +20,9 @@ struct keyboard
 
     KB_INIT_CALLBACK initialize;
     INTERRUPT_HANDLER interrupt_handler;
+
+    bool is_shift_pressed;
+    bool is_ctrl_pressed;
 };
 
 struct keyboard_buffer
@@ -30,6 +34,7 @@ struct keyboard_buffer
 
 void initialize_keyboard_drivers();
 void* keyboard_interrupt_handler(struct interrupt_frame* frame);
+struct keyboard* current_keyboard();
 void push_key(uint8_t key);
 uint8_t pop_key();
 

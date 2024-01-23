@@ -1,6 +1,7 @@
 #include "ps2_default_keyboard.h"
 #include "../io/io.h"
 #include "../terminal/terminal.h"
+#include "./keyboard.h"
 #include <stdbool.h>
 
 // Define key mapping tables that maps scancode to e.g., US QWERTY ASCII characters.
@@ -40,9 +41,6 @@ static uint8_t us_qwerty_ascii_keymap_shifted[] = {
 //     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // 5
 // };
 
-static bool is_shift_pressed = 0;
-static bool is_ctrl_pressed = 0;
-
 static status_t
 ps2_initialize_keyboard_driver()
 {
@@ -58,12 +56,14 @@ scancode_to_ascii_char(uint8_t scancode)
         return 0;
     }
 
-    if (is_ctrl_pressed) {
+    struct keyboard* keyboard = current_keyboard();
+
+    if (keyboard->is_ctrl_pressed) {
         // TODO: Send a signal to the foreground process.
         return 0;
     }
 
-    char c = is_shift_pressed ? us_qwerty_ascii_keymap_shifted[scancode] : us_qwerty_ascii_keymap[scancode];
+    char c = keyboard->is_shift_pressed ? us_qwerty_ascii_keymap_shifted[scancode] : us_qwerty_ascii_keymap[scancode];
 
     return c;
 }
@@ -72,6 +72,7 @@ static void*
 ps2_keyboard_interrupt_handler(struct interrupt_frame* frame)
 {
     uint8_t scancode = inb(PS2_DATA_PORT);
+    struct keyboard* keyboard = current_keyboard();
 
     /*
      * From https://wiki.osdev.org/%228042%22_PS/2_Controller:
@@ -90,20 +91,20 @@ ps2_keyboard_interrupt_handler(struct interrupt_frame* frame)
     if (scancode & PS2_KEYBOARD_KEY_RELEASED) {
         scancode &= ~PS2_KEYBOARD_KEY_RELEASED;
         if (scancode == PS2_KEYBOARD_LEFT_SHIFT || scancode == PS2_KEYBOARD_RIGHT_SHIFT) {
-            is_shift_pressed = false;
+            keyboard->is_shift_pressed = false;
         }
         if (scancode == PS2_KEYBOARD_LEFT_CTRL || scancode == PS2_KEYBOARD_RIGHT_CTRL) {
-            is_ctrl_pressed = false;
+            keyboard->is_ctrl_pressed = false;
         }
         return 0;
     }
 
     if (scancode == PS2_KEYBOARD_LEFT_SHIFT || scancode == PS2_KEYBOARD_RIGHT_SHIFT) {
-        is_shift_pressed = true;
+        keyboard->is_shift_pressed = true;
         return 0;
     }
     if (scancode == PS2_KEYBOARD_LEFT_CTRL || scancode == PS2_KEYBOARD_RIGHT_CTRL) {
-        is_ctrl_pressed = true;
+        keyboard->is_ctrl_pressed = true;
         return 0;
     }
 

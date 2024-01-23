@@ -5,13 +5,13 @@
 #include "../task/process.h"
 #include "../task/task.h"
 #include "../terminal/terminal.h"
-#include "ps2_default_keyboard.h"
+#include "./ps2_default_keyboard.h"
 
 // We could have used a linked list here. Not sure if that's a better design though.
 static struct keyboard* keyboard_drivers[MAX_KEYBOARD_DRIVER_COUNT];
 static int current_keyboard_index;
 
-static struct keyboard*
+struct keyboard*
 current_keyboard()
 {
     return keyboard_drivers[current_keyboard_index % MAX_KEYBOARD_DRIVER_COUNT];
