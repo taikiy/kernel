@@ -33,5 +33,8 @@ main(int argc, char** argv)
     free(str);
     printf("free succeeded\n");
 
+    // this should crash the program
+    str[0] = 'a';
+
     return 0;
 }

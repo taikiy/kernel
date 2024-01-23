@@ -51,16 +51,10 @@ default_interrupt_handler()
 }
 
 void*
-int0h_handler(struct interrupt_frame* frame)
+exception_handler(struct interrupt_frame* frame)
 {
-    print("Divide by zero error\n");
-    return 0;
-}
-
-void*
-int0Eh_handler(struct interrupt_frame* frame)
-{
-    print("Page fault\n");
+    print("Exception occurred\n");
+    terminate_process(get_current_task()->process, -1);
     return 0;
 }
 
@@ -145,8 +139,8 @@ initialize_interrupt_handlers()
 {
     memset(interrupt_handlers, 0, sizeof(interrupt_handlers));
 
-    register_interrupt_handler(IRQ_0H, int0h_handler);
-    register_interrupt_handler(IRQ_0EH, int0Eh_handler);
+    register_interrupt_handler(IRQ_0H, exception_handler);
+    register_interrupt_handler(IRQ_0EH, exception_handler);
     register_interrupt_handler(IRQ_21H, keyboard_interrupt_handler);
     register_interrupt_handler(IRQ_80H, int80h_handler);
 

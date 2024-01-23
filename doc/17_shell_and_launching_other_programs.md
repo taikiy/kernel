@@ -22,6 +22,14 @@ There are other ways to pass arguments to the user program. For example, we can 
 
 - [commit](https://github.com/taikiy/kernel/commit/2d8816ca275ba32c1d2d33ddb0f0660b0acef1b1)
 
-We also need to implement a system call that terminates the process.
+## Terminating the Process
+
+We also need to implement a system call that terminates the process by freeing the memory and removing the process from the process list.
 
 - sys_exit [commit](https://github.com/taikiy/kernel/commit/155b780001d7894da542c2ff81619fdf0d75aeac)
+
+### Exception Handling
+
+When the user program causes an exception, we need to handle it. We can handle it by implementing an interrupt handler for each exception. The interrupt handler will terminate the process. There are many exceptions (i.e., divide by zero, page fault, etc.), but we just terminate the process when any exception occurs for now.
+
+- exception handlers [commit]()

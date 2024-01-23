@@ -5,5 +5,6 @@
 
 void* sys_getchar(struct interrupt_frame* frame);
 void* sys_putchar(struct interrupt_frame* frame);
+void* sys_puts(struct interrupt_frame* frame);
 
 #endif

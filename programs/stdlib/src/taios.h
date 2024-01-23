@@ -15,9 +15,11 @@ struct command_args
 #define SYSCALL_EXIT    1
 #define SYSCALL_GETCHAR 2
 #define SYSCALL_PUTCHAR 3
-#define SYSCALL_MALLOC  4
-#define SYSCALL_FREE    5
+#define SYSCALL_PUTS    4
+#define SYSCALL_MALLOC  5
+#define SYSCALL_FREE    6
 
 int exec(const char* path);
+void exit(int status);
 
 #endif
