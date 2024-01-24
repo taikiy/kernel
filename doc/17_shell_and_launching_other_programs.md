@@ -38,4 +38,6 @@ When the user program causes an exception, we need to handle it. We can handle i
 
 In order to run multiple processes, we need to call the task switching when we receive a timer interrupt. We have all the code needed to do this, but there are a few things we need to take care of. For example, we shouldn't enable interrupts before running the first process in the system. The first process is the root process that runs indefinitely as long as the system is running.
 
-- task switching [commit]()
+Note that currently, all tasks are sharing the video memory. We need to implement a mechanism to switch the video memory when we switch the task. For example, we could allocate a buffer on physical memory for each task to write the output to. When the process is in the background, it can continue to write to the buffer, but the output won't be displayed on the screen. When the process is in the foreground, we can copy the buffer to the video memory.
+
+- task switching [commit](https://github.com/taikiy/kernel/commit/cfcc0caa0be3ad35ae23108fdbb543f21070130b)
