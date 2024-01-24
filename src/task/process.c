@@ -61,7 +61,7 @@ get_current_process()
     return current_process;
 }
 
-struct process*
+static struct process*
 get_process(uint16_t process_id)
 {
     if (process_id < 0 || process_id >= MAX_PROCESSES) {
@@ -78,11 +78,6 @@ free_process(struct process* process)
 
     if (!process) {
         return ERROR(EINVARG);
-    }
-
-    // before anything, free the task so that the scheduler doesn't pick it up
-    if (process->task) {
-        free_task(process->task);
     }
 
     if (process->program) {
@@ -127,7 +122,10 @@ free_process(struct process* process)
         }
     }
 
-    processes[process->id] = 0;
+    if (process->task) {
+        free_task(process->task);
+    }
+
     kfree(process);
 
     // We don't change the current process here. The caller needs to do that.
@@ -330,16 +328,14 @@ create_process(struct command_args* command, struct process** process)
         return status;
     }
 
+    set_command_line_arguments(*process);
+
     current_process = *process;
     // TODO: We shouldn't call this here. We should let the scheduler do it.
     if (!root_process) {
         root_process = current_process;
     }
-
-    set_command_line_arguments(current_process);
-
-    // TODO: We shouldn't call this here. We should let the scheduler do it.
-    switch_task();
+    current_process->state = PROCESS_STATE_READY;
 
     return status;
 }
@@ -351,14 +347,14 @@ terminate_process(struct process* process, int status)
         return;
     }
 
+    processes[process->id] = 0;
     free_process(process);
 
     // TODO: need a better design
     current_process = root_process;
-    switch_task();
 }
 
-int
+static int
 find_empty_malloc_slot(struct process* process)
 {
     for (int i = 0; i < MAX_ALLOCATIONS_PER_PROCESS; i++) {
@@ -443,5 +439,4 @@ process_free(struct process* process, void* ptr)
 
     kfree(mem->ptr);
     kfree(mem);
-    return;
 }

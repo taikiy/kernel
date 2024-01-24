@@ -33,3 +33,9 @@ We also need to implement a system call that terminates the process by freeing t
 When the user program causes an exception, we need to handle it. We can handle it by implementing an interrupt handler for each exception. The interrupt handler will terminate the process. There are many exceptions (i.e., divide by zero, page fault, etc.), but we just terminate the process when any exception occurs for now.
 
 - exception handlers [commit](https://github.com/taikiy/kernel/commit/2b484211d6987d1616b8ea3be1d16c307872980c)
+
+## Task Switching
+
+In order to run multiple processes, we need to call the task switching when we receive a timer interrupt. We have all the code needed to do this, but there are a few things we need to take care of. For example, we shouldn't enable interrupts before running the first process in the system. The first process is the root process that runs indefinitely as long as the system is running.
+
+- task switching [commit]()

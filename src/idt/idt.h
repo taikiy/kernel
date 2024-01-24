@@ -5,6 +5,7 @@
 
 #define IRQ_0H  0x00
 #define IRQ_0EH 0x0E
+#define IRQ_20H 0x20
 #define IRQ_21H 0x21
 #define IRQ_80H 0x80
 

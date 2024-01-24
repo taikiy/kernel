@@ -57,13 +57,13 @@ kernel_main()
     initialize_keyboard_drivers();
     printc("   OK\n", GREEN);
 
-    print("Enabling system interrupts...");
-    enable_interrupts();
-    printc("   OK\n", GREEN);
-
     print("\nKernel initialization complete!\n\n");
 
     launch_shell();
+
+    // Defer calling `enable_interrupts()` until the root program (i.e., shell) is launched. Otherwise, the kernel will
+    // try to switch to another task, but there is no other task to switch to.
+    enable_interrupts();
 
     while (1) {}
 }

@@ -154,6 +154,11 @@ switch_task()
     }
 
     current_task = next_task;
+
+    if (current_task->process->state == PROCESS_STATE_READY) {
+        current_task->process->state = PROCESS_STATE_RUNNING;
+    }
+
     switch_to_user_page(current_task);
     jump_to_user_space(&current_task->registers);
 }

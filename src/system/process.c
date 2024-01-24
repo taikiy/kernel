@@ -1,5 +1,6 @@
 #include "process.h"
 #include "../config.h"
+#include "../io/io.h"
 #include "../memory/heap/kheap.h"
 #include "../memory/paging/paging.h"
 #include "../status.h"
@@ -80,6 +81,7 @@ sys_exec(struct interrupt_frame* frame)
         return (void*)ERROR(EINVARG);
     }
 
+    // TODO: Shouldn't we disable interrupts here?
     struct process* proc = 0;
     status = create_process(command, &proc);
 
@@ -91,7 +93,16 @@ sys_exit(struct interrupt_frame* frame)
 {
     struct task* task = get_current_task();
     int status = (int)get_arg_from_task(task, 0);
-    terminate_process(task->process, status);
 
+    // Disable interrupts while we terminate the process. Otherwise, the scheduler may switch to another task and come
+    // back to this task later. At that time, some of the memory pages of this process may have been freed.
+    disable_interrupts();
+    terminate_process(task->process, status);
+    enable_interrupts();
+
+    // Send ack. Since we've already freed the process so there's nothing to return to, so call switch_task() to switch
+    // to another process' task.
+    outb(0x20, 0x20);
+    switch_task();
     return 0;
 }

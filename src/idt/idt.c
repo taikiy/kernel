@@ -6,6 +6,7 @@
 #include "../memory/paging/paging.h"
 #include "../system/sys.h"
 #include "../system/syscall.h"
+#include "../task/task.h"
 #include "../terminal/terminal.h"
 
 extern void load_idt(struct idtr_desc* ptr);
@@ -27,6 +28,14 @@ save_task_state(struct task* task, struct interrupt_frame* frame)
 
     if (!frame) {
         panic("Cannot save the state of a task with a null frame!");
+    }
+
+    // When a new process is created, we set the EIP to the address of the entry point of the process. We don't switch
+    // to the new process until the first time the clock interrupt is triggered. So, when the clock interrupt is called
+    // for the first time, we have to make sure that we don't overwrite the EIP of the new process with some garbage
+    // value. Once the process is switched to, we change the process state to RUNNING.
+    if (task->process->state != PROCESS_STATE_RUNNING) {
+        return;
     }
 
     task->registers.eip = frame->eip;
@@ -54,7 +63,24 @@ void*
 exception_handler(struct interrupt_frame* frame)
 {
     print("Exception occurred\n");
+
+    disable_interrupts();
     terminate_process(get_current_task()->process, -1);
+    enable_interrupts();
+
+    // Send ack. Since we've already freed the process so there's nothing to return to, so call switch_task() to switch
+    // to another process' task.
+    outb(0x20, 0x20);
+    switch_task();
+    return 0;
+}
+
+void*
+clock()
+{
+    // Send ack before switching tasks. Once we call switch_task(), we will not return to this function.
+    outb(0x20, 0x20);
+    switch_task();
     return 0;
 }
 
@@ -141,6 +167,7 @@ initialize_interrupt_handlers()
 
     register_interrupt_handler(IRQ_0H, exception_handler);
     register_interrupt_handler(IRQ_0EH, exception_handler);
+    register_interrupt_handler(IRQ_20H, clock);
     register_interrupt_handler(IRQ_21H, keyboard_interrupt_handler);
     register_interrupt_handler(IRQ_80H, int80h_handler);
 

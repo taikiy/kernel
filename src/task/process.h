@@ -42,6 +42,13 @@ struct allocation
     size_t size;
 };
 
+enum PROCESS_STATE
+{
+    PROCESS_STATE_UNKNOWN = 0,
+    PROCESS_STATE_READY,
+    PROCESS_STATE_RUNNING,
+};
+
 struct process
 {
     // Process ID
@@ -59,6 +66,8 @@ struct process
     struct program* program;
 
     struct keyboard_buffer keyboard_buffer;
+
+    enum PROCESS_STATE state;
 };
 
 status_t create_process(struct command_args* command, struct process** process);
