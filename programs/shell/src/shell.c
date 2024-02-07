@@ -15,7 +15,10 @@ main(int argc, char* argv[])
 
         gets(command);
 
-        int result = exec(command);
+        char path[MAX_COMMAND_LENGTH] = "0:/";
+        strcat(path, command);
+
+        int result = exec(path);
         if (result != 0) {
             printf("exec failed: %d\n", result);
         }

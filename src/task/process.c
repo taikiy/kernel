@@ -274,7 +274,7 @@ set_command_line_arguments(struct process* process)
     }
 
     // get all the command arguments and join them into an array
-    struct command_args* next = process->program->command->next; // skip the program path
+    struct command_args* next = process->program->command;
     int argc = count_args(next);
     if (argc > MAX_COMMAND_ARGS) {
         return ERROR(ETOOMANYARGS);

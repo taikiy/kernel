@@ -29,6 +29,7 @@ Documents in this repo assume macOS on an Apple M1 chip.
 14. [Accessing the Keyboard in Protected Mode](./doc/14_accessing_keyboard_in_protected_mode.md.md)
 15. [ELF files](./doc/15_elf_files.md)
 16. [Writing User Programs in C](./doc/16_writing_user_programs_in_C.md)
+17. [Shell and Launching Other User Programs](./doc/17_shell_and_launching_other_programs.md)
 
 # Resources
 
