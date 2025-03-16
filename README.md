@@ -1,6 +1,11 @@
 # Overview
 
-Developing a multi-threaded kernel from scratch
+Developing a multi-threaded kernel from scratch.
+
+# Credit
+
+Excellent course by Daniel McCarthy. Follow the link to the video course with the coupon.
+https://dragonzap.com/course/developing-a-multithreaded-kernel-from-scratch?coupon=GITHUBKERNELDISCOUNT
 
 # Preparation
 
